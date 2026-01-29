@@ -118,8 +118,12 @@ export const GameScreen: React.FC = () => {
       <div className="flex-1 flex max-w-7xl mx-auto w-full">
         {/* 左侧角色状态栏 */}
         <aside
-          className="w-72 p-4"
-          style={{ borderRight: '1px solid var(--border-subtle)' }}
+          style={{
+            width: '280px',
+            minWidth: '280px',
+            padding: '16px',
+            borderRight: '1px solid var(--border-subtle)',
+          }}
         >
           <PlayerStatus />
         </aside>
@@ -156,7 +160,7 @@ export const GameScreen: React.FC = () => {
           </nav>
 
           {/* 内容区域 */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
             {renderTabContent()}
           </div>
         </main>

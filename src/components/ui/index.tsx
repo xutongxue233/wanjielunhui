@@ -27,12 +27,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   }[type];
 
   return (
-    <div className="w-full">
+    <div style={{ width: '100%' }}>
       {(label || showText) && (
-        <div className="flex justify-between items-center mb-1.5">
-          {label && <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{label}</span>}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+          {label && <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{label}</span>}
           {showText && (
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
               {Math.floor(current).toLocaleString()} / {Math.floor(max).toLocaleString()}
             </span>
           )}
@@ -121,8 +121,9 @@ export const Card: React.FC<CardProps> = ({ children, title, className = '', onC
     <div
       className={`card-xian ${onClick ? 'cursor-pointer' : ''} ${className}`}
       onClick={onClick}
+      style={{ padding: '20px' }}
     >
-      {title && <h3 className="card-title">{title}</h3>}
+      {title && <h3 className="card-title" style={{ marginBottom: '16px' }}>{title}</h3>}
       {children}
     </div>
   );
