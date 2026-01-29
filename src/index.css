@@ -1,0 +1,553 @@
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 水墨修仙主色调 */
+  --ink-black: #0a0a0f;
+  --ink-deep: #12121a;
+  --ink-dark: #1a1a28;
+  --ink-medium: #252535;
+  --ink-light: #3a3a4a;
+
+  /* 仙气色彩 */
+  --gold-immortal: #c9a227;
+  --gold-light: #e8d48b;
+  --gold-glow: rgba(201, 162, 39, 0.4);
+
+  --jade-essence: #2d8b6f;
+  --jade-light: #5ab896;
+  --jade-glow: rgba(45, 139, 111, 0.3);
+
+  --crimson-blood: #8b2942;
+  --crimson-light: #c44569;
+
+  --azure-spirit: #2563eb;
+  --azure-light: #60a5fa;
+
+  --purple-mystic: #6d28d9;
+  --purple-light: #a78bfa;
+
+  /* 五行色彩 */
+  --metal-silver: #a8a8b8;
+  --wood-green: #22863a;
+  --water-blue: #1e6bb8;
+  --fire-red: #c24e4e;
+  --earth-yellow: #b8860b;
+
+  /* 文字色彩 */
+  --text-primary: #e8e4d9;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  /* 边框与装饰 */
+  --border-subtle: rgba(201, 162, 39, 0.15);
+  --border-active: rgba(201, 162, 39, 0.4);
+  --shadow-gold: 0 0 20px rgba(201, 162, 39, 0.15);
+  --shadow-jade: 0 0 20px rgba(45, 139, 111, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  background: var(--ink-black);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* 水墨背景纹理 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(45, 139, 111, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(201, 162, 39, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(109, 40, 217, 0.04) 0%, transparent 60%),
+    linear-gradient(180deg, var(--ink-black) 0%, var(--ink-deep) 50%, var(--ink-dark) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 云雾动画背景 */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ink-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-immortal), var(--jade-essence));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold-light), var(--jade-light));
+}
+
+/* 文字选择 */
+::selection {
+  background: var(--gold-immortal);
+  color: var(--ink-black);
+}
+
+/* ==================== 基础组件样式 ==================== */
+
+/* 仙侠风格按钮 */
+.btn-xian {
+  position: relative;
+  padding: 0.625rem 1.5rem;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--gold-light);
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(201, 162, 39, 0.05) 100%);
+  border: 1px solid var(--border-active);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.btn-xian::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(201, 162, 39, 0.1) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.btn-xian:hover {
+  color: var(--gold-immortal);
+  border-color: var(--gold-immortal);
+  box-shadow: var(--shadow-gold), inset 0 0 20px rgba(201, 162, 39, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-xian:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-xian:active {
+  transform: translateY(0);
+}
+
+.btn-xian:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-xian:disabled:hover {
+  box-shadow: none;
+}
+
+/* 主要按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-immortal) 0%, #a88620 100%);
+  color: var(--ink-black);
+  border: none;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-immortal) 100%);
+  color: var(--ink-black);
+  box-shadow: 0 4px 20px rgba(201, 162, 39, 0.4);
+}
+
+/* 危险按钮 */
+.btn-danger {
+  background: linear-gradient(135deg, rgba(139, 41, 66, 0.2) 0%, rgba(139, 41, 66, 0.1) 100%);
+  color: var(--crimson-light);
+  border-color: var(--crimson-blood);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, var(--crimson-blood) 0%, #6b1d30 100%);
+  color: #fff;
+  border-color: var(--crimson-light);
+}
+
+/* 幽灵按钮 */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-subtle);
+  box-shadow: none;
+}
+
+/* ==================== 卡片组件 ==================== */
+
+.card-xian {
+  position: relative;
+  background: linear-gradient(145deg, rgba(26, 26, 40, 0.9) 0%, rgba(18, 18, 26, 0.95) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.25rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.card-xian::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--gold-immortal) 50%, transparent 100%);
+  opacity: 0.5;
+}
+
+.card-xian:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-gold);
+}
+
+.card-title {
+  font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+  font-size: 1.25rem;
+  color: var(--gold-immortal);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+  letter-spacing: 0.05em;
+}
+
+/* ==================== 进度条 ==================== */
+
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: var(--ink-medium);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-hp {
+  background: linear-gradient(90deg, var(--crimson-blood) 0%, var(--crimson-light) 100%);
+}
+
+.progress-mp {
+  background: linear-gradient(90deg, var(--azure-spirit) 0%, var(--azure-light) 100%);
+}
+
+.progress-exp {
+  background: linear-gradient(90deg, var(--gold-immortal) 0%, var(--gold-light) 100%);
+}
+
+.progress-cultivation {
+  background: linear-gradient(90deg, var(--jade-essence) 0%, var(--jade-light) 100%);
+}
+
+/* ==================== 输入框 ==================== */
+
+.input-xian {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: var(--ink-deep);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-xian::placeholder {
+  color: var(--text-muted);
+}
+
+.input-xian:focus {
+  border-color: var(--gold-immortal);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
+}
+
+/* ==================== 标签页 ==================== */
+
+.tab-xian {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-xian:hover {
+  color: var(--text-secondary);
+}
+
+.tab-xian.active {
+  color: var(--gold-immortal);
+  border-bottom-color: var(--gold-immortal);
+}
+
+.tab-xian.active::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--gold-immortal);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--gold-immortal);
+}
+
+/* ==================== 工具提示 ==================== */
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  background: var(--ink-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.tooltip:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==================== 境界标签 ==================== */
+
+.realm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 4px;
+  background: rgba(var(--realm-color), 0.15);
+  border: 1px solid rgba(var(--realm-color), 0.3);
+}
+
+.realm-lianqi { --realm-color: 156, 163, 175; color: #9ca3af; }
+.realm-zhuji { --realm-color: 96, 165, 250; color: #60a5fa; }
+.realm-jindan { --realm-color: 251, 191, 36; color: #fbbf24; }
+.realm-yuanying { --realm-color: 167, 139, 250; color: #a78bfa; }
+.realm-huashen { --realm-color: 244, 114, 182; color: #f472b6; }
+.realm-heti { --realm-color: 52, 211, 153; color: #34d399; }
+.realm-dacheng { --realm-color: 249, 115, 22; color: #f97316; }
+.realm-dujie { --realm-color: 239, 68, 68; color: #ef4444; }
+.realm-xianren { --realm-color: 255, 215, 0; color: #ffd700; }
+
+/* ==================== 五行标签 ==================== */
+
+.element-metal { color: var(--metal-silver); }
+.element-wood { color: var(--wood-green); }
+.element-water { color: var(--water-blue); }
+.element-fire { color: var(--fire-red); }
+.element-earth { color: var(--earth-yellow); }
+
+/* ==================== 动画 ==================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+  50% { box-shadow: 0 0 15px currentColor, 0 0 30px currentColor; }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+.animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
+.animate-fade-in-scale { animation: fadeInScale 0.3s ease-out; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-rotate-slow { animation: rotate-slow 20s linear infinite; }
+.animate-breathe { animation: breathe 4s ease-in-out infinite; }
+
+/* 交错动画延迟 */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* ==================== 装饰元素 ==================== */
+
+/* 八卦图案 */
+.bagua-pattern {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--ink-black) 0deg 45deg,
+    var(--gold-immortal) 45deg 90deg,
+    var(--ink-black) 90deg 135deg,
+    var(--gold-immortal) 135deg 180deg,
+    var(--ink-black) 180deg 225deg,
+    var(--gold-immortal) 225deg 270deg,
+    var(--ink-black) 270deg 315deg,
+    var(--gold-immortal) 315deg 360deg
+  );
+  opacity: 0.1;
+}
+
+/* 云纹装饰 */
+.cloud-decoration {
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, rgba(201, 162, 39, 0.1) 0%, transparent 70%);
+  filter: blur(20px);
+  animation: float 8s ease-in-out infinite;
+}
+
+/* 分隔线 */
+.divider-xian {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold-immortal) 50%, var(--border-subtle) 80%, transparent 100%);
+}
+
+/* ==================== 布局辅助 ==================== */
+
+.glass-effect {
+  background: rgba(18, 18, 26, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-immortal) 50%, var(--gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-jade {
+  background: linear-gradient(135deg, var(--jade-light) 0%, var(--jade-essence) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-glow-gold {
+  border: 1px solid var(--gold-immortal);
+  box-shadow: 0 0 15px rgba(201, 162, 39, 0.3), inset 0 0 15px rgba(201, 162, 39, 0.1);
+}
+
+.border-glow-jade {
+  border: 1px solid var(--jade-essence);
+  box-shadow: 0 0 15px rgba(45, 139, 111, 0.3), inset 0 0 15px rgba(45, 139, 111, 0.1);
+}
+
+/* ==================== 响应式 ==================== */
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .card-xian {
+    padding: 1rem;
+  }
+}
