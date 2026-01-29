@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, ProgressBar, Tooltip } from '../ui';
 import { usePlayerStore } from '../../stores/playerStore';
-import { getRealmColor, REALM_CONFIGS } from '../../data/realms';
+import { getRealmColor, REALM_CONFIGS, STAGE_DISPLAY_NAMES } from '../../data/realms';
 import { getSpiritualRootName } from '../../data/origins';
 import { formatNumber } from '../../core/game-loop';
 
@@ -17,151 +17,183 @@ export const PlayerStatus: React.FC = () => {
   return (
     <Card className="w-full">
       {/* 角色头像和基本信息 */}
-      <div className="flex items-start gap-4 mb-5">
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
+        {/* 头像 */}
         <div
-          className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold relative"
           style={{
+            width: '64px',
+            height: '64px',
+            minWidth: '64px',
+            minHeight: '64px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            fontWeight: 'bold',
             background: `linear-gradient(135deg, ${realmColor}30, ${realmColor}10)`,
             border: `2px solid ${realmColor}`,
             boxShadow: `0 0 20px ${realmColor}30`,
             fontFamily: "'Ma Shan Zheng', serif",
+            color: 'var(--text-primary)',
+            flexShrink: 0,
           }}
         >
           {player.name.charAt(0)}
-          <div
-            className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs"
-            style={{
-              background: 'var(--ink-dark)',
-              border: `1px solid ${realmColor}`,
-              color: realmColor,
-            }}
-          >
-            {realm.stage}
-          </div>
         </div>
 
-        <div className="flex-1">
-          <h2
-            className="text-xl font-bold"
+        {/* 名字和境界信息 */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
             style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              lineHeight: '1.3',
+              marginBottom: '6px',
               color: 'var(--text-primary)',
               fontFamily: "'Ma Shan Zheng', serif",
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             {player.name}
-          </h2>
-          <Tooltip content={realmConfig.description}>
-            <span
-              className="text-sm font-medium cursor-help"
-              style={{ color: realmColor }}
-            >
-              {realm.displayName}
-            </span>
-          </Tooltip>
-          <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+          </div>
+          <div style={{ marginBottom: '4px' }}>
+            <Tooltip content={realmConfig.description}>
+              <span
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'help',
+                  color: realmColor,
+                }}
+              >
+                {realm.displayName}
+              </span>
+            </Tooltip>
+          </div>
+          <div
+            style={{
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+            }}
+          >
             {getSpiritualRootName(spiritualRoot)}
           </div>
         </div>
       </div>
 
       {/* 状态条 */}
-      <div className="space-y-4">
-        <ProgressBar
-          current={attributes.hp}
-          max={attributes.maxHp}
-          type="hp"
-          label="气血"
-          height={14}
-        />
-
-        <ProgressBar
-          current={attributes.mp}
-          max={attributes.maxMp}
-          type="mp"
-          label="法力"
-          height={14}
-        />
-
-        <ProgressBar
-          current={attributes.cultivation}
-          max={attributes.maxCultivation}
-          type="cultivation"
-          label="修为"
-          height={14}
-        />
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <ProgressBar
+            current={attributes.hp}
+            max={attributes.maxHp}
+            type="hp"
+            label="气血"
+            height={14}
+          />
+        </div>
+        <div style={{ marginBottom: '12px' }}>
+          <ProgressBar
+            current={attributes.mp}
+            max={attributes.maxMp}
+            type="mp"
+            label="法力"
+            height={14}
+          />
+        </div>
+        <div>
+          <ProgressBar
+            current={attributes.cultivation}
+            max={attributes.maxCultivation}
+            type="cultivation"
+            label="修为"
+            height={14}
+          />
+        </div>
       </div>
 
       {/* 分隔线 */}
-      <div className="divider-xian my-5" />
+      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold-immortal) 50%, var(--border-subtle) 80%, transparent 100%)', margin: '16px 0' }} />
 
       {/* 属性列表 */}
-      <div className="grid grid-cols-2 gap-3">
-        <AttributeRow label="攻击" value={formatNumber(attributes.attack)} color="var(--crimson-light)" />
-        <AttributeRow label="防御" value={formatNumber(attributes.defense)} color="var(--azure-light)" />
-        <AttributeRow label="速度" value={formatNumber(attributes.speed)} color="var(--jade-light)" />
-        <AttributeRow label="悟性" value={attributes.comprehension.toString()} color="var(--purple-light)" />
-        <AttributeRow label="气运" value={attributes.luck.toString()} color="var(--gold-light)" />
-        <AttributeRow
-          label="寿元"
-          value={`${attributes.lifespan}/${attributes.maxLifespan}`}
-          color="var(--text-secondary)"
-        />
+      <div>
+        <div style={{ display: 'flex', marginBottom: '8px' }}>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingRight: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>攻击</span>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--crimson-light)' }}>{formatNumber(attributes.attack)}</span>
+          </div>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>防御</span>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--azure-light)' }}>{formatNumber(attributes.defense)}</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', marginBottom: '8px' }}>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingRight: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>速度</span>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--jade-light)' }}>{formatNumber(attributes.speed)}</span>
+          </div>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>悟性</span>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--purple-light)' }}>{attributes.comprehension}</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex' }}>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingRight: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>气运</span>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--gold-light)' }}>{attributes.luck}</span>
+          </div>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>寿元</span>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)' }}>{attributes.lifespan}/{attributes.maxLifespan}</span>
+          </div>
+        </div>
       </div>
 
+      {/* 分隔线 */}
+      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold-immortal) 50%, var(--border-subtle) 80%, transparent 100%)', margin: '16px 0' }} />
+
       {/* 五行亲和 */}
-      <div className="divider-xian my-5" />
-      <div className="space-y-2">
-        <div className="text-xs" style={{ color: 'var(--text-muted)' }}>五行亲和</div>
-        <div className="flex justify-between text-sm">
-          <ElementBadge element="metal" value={spiritualRoot.elements.metal} />
-          <ElementBadge element="wood" value={spiritualRoot.elements.wood} />
-          <ElementBadge element="water" value={spiritualRoot.elements.water} />
-          <ElementBadge element="fire" value={spiritualRoot.elements.fire} />
-          <ElementBadge element="earth" value={spiritualRoot.elements.earth} />
+      <div>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+          五行亲和
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '4px' }}>
+          <ElementBadge name="金" value={spiritualRoot.elements.metal} color="var(--metal-silver)" />
+          <ElementBadge name="木" value={spiritualRoot.elements.wood} color="var(--wood-green)" />
+          <ElementBadge name="水" value={spiritualRoot.elements.water} color="var(--water-blue)" />
+          <ElementBadge name="火" value={spiritualRoot.elements.fire} color="var(--fire-red)" />
+          <ElementBadge name="土" value={spiritualRoot.elements.earth} color="var(--earth-yellow)" />
         </div>
       </div>
     </Card>
   );
 };
 
-interface AttributeRowProps {
-  label: string;
-  value: string;
+interface ElementBadgeProps {
+  name: string;
+  value: number;
   color: string;
 }
 
-const AttributeRow: React.FC<AttributeRowProps> = ({ label, value, color }) => (
-  <div className="flex justify-between items-center">
-    <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{label}</span>
-    <span className="text-sm font-medium" style={{ color }}>{value}</span>
-  </div>
-);
-
-interface ElementBadgeProps {
-  element: 'metal' | 'wood' | 'water' | 'fire' | 'earth';
-  value: number;
-}
-
-const ELEMENT_CONFIG = {
-  metal: { name: '金', color: 'var(--metal-silver)' },
-  wood: { name: '木', color: 'var(--wood-green)' },
-  water: { name: '水', color: 'var(--water-blue)' },
-  fire: { name: '火', color: 'var(--fire-red)' },
-  earth: { name: '土', color: 'var(--earth-yellow)' },
-};
-
-const ElementBadge: React.FC<ElementBadgeProps> = ({ element, value }) => {
-  const config = ELEMENT_CONFIG[element];
+const ElementBadge: React.FC<ElementBadgeProps> = ({ name, value, color }) => {
   return (
     <div
-      className="flex flex-col items-center gap-1 px-2 py-1 rounded"
       style={{
-        background: `${config.color}10`,
-        border: `1px solid ${config.color}30`,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '6px 10px',
+        borderRadius: '4px',
+        background: `${color}15`,
+        border: `1px solid ${color}40`,
+        minWidth: '36px',
       }}
     >
-      <span className="text-xs" style={{ color: config.color }}>{config.name}</span>
-      <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
+      <span style={{ fontSize: '12px', color, fontWeight: '500' }}>{name}</span>
+      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>
         {value}
       </span>
     </div>
