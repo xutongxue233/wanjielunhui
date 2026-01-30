@@ -1,0 +1,104 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: linear-gradient(180deg, rgba(15, 12, 8, 0.95) 0%, rgba(10, 8, 5, 0.98) 100%);
+  border-top: 1px solid var(--gold-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bottom-nav-icon-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-nav-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-3);
+  transition: all 0.3s ease;
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+  color: var(--gold);
+  filter: drop-shadow(0 0 6px var(--gold));
+}
+
+.bottom-nav-item:hover .bottom-nav-icon {
+  color: var(--gold-light);
+}
+
+.bottom-nav-label {
+  font-size: 0.7rem;
+  color: var(--text-3);
+  font-family: var(--font-cn);
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+.bottom-nav-item.active .bottom-nav-label {
+  color: var(--gold);
+}
+
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 2px;
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--crimson);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

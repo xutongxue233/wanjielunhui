@@ -1,0 +1,362 @@
+.social-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  gap: 16px;
+}
+
+.social-tabs {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gold-border);
+}
+
+.social-tab {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-family: var(--font-cn);
+  color: var(--text-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.social-tab:hover {
+  color: var(--gold-light);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.social-tab.active {
+  color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-border);
+}
+
+.social-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 好友列表 */
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid var(--gold-border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.friend-card:hover {
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateX(4px);
+}
+
+.friend-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--bg-primary);
+  font-weight: 600;
+  border: 2px solid var(--gold-border);
+}
+
+.friend-avatar.online {
+  border-color: var(--jade-essence);
+  box-shadow: 0 0 8px rgba(103, 194, 165, 0.4);
+}
+
+.friend-info {
+  flex: 1;
+}
+
+.friend-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.friend-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.friend-realm {
+  padding: 2px 8px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 4px;
+  color: var(--gold-light);
+}
+
+.friend-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.friend-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.friend-status-dot.online {
+  background: var(--jade-essence);
+  box-shadow: 0 0 6px var(--jade-essence);
+}
+
+.friend-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.friend-action-btn {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-family: var(--font-cn);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.friend-action-btn.primary {
+  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border: none;
+}
+
+.friend-action-btn.secondary {
+  color: var(--text-2);
+  background: transparent;
+  border: 1px solid var(--gold-border);
+}
+
+.friend-action-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* 宗门信息 */
+.sect-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sect-header {
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(139, 90, 43, 0.1) 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.sect-name {
+  font-size: 1.5rem;
+  font-family: var(--font-cn);
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+  letter-spacing: 0.15em;
+}
+
+.sect-level {
+  font-size: 0.9rem;
+  color: var(--gold-light);
+  margin-bottom: 12px;
+}
+
+.sect-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.sect-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sect-stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.sect-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.sect-members-title {
+  font-size: 1rem;
+  font-family: var(--font-cn);
+  font-weight: 600;
+  color: var(--gold);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gold-border);
+}
+
+.sect-member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sect-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+}
+
+.sect-member-rank {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 4px;
+  color: var(--gold);
+  min-width: 48px;
+  text-align: center;
+}
+
+.sect-member-rank.leader {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: var(--bg-primary);
+}
+
+.sect-member-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.sect-member-contribution {
+  font-size: 0.8rem;
+  color: var(--gold-light);
+}
+
+/* 好友请求 */
+.request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.request-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid var(--gold-border);
+  border-radius: 8px;
+}
+
+.request-info {
+  flex: 1;
+}
+
+.request-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.request-message {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.request-btn {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-family: var(--font-cn);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.request-btn.accept {
+  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--jade-essence) 0%, #4a9b7f 100%);
+  border: none;
+}
+
+.request-btn.reject {
+  color: var(--text-2);
+  background: transparent;
+  border: 1px solid var(--gold-border);
+}
+
+/* 空状态 */
+.social-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+.social-empty-icon {
+  width: 64px;
+  height: 64px;
+  opacity: 0.3;
+}
+
+.social-empty-text {
+  font-size: 0.9rem;
+}
+
+.social-empty-action {
+  margin-top: 8px;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-family: var(--font-cn);
+  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.social-empty-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}

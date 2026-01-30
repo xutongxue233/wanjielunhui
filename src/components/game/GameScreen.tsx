@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PlayerStatus } from './PlayerStatus';
 import { CultivationPanel } from './CultivationPanel';
 import { StoryPanel } from './StoryPanel';
 import { useGameLoop } from '../../core/game-loop';
 import { usePlayerStore } from '../../stores/playerStore';
 import { useGameStore } from '../../stores/gameStore';
+import { useAuthStore } from '../../stores/authStore';
 import { Button } from '../ui';
+import { BottomNav, type NavTab } from '../navigation/BottomNav';
+import { ChatPanel, ChatToggleButton } from '../chat/ChatPanel';
+import { SocialPage } from '../social/SocialPage';
+import { MarketPage } from '../market/MarketPage';
+import { PvpPage } from '../pvp/PvpPage';
+import { RankingPage } from '../ranking/RankingPage';
+import { friendApi, mailApi } from '../../services/api';
 
 type TabType = 'cultivation' | 'story' | 'combat' | 'alchemy' | 'disciples' | 'exploration';
 
@@ -21,14 +28,40 @@ const TABS: { id: TabType; name: string; icon: string; available: boolean }[] = 
 
 export const GameScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('cultivation');
+  const [activeNavTab, setActiveNavTab] = useState<NavTab>('game');
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const player = usePlayerStore((state) => state.player);
   const setPhase = useGameStore((state) => state.setPhase);
+  const { isAuthenticated, logout } = useAuthStore();
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const [friendRequests, mailData] = await Promise.all([
+        friendApi.requests().catch(() => []),
+        mailApi.list(1, 1).catch(() => ({ mails: [], total: 0, unreadCount: 0 })),
+      ]);
+      const totalUnread = friendRequests.length + (mailData.unreadCount || 0);
+      setUnreadCount(totalUnread);
+    } catch (err) {
+      console.error('获取未读数量失败:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUnreadCount();
+      const interval = setInterval(fetchUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, fetchUnreadCount]);
 
   useGameLoop();
 
   if (!player) return null;
 
-  const renderTabContent = () => {
+  const renderGameTabContent = () => {
     switch (activeTab) {
       case 'cultivation':
         return <CultivationPanel />;
@@ -83,9 +116,88 @@ export const GameScreen: React.FC = () => {
     }
   };
 
+  const renderMainContent = () => {
+    switch (activeNavTab) {
+      case 'game':
+        return (
+          <div className="flex-1 flex max-w-7xl mx-auto w-full">
+            <aside
+              style={{
+                width: '280px',
+                minWidth: '280px',
+                padding: '16px',
+                borderRight: '1px solid var(--border-subtle)',
+              }}
+            >
+              <PlayerStatus />
+            </aside>
+
+            <main className="flex-1 flex flex-col">
+              <nav
+                className="flex px-4"
+                style={{ borderBottom: '1px solid var(--border-subtle)' }}
+              >
+                {TABS.map((tab) => (
+                  <button
+                    key={tab.id}
+                    className={`tab-xian ${activeTab === tab.id ? 'active' : ''}`}
+                    onClick={() => tab.available && setActiveTab(tab.id)}
+                    disabled={!tab.available}
+                    style={{
+                      opacity: tab.available ? 1 : 0.4,
+                      cursor: tab.available ? 'pointer' : 'not-allowed',
+                    }}
+                  >
+                    {tab.name}
+                    {!tab.available && (
+                      <span
+                        className="ml-1 text-xs"
+                        style={{ color: 'var(--text-muted)' }}
+                      >
+                        (soon)
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </nav>
+
+              <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+                {renderGameTabContent()}
+              </div>
+            </main>
+          </div>
+        );
+      case 'social':
+        return (
+          <div className="flex-1 max-w-4xl mx-auto w-full">
+            <SocialPage />
+          </div>
+        );
+      case 'market':
+        return (
+          <div className="flex-1 max-w-5xl mx-auto w-full">
+            <MarketPage />
+          </div>
+        );
+      case 'pvp':
+        return (
+          <div className="flex-1 max-w-4xl mx-auto w-full">
+            <PvpPage />
+          </div>
+        );
+      case 'ranking':
+        return (
+          <div className="flex-1 max-w-4xl mx-auto w-full">
+            <RankingPage />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* 顶部导航栏 */}
+    <div className="min-h-screen flex flex-col" style={{ paddingBottom: '64px' }}>
       <header
         className="glass-effect px-4 py-3"
         style={{ borderBottom: '1px solid var(--border-subtle)' }}
@@ -97,10 +209,28 @@ export const GameScreen: React.FC = () => {
           >
             万界轮回
           </h1>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span style={{ color: 'var(--text-primary)' }}>{player.name}</span>
-              <span className="text-sm" style={{ color: 'var(--gold-immortal)' }}>
+          <div className="flex items-center gap-5">
+            <div
+              className="flex items-center gap-5 px-4 py-1.5 rounded-full"
+              style={{
+                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 90, 43, 0.15) 100%)',
+                border: '1px solid rgba(212, 175, 55, 0.3)',
+              }}
+            >
+              <span
+                className="font-medium"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {player.name}
+              </span>
+              <span
+                className="h-4 w-px"
+                style={{ background: 'rgba(212, 175, 55, 0.4)' }}
+              />
+              <span
+                className="text-sm font-medium"
+                style={{ color: 'var(--gold-immortal)' }}
+              >
                 {player.realm.displayName}
               </span>
             </div>
@@ -108,86 +238,52 @@ export const GameScreen: React.FC = () => {
               size="sm"
               variant="ghost"
               onClick={() => setPhase('title')}
+              className="hover:text-gold-primary"
+              style={{
+                color: 'var(--text-muted)',
+                transition: 'color 0.2s ease',
+              }}
             >
               返回
             </Button>
+            {isAuthenticated && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  logout();
+                  setPhase('title');
+                }}
+                style={{
+                  color: 'var(--crimson-light, #e06860)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                退出登录
+              </Button>
+            )}
           </div>
         </div>
       </header>
 
-      <div className="flex-1 flex max-w-7xl mx-auto w-full">
-        {/* 左侧角色状态栏 */}
-        <aside
-          style={{
-            width: '280px',
-            minWidth: '280px',
-            padding: '16px',
-            borderRight: '1px solid var(--border-subtle)',
-          }}
-        >
-          <PlayerStatus />
-        </aside>
+      {renderMainContent()}
 
-        {/* 主内容区 */}
-        <main className="flex-1 flex flex-col">
-          {/* 标签页导航 */}
-          <nav
-            className="flex px-4"
-            style={{ borderBottom: '1px solid var(--border-subtle)' }}
-          >
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                className={`tab-xian ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => tab.available && setActiveTab(tab.id)}
-                disabled={!tab.available}
-                style={{
-                  opacity: tab.available ? 1 : 0.4,
-                  cursor: tab.available ? 'pointer' : 'not-allowed',
-                }}
-              >
-                {tab.name}
-                {!tab.available && (
-                  <span
-                    className="ml-1 text-xs"
-                    style={{ color: 'var(--text-muted)' }}
-                  >
-                    (soon)
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
+      <BottomNav
+        activeTab={activeNavTab}
+        onTabChange={setActiveNavTab}
+        unreadCount={unreadCount}
+      />
 
-          {/* 内容区域 */}
-          <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
-            {renderTabContent()}
-          </div>
-        </main>
-      </div>
+      <ChatToggleButton
+        onClick={() => setIsChatOpen(!isChatOpen)}
+        unreadCount={isChatOpen ? 0 : unreadCount}
+      />
 
-      {/* 底部状态栏 */}
-      <footer
-        className="glass-effect px-4 py-2"
-        style={{ borderTop: '1px solid var(--border-subtle)' }}
-      >
-        <div
-          className="max-w-7xl mx-auto flex justify-between text-xs"
-          style={{ color: 'var(--text-muted)' }}
-        >
-          <span>万界轮回 v0.1.0</span>
-          <span
-            className="flex items-center gap-1"
-            style={{ color: 'var(--jade-essence)' }}
-          >
-            <span
-              className="w-2 h-2 rounded-full animate-pulse"
-              style={{ background: 'var(--jade-essence)' }}
-            />
-            自动保存已启用
-          </span>
-        </div>
-      </footer>
+      <ChatPanel
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        unreadCount={unreadCount}
+      />
     </div>
   );
 };

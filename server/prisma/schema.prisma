@@ -1,0 +1,534 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ==================== 用户与认证 ====================
+
+model User {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+
+  status       UserStatus @default(ACTIVE)
+  role         UserRole   @default(PLAYER)
+
+  lastLoginAt  DateTime?
+  lastLoginIp  String?
+  loginCount   Int       @default(0)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  player        Player?
+  refreshTokens RefreshToken[]
+
+  @@index([email])
+  @@index([username])
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceInfo String?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+  SUSPENDED
+}
+
+enum UserRole {
+  PLAYER
+  GM
+  ADMIN
+}
+
+// ==================== 玩家数据 ====================
+
+model Player {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name             String
+  title            String?
+  avatarId         Int      @default(1)
+
+  realm            String   @default("炼气")
+  realmStage       String   @default("初期")
+  cultivation      BigInt   @default(0)
+  totalCultivation BigInt   @default(0)
+
+  health           Int      @default(100)
+  maxHealth        Int      @default(100)
+  attack           Int      @default(10)
+  defense          Int      @default(5)
+  speed            Int      @default(10)
+  critRate         Float    @default(0.05)
+  critDamage       Float    @default(1.5)
+
+  spiritualRoot    String
+
+  spiritStones     BigInt   @default(0)
+  destinyPoints    Int      @default(0)
+
+  combatPower      BigInt   @default(0)
+  pvpRating        Int      @default(1000)
+  reincarnations   Int      @default(0)
+
+  vipLevel         Int      @default(0)
+  vipExpireAt      DateTime?
+
+  lastActiveAt     DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  gameSaves        GameSave[]
+  rankings         Ranking[]
+  sentFriendReqs   FriendRequest[] @relation("SentRequests")
+  recvFriendReqs   FriendRequest[] @relation("ReceivedRequests")
+  friends          Friend[]        @relation("PlayerFriends")
+  friendOf         Friend[]        @relation("FriendOfPlayer")
+  sectMember       SectMember?
+  sentMails        Mail[]          @relation("SentMails")
+  receivedMails    Mail[]          @relation("ReceivedMails")
+  marketListings   MarketListing[]
+  tradeHistory     TradeLog[]
+  pvpMatches       PvpMatch[]      @relation("PvpPlayer")
+  pvpOpponents     PvpMatch[]      @relation("PvpOpponent")
+  activityProgress ActivityProgress[]
+
+  @@index([realm, combatPower])
+  @@index([pvpRating])
+}
+
+// ==================== 存档系统 ====================
+
+model GameSave {
+  id            String   @id @default(uuid())
+  playerId      String
+  player        Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  slot          Int      @default(1)
+  name          String
+
+  playerData    String
+  gameData      String
+  alchemyData   String
+  discipleData  String
+  roguelikeData String
+
+  playTime      Int      @default(0)
+  checkpoint    String?
+
+  checksum      String
+  version       Int      @default(1)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([playerId, slot])
+  @@index([playerId])
+}
+
+// ==================== 排行榜 ====================
+
+model Ranking {
+  id        String      @id @default(uuid())
+  playerId  String
+  player    Player      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  type      RankingType
+  score     BigInt
+  rank      Int?
+
+  snapshot  String
+
+  seasonId  Int?
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([playerId, type, seasonId])
+  @@index([type, score])
+}
+
+enum RankingType {
+  COMBAT_POWER
+  REALM
+  REINCARNATION
+  PVP_RATING
+  WEALTH
+  SECT
+}
+
+// ==================== 好友系统 ====================
+
+model FriendRequest {
+  id         String              @id @default(uuid())
+  senderId   String
+  sender     Player              @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   Player              @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  status     FriendRequestStatus @default(PENDING)
+  message    String?
+
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId, status])
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Friend {
+  id        String   @id @default(uuid())
+  playerId  String
+  player    Player   @relation("PlayerFriends", fields: [playerId], references: [id], onDelete: Cascade)
+  friendId  String
+  friend    Player   @relation("FriendOfPlayer", fields: [friendId], references: [id], onDelete: Cascade)
+
+  intimacy  Int      @default(0)
+  remark    String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([playerId, friendId])
+  @@index([playerId])
+}
+
+// ==================== 门派系统 ====================
+
+model Sect {
+  id             String       @id @default(uuid())
+  name           String       @unique
+
+  description    String?
+  notice         String?
+  iconId         Int          @default(1)
+
+  level          Int          @default(1)
+  experience     BigInt       @default(0)
+  fund           BigInt       @default(0)
+
+  joinType       SectJoinType @default(APPROVAL)
+  minRealmToJoin String?
+
+  memberCount    Int          @default(1)
+  maxMembers     Int          @default(50)
+  totalPower     BigInt       @default(0)
+
+  founderId      String
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  members        SectMember[]
+  applications   SectApplication[]
+
+  @@index([totalPower])
+}
+
+enum SectJoinType {
+  OPEN
+  APPROVAL
+  INVITE_ONLY
+}
+
+model SectMember {
+  id           String   @id @default(uuid())
+  sectId       String
+  sect         Sect     @relation(fields: [sectId], references: [id], onDelete: Cascade)
+  playerId     String   @unique
+  player       Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  role         SectRole @default(MEMBER)
+  contribution BigInt   @default(0)
+
+  joinedAt     DateTime @default(now())
+
+  @@index([sectId, contribution])
+}
+
+enum SectRole {
+  LEADER
+  ELDER
+  DEACON
+  MEMBER
+}
+
+model SectApplication {
+  id        String   @id @default(uuid())
+  sectId    String
+  sect      Sect     @relation(fields: [sectId], references: [id], onDelete: Cascade)
+  playerId  String
+
+  message   String?
+  status    String   @default("PENDING")
+
+  createdAt DateTime @default(now())
+
+  @@unique([sectId, playerId])
+}
+
+// ==================== 邮件系统 ====================
+
+model Mail {
+  id          String    @id @default(uuid())
+
+  senderId    String?
+  sender      Player?   @relation("SentMails", fields: [senderId], references: [id], onDelete: SetNull)
+
+  receiverId  String
+  receiver    Player    @relation("ReceivedMails", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  type        MailType  @default(NORMAL)
+  title       String
+  content     String
+
+  attachments String?
+
+  isRead      Boolean   @default(false)
+  isClaimed   Boolean   @default(false)
+
+  expiresAt   DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([receiverId, isRead])
+  @@index([receiverId, createdAt])
+}
+
+enum MailType {
+  NORMAL
+  SYSTEM
+  REWARD
+  TRADE
+}
+
+// ==================== 交易市场 ====================
+
+model MarketListing {
+  id        String        @id @default(uuid())
+  sellerId  String
+  seller    Player        @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  itemType  String
+  itemId    String
+  itemData  String
+  amount    Int           @default(1)
+
+  price     BigInt
+  currency  String        @default("spiritStones")
+
+  status    ListingStatus @default(ACTIVE)
+
+  expiresAt DateTime
+  createdAt DateTime      @default(now())
+  soldAt    DateTime?
+
+  @@index([itemType, status])
+  @@index([status, price])
+  @@index([sellerId])
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+model TradeLog {
+  id        String   @id @default(uuid())
+
+  sellerId  String?
+  buyerId   String
+  buyer     Player   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  listingId String?
+  itemType  String
+  itemId    String
+  itemData  String
+  amount    Int
+
+  price     BigInt
+  currency  String
+
+  fee       BigInt   @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([buyerId, createdAt])
+  @@index([sellerId, createdAt])
+}
+
+// ==================== PVP系统 ====================
+
+model PvpMatch {
+  id         String    @id @default(uuid())
+
+  playerId   String
+  player     Player    @relation("PvpPlayer", fields: [playerId], references: [id], onDelete: Cascade)
+  opponentId String
+  opponent   Player    @relation("PvpOpponent", fields: [opponentId], references: [id], onDelete: Cascade)
+
+  winnerId   String?
+  result     PvpResult
+
+  playerRatingChange   Int
+  opponentRatingChange Int
+
+  battleLog  String
+  duration   Int
+
+  seasonId   Int
+
+  createdAt  DateTime @default(now())
+
+  @@index([playerId, seasonId])
+  @@index([seasonId, createdAt])
+}
+
+enum PvpResult {
+  WIN
+  LOSE
+  DRAW
+}
+
+model PvpSeason {
+  id        Int      @id @default(autoincrement())
+  name      String
+
+  startAt   DateTime
+  endAt     DateTime
+
+  rewards   String
+
+  isActive  Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+// ==================== 运营系统 ====================
+
+model Announcement {
+  id        String   @id @default(uuid())
+
+  title     String
+  content   String
+  type      String   @default("normal")
+
+  priority  Int      @default(0)
+  isActive  Boolean  @default(true)
+
+  startAt   DateTime @default(now())
+  endAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, priority])
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+
+  name        String
+  description String
+  type        String
+
+  config      String
+
+  startAt     DateTime
+  endAt       DateTime
+
+  isActive    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  progress    ActivityProgress[]
+
+  @@index([isActive, startAt])
+}
+
+model ActivityProgress {
+  id         String   @id @default(uuid())
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  playerId   String
+  player     Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  progress   String
+  rewards    String?
+
+  updatedAt  DateTime @updatedAt
+
+  @@unique([activityId, playerId])
+}
+
+// ==================== 聊天记录 ====================
+
+model ChatMessage {
+  id          String      @id @default(uuid())
+
+  channel     ChatChannel
+  channelId   String?
+
+  senderId    String
+  senderName  String
+  senderRealm String
+
+  content     String
+
+  createdAt   DateTime    @default(now())
+
+  @@index([channel, channelId, createdAt])
+  @@index([createdAt])
+}
+
+enum ChatChannel {
+  WORLD
+  SECT
+  PRIVATE
+}
+
+// ==================== 操作日志 ====================
+
+model OperationLog {
+  id        String   @id @default(uuid())
+
+  userId    String?
+  playerId  String?
+
+  action    String
+  target    String?
+  details   String?
+
+  ip        String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}

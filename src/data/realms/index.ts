@@ -126,24 +126,16 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
 // 每个小境界的修为需求基数
 export const BASE_CULTIVATION_REQUIREMENT = 100;
 
-// 阶段修为倍率
-export const STAGE_MULTIPLIERS: Record<RealmStage, number> = {
-  early: 1,
-  middle: 3,
-  late: 9,
-  peak: 27,
-};
+// 增长系数 - 每个小境界需求是上一个的1.5倍
+export const CULTIVATION_GROWTH_RATE = 1.5;
 
 // 计算某个境界阶段的修为需求
+// 使用指数增长公式，确保每个阶段需求都比前一个高
 export function getCultivationRequirement(realm: Realm): number {
-  const realmConfig = REALM_CONFIGS[realm.name];
-  const stageMultiplier = STAGE_MULTIPLIERS[realm.stage];
-
-  return Math.floor(
-    BASE_CULTIVATION_REQUIREMENT *
-    realmConfig.cultivationMultiplier *
-    stageMultiplier
-  );
+  const level = getRealmLevel(realm);
+  // 需求 = 基数 * 增长率^(等级-1)
+  // 这样 level 1 = 100, level 2 = 150, level 3 = 225...
+  return Math.floor(BASE_CULTIVATION_REQUIREMENT * Math.pow(CULTIVATION_GROWTH_RATE, level - 1));
 }
 
 // 计算境界等级 (1-36)

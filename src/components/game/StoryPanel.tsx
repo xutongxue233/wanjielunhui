@@ -22,20 +22,23 @@ export const StoryPanel: React.FC = () => {
   const setStoryFlag = useGameStore((state) => state.setStoryFlag);
   const completeChapter = useGameStore((state) => state.completeChapter);
 
-  // 历史记录
-  const [storyHistory, setStoryHistory] = useState<StoryEntry[]>([]);
+  // 从 gameStore 获取持久化的剧情状态
+  const storyHistory = useGameStore((state) => state.storyHistory);
+  const addStoryEntry = useGameStore((state) => state.addStoryEntry);
+  const storyDisplayState = useGameStore((state) => state.storyDisplayState);
+  const setStoryDisplayState = useGameStore((state) => state.setStoryDisplayState);
+
   // 当前节点
   const [currentNode, setCurrentNodeState] = useState<StoryNode | null>(null);
   // 当前正在打字的文字
   const [displayedText, setDisplayedText] = useState('');
   // 是否正在打字
   const [isTyping, setIsTyping] = useState(false);
-  // 是否已完成全部剧情
-  const [isCompleted, setIsCompleted] = useState(false);
 
   const intervalRef = useRef<number | null>(null);
   const lastNodeIdRef = useRef<string>('');
   const contentRef = useRef<HTMLDivElement>(null);
+  const isInitializedRef = useRef(false);
 
   // 滚动到底部
   const scrollToBottom = useCallback(() => {
@@ -45,9 +48,10 @@ export const StoryPanel: React.FC = () => {
   }, []);
 
   // 打字效果
-  const typeText = useCallback((text: string, onComplete?: () => void) => {
+  const typeText = useCallback((text: string) => {
     if (intervalRef.current) {
       window.clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
     setIsTyping(true);
     setDisplayedText('');
@@ -64,7 +68,6 @@ export const StoryPanel: React.FC = () => {
           window.clearInterval(intervalRef.current);
           intervalRef.current = null;
         }
-        onComplete?.();
       }
     }, 25);
   }, [scrollToBottom]);
@@ -81,23 +84,52 @@ export const StoryPanel: React.FC = () => {
     setIsTyping(false);
   }, [currentNode]);
 
-  // 加载节点
+  // 初始化和恢复显示状态
   useEffect(() => {
-    if (player && storyProgress.currentNodeId !== lastNodeIdRef.current) {
+    if (!player) return;
+
+    // 恢复之前的显示状态
+    if (storyDisplayState.displayedText && !isInitializedRef.current) {
+      setDisplayedText(storyDisplayState.displayedText);
+      setIsTyping(false);
+      isInitializedRef.current = true;
+      lastNodeIdRef.current = storyProgress.currentNodeId;
+
+      const node = getStoryNode(player.origin, storyProgress.currentNodeId);
+      setCurrentNodeState(node);
+      return;
+    }
+
+    // 加载新节点
+    if (storyProgress.currentNodeId !== lastNodeIdRef.current) {
       lastNodeIdRef.current = storyProgress.currentNodeId;
       const node = getStoryNode(player.origin, storyProgress.currentNodeId);
       setCurrentNodeState(node);
       if (node) {
         typeText(node.content);
       }
+      isInitializedRef.current = true;
     }
+  }, [player, storyProgress.currentNodeId, storyDisplayState.displayedText, typeText]);
 
+  // 保存显示状态
+  useEffect(() => {
+    if (displayedText && !isTyping) {
+      setStoryDisplayState({
+        displayedText,
+        isCompleted: storyDisplayState.isCompleted,
+      });
+    }
+  }, [displayedText, isTyping, setStoryDisplayState, storyDisplayState.isCompleted]);
+
+  // 清理 interval
+  useEffect(() => {
     return () => {
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);
       }
     };
-  }, [player, storyProgress.currentNodeId, typeText]);
+  }, []);
 
   // 应用效果
   const applyEffects = (effects?: StoryNode['effects']) => {
@@ -125,10 +157,10 @@ export const StoryPanel: React.FC = () => {
     if (!currentNode) return;
 
     // 将当前内容添加到历史
-    setStoryHistory(prev => [...prev, {
+    addStoryEntry({
       id: currentNode.id,
       content: currentNode.content,
-    }]);
+    });
 
     // 应用效果
     applyEffects(currentNode.effects);
@@ -139,7 +171,7 @@ export const StoryPanel: React.FC = () => {
     } else {
       // 完成章节
       completeChapter(storyProgress.currentChapterId);
-      setIsCompleted(true);
+      setStoryDisplayState({ displayedText: '', isCompleted: true });
       setDisplayedText('');
       setCurrentNodeState(null);
     }
@@ -150,12 +182,12 @@ export const StoryPanel: React.FC = () => {
     if (!currentNode) return;
 
     // 将当前内容和选择添加到历史
-    setStoryHistory(prev => [...prev, {
+    addStoryEntry({
       id: currentNode.id,
       content: currentNode.content,
       isChoice: true,
       choiceText: choice.text,
-    }]);
+    });
 
     // 应用效果
     applyEffects(choice.effects);
@@ -165,7 +197,7 @@ export const StoryPanel: React.FC = () => {
   };
 
   // 加载中
-  if (!currentNode && !isCompleted && storyHistory.length === 0) {
+  if (!currentNode && !storyDisplayState.isCompleted && storyHistory.length === 0) {
     return (
       <div
         className="h-full flex items-center justify-center"
@@ -255,7 +287,7 @@ export const StoryPanel: React.FC = () => {
           )}
 
           {/* 完成提示 */}
-          {isCompleted && (
+          {storyDisplayState.isCompleted && (
             <div
               style={{
                 marginTop: '2em',
@@ -277,7 +309,7 @@ export const StoryPanel: React.FC = () => {
       </div>
 
       {/* 操作区 */}
-      {!isCompleted && currentNode && (
+      {!storyDisplayState.isCompleted && currentNode && (
         <div
           className="p-4"
           style={{

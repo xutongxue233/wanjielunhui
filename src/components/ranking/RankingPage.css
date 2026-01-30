@@ -1,0 +1,235 @@
+.ranking-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  gap: 16px;
+}
+
+.ranking-tabs {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gold-border);
+}
+
+.ranking-tab {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-family: var(--font-cn);
+  color: var(--text-3);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ranking-tab:hover {
+  color: var(--gold-light);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.ranking-tab.active {
+  color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-border);
+}
+
+.ranking-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.ranking-item:hover {
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateX(4px);
+}
+
+.ranking-item.top-1 {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 180, 0, 0.08) 100%);
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.ranking-item.top-2 {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.12) 0%, rgba(160, 160, 160, 0.06) 100%);
+  border-color: rgba(192, 192, 192, 0.4);
+}
+
+.ranking-item.top-3 {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.12) 0%, rgba(180, 100, 40, 0.06) 100%);
+  border-color: rgba(205, 127, 50, 0.4);
+}
+
+.ranking-position {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--text-3);
+}
+
+.ranking-item.top-1 .ranking-position {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb000 100%);
+  color: var(--bg-primary);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+}
+
+.ranking-item.top-2 .ranking-position {
+  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+  color: var(--bg-primary);
+}
+
+.ranking-item.top-3 .ranking-position {
+  background: linear-gradient(135deg, #cd7f32 0%, #b06420 100%);
+  color: var(--bg-primary);
+}
+
+.ranking-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--bg-primary);
+  font-weight: 600;
+  border: 2px solid var(--gold-border);
+}
+
+.ranking-item.top-1 .ranking-avatar {
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.ranking-info {
+  flex: 1;
+}
+
+.ranking-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.ranking-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.ranking-realm {
+  padding: 2px 8px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 4px;
+  color: var(--gold-light);
+}
+
+.ranking-sect {
+  color: var(--text-muted);
+}
+
+.ranking-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.ranking-score-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.ranking-score-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* 我的排名 */
+.my-ranking {
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 90, 43, 0.08) 100%);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.my-ranking-label {
+  font-size: 0.8rem;
+  color: var(--gold-light);
+  margin-bottom: 2px;
+}
+
+.my-ranking-position {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.my-ranking-info {
+  flex: 1;
+}
+
+.my-ranking-score {
+  text-align: right;
+}
+
+.my-ranking-score-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.my-ranking-score-label {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+/* 空状态 */
+.ranking-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+.ranking-empty-icon {
+  width: 64px;
+  height: 64px;
+  opacity: 0.3;
+}

@@ -3,6 +3,18 @@ import { immer } from 'zustand/middleware/immer';
 import { persist } from 'zustand/middleware';
 import type { GamePhase, GameSettings, StoryProgress, RoguelikeState } from '../types';
 
+interface StoryEntry {
+  id: string;
+  content: string;
+  isChoice?: boolean;
+  choiceText?: string;
+}
+
+interface StoryDisplayState {
+  displayedText: string;
+  isCompleted: boolean;
+}
+
 interface GameState {
   // 游戏阶段
   phase: GamePhase;
@@ -23,6 +35,16 @@ interface GameState {
   completeChapter: (chapterId: string) => void;
   setStoryFlag: (key: string, value: boolean | number | string) => void;
   getStoryFlag: (key: string) => boolean | number | string | undefined;
+  resetStoryProgress: () => void;
+
+  // 剧情历史记录
+  storyHistory: StoryEntry[];
+  addStoryEntry: (entry: StoryEntry) => void;
+  clearStoryHistory: () => void;
+
+  // 剧情显示状态
+  storyDisplayState: StoryDisplayState;
+  setStoryDisplayState: (state: Partial<StoryDisplayState>) => void;
 
   // 轮回状态
   roguelikeState: RoguelikeState;
@@ -60,6 +82,11 @@ const initialSettings: GameSettings = {
   autoSaveInterval: 60,
 };
 
+const initialStoryDisplayState: StoryDisplayState = {
+  displayedText: '',
+  isCompleted: false,
+};
+
 export const useGameStore = create<GameState>()(
   persist(
     immer((set, get) => ({
@@ -67,6 +94,8 @@ export const useGameStore = create<GameState>()(
       lastTickTime: Date.now(),
       isPaused: false,
       storyProgress: initialStoryProgress,
+      storyHistory: [],
+      storyDisplayState: initialStoryDisplayState,
       roguelikeState: initialRoguelikeState,
       settings: initialSettings,
 
@@ -119,6 +148,32 @@ export const useGameStore = create<GameState>()(
         return get().storyProgress.flags[key];
       },
 
+      resetStoryProgress: () => {
+        set((state) => {
+          state.storyProgress = { ...initialStoryProgress, flags: {} };
+          state.storyHistory = [];
+          state.storyDisplayState = initialStoryDisplayState;
+        });
+      },
+
+      addStoryEntry: (entry) => {
+        set((state) => {
+          state.storyHistory.push(entry);
+        });
+      },
+
+      clearStoryHistory: () => {
+        set((state) => {
+          state.storyHistory = [];
+        });
+      },
+
+      setStoryDisplayState: (newState) => {
+        set((state) => {
+          state.storyDisplayState = { ...state.storyDisplayState, ...newState };
+        });
+      },
+
       addDestinyPoints: (amount) => {
         set((state) => {
           state.roguelikeState.destinyPoints += amount;
@@ -149,6 +204,8 @@ export const useGameStore = create<GameState>()(
         set((state) => {
           state.phase = 'title';
           state.storyProgress = initialStoryProgress;
+          state.storyHistory = [];
+          state.storyDisplayState = initialStoryDisplayState;
           state.isPaused = false;
         });
       },

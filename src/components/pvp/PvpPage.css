@@ -1,0 +1,366 @@
+.pvp-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  gap: 16px;
+}
+
+.pvp-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(139, 90, 43, 0.1) 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+}
+
+.pvp-title {
+  font-size: 1.5rem;
+  font-family: var(--font-cn);
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+  letter-spacing: 0.15em;
+}
+
+.pvp-season {
+  font-size: 0.9rem;
+  color: var(--gold-light);
+  margin-bottom: 16px;
+}
+
+.pvp-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+}
+
+.pvp-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pvp-stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.pvp-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.pvp-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 匹配区域 */
+.pvp-matchmaking {
+  padding: 24px;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.pvp-match-btn {
+  padding: 16px 48px;
+  font-size: 1.1rem;
+  font-family: var(--font-cn);
+  font-weight: 600;
+  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.1em;
+}
+
+.pvp-match-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.pvp-match-btn.matching {
+  background: linear-gradient(135deg, var(--crimson) 0%, #a03030 100%);
+  animation: pulse-match 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-match {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 80, 80, 0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(200, 80, 80, 0); }
+}
+
+.pvp-matching-text {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.pvp-matching-time {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* 战斗界面 */
+.pvp-battle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pvp-battle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+}
+
+.pvp-player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pvp-player.right {
+  flex-direction: row-reverse;
+}
+
+.pvp-player-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--bg-primary);
+  font-weight: 600;
+  border: 2px solid var(--gold-border);
+}
+
+.pvp-player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pvp-player.right .pvp-player-info {
+  align-items: flex-end;
+}
+
+.pvp-player-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.pvp-player-realm {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.pvp-vs {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--crimson);
+  text-shadow: 0 0 10px rgba(200, 80, 80, 0.5);
+}
+
+.pvp-health-bars {
+  display: flex;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.pvp-health-bar {
+  flex: 1;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pvp-health-bar.right {
+  direction: rtl;
+}
+
+.pvp-health-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--crimson) 0%, #e06060 100%);
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.pvp-health-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.pvp-battle-log {
+  flex: 1;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pvp-log-entry {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  padding: 6px 10px;
+  background: rgba(212, 175, 55, 0.03);
+  border-radius: 6px;
+}
+
+.pvp-log-entry.damage {
+  color: var(--crimson-light);
+}
+
+.pvp-log-entry.heal {
+  color: var(--jade-essence);
+}
+
+.pvp-log-entry.critical {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.pvp-actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+}
+
+.pvp-action-btn {
+  flex: 1;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-family: var(--font-cn);
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pvp-action-btn.attack {
+  color: white;
+  background: linear-gradient(135deg, var(--crimson) 0%, #a03030 100%);
+  border: none;
+}
+
+.pvp-action-btn.skill {
+  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border: none;
+}
+
+.pvp-action-btn.defend {
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--gold-border);
+}
+
+.pvp-action-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.pvp-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 历史记录 */
+.pvp-history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pvp-history-title {
+  font-size: 1rem;
+  font-family: var(--font-cn);
+  font-weight: 600;
+  color: var(--gold);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gold-border);
+}
+
+.pvp-history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+}
+
+.pvp-history-result {
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.pvp-history-result.win {
+  background: rgba(103, 194, 165, 0.15);
+  color: var(--jade-essence);
+}
+
+.pvp-history-result.lose {
+  background: rgba(200, 80, 80, 0.15);
+  color: var(--crimson-light);
+}
+
+.pvp-history-opponent {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.pvp-history-rating {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pvp-history-rating.positive {
+  color: var(--jade-essence);
+}
+
+.pvp-history-rating.negative {
+  color: var(--crimson-light);
+}
+
+.pvp-history-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
