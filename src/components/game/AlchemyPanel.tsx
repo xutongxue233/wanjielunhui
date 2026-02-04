@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, Button, ProgressBar } from '../ui';
 import { useAlchemyStore } from '../../stores/alchemyStore';
 import { usePlayerStore } from '../../stores/playerStore';
-import { PILL_RECIPES, FURNACES, calculateSuccessRate, QUALITY_MULTIPLIERS } from '../../data/alchemy';
+import { PILL_RECIPES, calculateSuccessRate } from '../../data/alchemy';
 
 const QUALITY_COLORS = {
   low: 'text-gray-400',

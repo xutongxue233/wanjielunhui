@@ -1,4 +1,4 @@
-import { CombatSkill } from './index';
+import type { CombatSkill } from './index';
 import type { Element } from '../../types';
 
 // 玩家技能数据

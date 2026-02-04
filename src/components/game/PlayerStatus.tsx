@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, ProgressBar, Tooltip } from '../ui';
 import { usePlayerStore } from '../../stores/playerStore';
-import { getRealmColor, REALM_CONFIGS, STAGE_DISPLAY_NAMES } from '../../data/realms';
+import { getRealmColor, REALM_CONFIGS } from '../../data/realms';
 import { getSpiritualRootName } from '../../data/origins';
 import { formatNumber } from '../../core/game-loop';
 
@@ -161,11 +161,11 @@ export const PlayerStatus: React.FC = () => {
           五行亲和
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '4px' }}>
-          <ElementBadge name="金" value={spiritualRoot.elements.metal} color="var(--metal-silver)" />
-          <ElementBadge name="木" value={spiritualRoot.elements.wood} color="var(--wood-green)" />
-          <ElementBadge name="水" value={spiritualRoot.elements.water} color="var(--water-blue)" />
-          <ElementBadge name="火" value={spiritualRoot.elements.fire} color="var(--fire-red)" />
-          <ElementBadge name="土" value={spiritualRoot.elements.earth} color="var(--earth-yellow)" />
+          <ElementBadge name="金" value={spiritualRoot.elements.includes('metal') ? 100 : 0} color="var(--metal-silver)" />
+          <ElementBadge name="木" value={spiritualRoot.elements.includes('wood') ? 100 : 0} color="var(--wood-green)" />
+          <ElementBadge name="水" value={spiritualRoot.elements.includes('water') ? 100 : 0} color="var(--water-blue)" />
+          <ElementBadge name="火" value={spiritualRoot.elements.includes('fire') ? 100 : 0} color="var(--fire-red)" />
+          <ElementBadge name="土" value={spiritualRoot.elements.includes('earth') ? 100 : 0} color="var(--earth-yellow)" />
         </div>
       </div>
     </Card>

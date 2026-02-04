@@ -72,7 +72,7 @@ export function SavesPage() {
     {
       key: 'player',
       title: '玩家',
-      render: (item: GameSave) => (
+      render: (_: unknown, item: GameSave) => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{ color: 'var(--gold-light)', fontWeight: 500 }}>{item.player.name}</span>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
@@ -84,7 +84,7 @@ export function SavesPage() {
     {
       key: 'name',
       title: '存档名',
-      render: (item: GameSave) => (
+      render: (_: unknown, item: GameSave) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span className="admin-badge gold">槽位 {item.slot}</span>
           <span>{item.name}</span>
@@ -94,7 +94,7 @@ export function SavesPage() {
     {
       key: 'realm',
       title: '境界',
-      render: (item: GameSave) => (
+      render: (_: unknown, item: GameSave) => (
         <span style={{ color: 'var(--jade-light)' }}>
           {item.checkpoint || `${item.player.realm} · ${item.player.realmStage}`}
         </span>
@@ -103,17 +103,17 @@ export function SavesPage() {
     {
       key: 'playTime',
       title: '游戏时长',
-      render: (item: GameSave) => formatPlayTime(item.playTime),
+      render: (_: unknown, item: GameSave) => formatPlayTime(item.playTime),
     },
     {
       key: 'updatedAt',
       title: '最后更新',
-      render: (item: GameSave) => new Date(item.updatedAt).toLocaleString(),
+      render: (_: unknown, item: GameSave) => new Date(item.updatedAt).toLocaleString(),
     },
     {
       key: 'actions',
       title: '操作',
-      render: (item: GameSave) => (
+      render: (_: unknown, item: GameSave) => (
         <div style={{ display: 'flex', gap: 6 }}>
           <button className="admin-btn-inline azure" onClick={() => handleViewDetail(item.id)}>
             详情

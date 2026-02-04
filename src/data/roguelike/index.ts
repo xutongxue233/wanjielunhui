@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { Element } from '../../types';
 
 // 秘境配置
 export interface SecretRealm {
@@ -14,7 +13,7 @@ export interface SecretRealm {
   roomPool: RoomType[];
   enemyPool: string[];
   rewardPool: RealmReward[];
-  talentPool: TemporaryTalent[];
+  talentPool: string[];
 
   // 入场限制
   dailyLimit: number;

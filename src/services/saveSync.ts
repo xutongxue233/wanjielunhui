@@ -27,7 +27,6 @@ function getStoreStates() {
 
 // 恢复store状态从存档
 function restoreStoreStates(saveData: SaveData) {
-  const playerStore = usePlayerStore.getState();
   const gameStore = useGameStore.getState();
 
   // 恢复玩家数据
@@ -66,7 +65,6 @@ function restoreStoreStates(saveData: SaveData) {
 
 class SaveSyncService {
   private autoSaveInterval: number | null = null;
-  private lastSaveTime = 0;
   private isSaving = false;
 
   // 获取云存档列表
@@ -111,7 +109,6 @@ class SaveSyncService {
         checkpoint: `${player?.realm?.displayName || '炼气'} - ${player?.realm?.stage || '初期'}`,
       });
 
-      this.lastSaveTime = Date.now();
       return true;
     } catch (error) {
       console.error('Failed to save to cloud:', error);

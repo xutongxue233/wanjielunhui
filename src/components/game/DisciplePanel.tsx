@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, Button, ProgressBar } from '../ui';
+import { Card, Button } from '../ui';
 import { useDiscipleStore } from '../../stores/discipleStore';
-import { Disciple, EXPEDITIONS, calculateExpeditionSuccess } from '../../data/disciples';
+import type { Disciple } from '../../data/disciples';
+import { EXPEDITIONS, calculateExpeditionSuccess } from '../../data/disciples';
 import { ELEMENT_NAMES } from '../../data/origins';
 
 const TALENT_NAMES = {
@@ -121,8 +122,6 @@ export const DisciplePanel: React.FC = () => {
   const refreshRecruitCandidates = useDiscipleStore((state) => state.refreshRecruitCandidates);
   const recruitDisciple = useDiscipleStore((state) => state.recruitDisciple);
   const startExpedition = useDiscipleStore((state) => state.startExpedition);
-  const completeExpedition = useDiscipleStore((state) => state.completeExpedition);
-  const healDisciple = useDiscipleStore((state) => state.healDisciple);
 
   const [activeTab, setActiveTab] = useState<'list' | 'recruit' | 'expedition'>('list');
   const [selectedDisciple, setSelectedDisciple] = useState<string | null>(null);
@@ -137,6 +136,11 @@ export const DisciplePanel: React.FC = () => {
 
   const idleDisciples = disciples.filter(d => d.status === 'idle');
 
+  // 过滤满足当前派遣任务等级要求的弟子
+  const eligibleDisciples = selectedExpedition
+    ? idleDisciples.filter(d => d.level >= EXPEDITIONS[selectedExpedition].minLevel)
+    : idleDisciples;
+
   const handleToggleExpeditionSelect = (id: string) => {
     setSelectedForExpedition(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
@@ -144,8 +148,13 @@ export const DisciplePanel: React.FC = () => {
   };
 
   const handleStartExpedition = () => {
-    if (!selectedExpedition || selectedForExpedition.length === 0) return;
+    if (!selectedExpedition || selectedForExpedition.length === 0) {
+      console.log('派遣检查失败:', { selectedExpedition, selectedForExpedition });
+      return;
+    }
+    console.log('开始派遣:', { selectedExpedition, selectedForExpedition });
     const success = startExpedition(selectedExpedition, selectedForExpedition);
+    console.log('派遣结果:', success);
     if (success) {
       setSelectedForExpedition([]);
       setSelectedExpedition(null);
@@ -281,7 +290,12 @@ export const DisciplePanel: React.FC = () => {
                 </div>
 
                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {idleDisciples.map((disciple) => (
+                  {eligibleDisciples.length === 0 ? (
+                    <p className="text-center text-gray-500 py-4">
+                      没有满足等级要求的空闲弟子
+                    </p>
+                  ) : (
+                    eligibleDisciples.map((disciple) => (
                     <div
                       key={disciple.id}
                       className={`p-2 rounded-lg border cursor-pointer transition-all ${
@@ -296,7 +310,8 @@ export const DisciplePanel: React.FC = () => {
                         <span className="text-xs text-gray-400">Lv.{disciple.level}</span>
                       </div>
                     </div>
-                  ))}
+                  ))
+                  )}
                 </div>
 
                 {selectedForExpedition.length >= EXPEDITIONS[selectedExpedition].minDiscipleCount && (

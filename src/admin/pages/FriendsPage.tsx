@@ -47,7 +47,7 @@ export function FriendsPage() {
     { key: 'friendName', title: '好友' },
     { key: 'friendRealm', title: '好友境界' },
     { key: 'intimacy', title: '亲密度' },
-    { key: 'createdAt', title: '添加时间', render: (v: string) => new Date(v).toLocaleDateString() },
+    { key: 'createdAt', title: '添加时间', render: (v: unknown) => new Date(String(v)).toLocaleDateString() },
     {
       key: 'actions',
       title: '操作',

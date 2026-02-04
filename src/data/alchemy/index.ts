@@ -444,7 +444,7 @@ export function calculateSuccessRate(
 
 // 计算丹药品质
 export function calculatePillQuality(
-  recipe: PillRecipe,
+  _recipe: PillRecipe,
   furnace: Furnace,
   alchemyLevel: number,
   luck: number

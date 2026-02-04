@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, Button, ProgressBar } from '../ui';
+import { Card, Button } from '../ui';
 import { useRoguelikeStore } from '../../stores/roguelikeStore';
 import { usePlayerStore } from '../../stores/playerStore';
-import { SECRET_REALMS, TEMPORARY_TALENTS, Room } from '../../data/roguelike';
+import type { Room } from '../../data/roguelike';
+import { SECRET_REALMS } from '../../data/roguelike';
 
 const ROOM_TYPE_ICONS: Record<string, string> = {
   combat: '剑',
@@ -23,13 +24,6 @@ const ROOM_TYPE_COLORS: Record<string, string> = {
   rest: 'border-green-500 bg-green-500/20',
   shop: 'border-blue-500 bg-blue-500/20',
   event: 'border-gray-500 bg-gray-500/20',
-};
-
-const RARITY_COLORS = {
-  common: 'text-gray-400 border-gray-500',
-  rare: 'text-blue-400 border-blue-500',
-  epic: 'text-purple-400 border-purple-500',
-  legendary: 'text-amber-400 border-amber-500',
 };
 
 // 房间节点组件
@@ -97,7 +91,7 @@ export const ExplorationPanel: React.FC = () => {
   };
 
   const handleExitRealm = () => {
-    const result = exitRealm(false);
+    exitRealm(false);
     setActiveTab('realms');
   };
 

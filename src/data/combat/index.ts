@@ -1,4 +1,4 @@
-import type { Element, Skill, BaseAttributes } from '../../types';
+import type { Element, BaseAttributes } from '../../types';
 import { ELEMENT_OVERCOMES } from '../origins';
 
 // 战斗单位接口
@@ -186,7 +186,7 @@ export function calculateDamage(
 // 计算治疗量
 export function calculateHeal(
   healer: Combatant,
-  target: Combatant,
+  _target: Combatant,
   skill: CombatSkill
 ): number {
   let baseHeal = healer.attack * skill.damageMultiplier * 0.5;
@@ -267,7 +267,7 @@ export function isStunned(combatant: Combatant): boolean {
 }
 
 // AI选择技能
-export function selectSkillAI(actor: Combatant, allies: Combatant[], enemies: Combatant[]): {
+export function selectSkillAI(actor: Combatant, _allies: Combatant[], enemies: Combatant[]): {
   skill: CombatSkill;
   target: Combatant;
 } {

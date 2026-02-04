@@ -62,8 +62,8 @@ export function ChatPage() {
   const columns = [
     { key: 'senderName', title: '发送者' },
     { key: 'senderRealm', title: '境界' },
-    { key: 'content', title: '内容', render: (v: string) => v.length > 50 ? v.slice(0, 50) + '...' : v },
-    { key: 'createdAt', title: '时间', render: (v: string) => new Date(v).toLocaleString() },
+    { key: 'content', title: '内容', render: (v: unknown) => { const s = String(v); return s.length > 50 ? s.slice(0, 50) + '...' : s; } },
+    { key: 'createdAt', title: '时间', render: (v: unknown) => new Date(String(v)).toLocaleString() },
     {
       key: 'actions',
       title: '操作',

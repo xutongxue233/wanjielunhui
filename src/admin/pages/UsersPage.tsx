@@ -57,7 +57,7 @@ export function UsersPage() {
     {
       key: 'player',
       title: '游戏角色',
-      render: (item: User) => item.player ? (
+      render: (_: unknown, item: User) => item.player ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <span style={{ color: 'var(--gold-light)', fontWeight: 500 }}>{item.player.name}</span>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
@@ -71,7 +71,7 @@ export function UsersPage() {
     {
       key: 'role',
       title: '权限',
-      render: (item: User) => (
+      render: (_: unknown, item: User) => (
         <span className={`admin-badge ${item.role === 'ADMIN' ? 'violet' : item.role === 'GM' ? 'azure' : 'muted'}`}>
           {item.role === 'ADMIN' ? '管理员' : item.role === 'GM' ? '游戏管理' : '玩家'}
         </span>
@@ -80,7 +80,7 @@ export function UsersPage() {
     {
       key: 'status',
       title: '状态',
-      render: (item: User) => (
+      render: (_: unknown, item: User) => (
         <span className={`admin-badge ${item.status === 'ACTIVE' ? 'jade' : 'crimson'}`}>
           {item.status === 'ACTIVE' ? '正常' : '封禁'}
         </span>
@@ -89,12 +89,12 @@ export function UsersPage() {
     {
       key: 'lastLoginAt',
       title: '最后登录',
-      render: (item: User) => item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleString() : '从未登录',
+      render: (_: unknown, item: User) => item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleString() : '从未登录',
     },
     {
       key: 'actions',
       title: '操作',
-      render: (item: User) => (
+      render: (_: unknown, item: User) => (
         <div style={{ display: 'flex', gap: 6 }}>
           {item.status === 'ACTIVE' ? (
             <button className="admin-btn-inline crimson" onClick={() => handleBan(item.id)}>封禁</button>

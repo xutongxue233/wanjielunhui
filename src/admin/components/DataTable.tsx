@@ -1,19 +1,28 @@
 interface Column<T> {
   key: string;
   title: string;
-  render?: (item: T) => React.ReactNode;
+  width?: number;
+  render?: (value: unknown, item: T) => React.ReactNode;
 }
 
-interface DataTableProps<T extends { id: string }> {
+interface PaginationProps {
+  page: number;
+  pageSize: number;
+  total: number;
+  onChange: (page: number) => void;
+}
+
+interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
   loading?: boolean;
   emptyText?: string;
   onRowClick?: (item: T) => void;
+  pagination?: PaginationProps;
 }
 
-export function DataTable<T extends { id: string }>({
-  columns, data, loading, emptyText = '暂无数据', onRowClick,
+export function DataTable<T>({
+  columns, data, loading, emptyText = '暂无数据', onRowClick, pagination: _pagination,
 }: DataTableProps<T>) {
   if (loading) {
     return (
@@ -62,20 +71,23 @@ export function DataTable<T extends { id: string }>({
         <tbody>
           {data.map((item, idx) => (
             <tr
-              key={item.id}
+              key={(item as Record<string, unknown>).id?.toString() ?? idx}
               onClick={() => onRowClick?.(item)}
               style={{
                 cursor: onRowClick ? 'pointer' : 'default',
                 animation: `ink-spread 0.4s var(--ease-flow) ${idx * 50}ms both`,
               }}
             >
-              {columns.map((col) => (
-                <td key={col.key}>
-                  {col.render
-                    ? col.render(item)
-                    : (item as Record<string, unknown>)[col.key]?.toString() ?? '-'}
-                </td>
-              ))}
+              {columns.map((col) => {
+                const value = (item as Record<string, unknown>)[col.key];
+                return (
+                  <td key={col.key}>
+                    {col.render
+                      ? col.render(value, item)
+                      : value?.toString() ?? '-'}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

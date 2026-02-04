@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card, Button, ProgressBar } from '../ui';
+import { motion } from 'framer-motion';
+import { Card, Button } from '../ui';
 import { useCombatStore } from '../../stores/combatStore';
 import { usePlayerStore } from '../../stores/playerStore';
-import { Combatant } from '../../data/combat';
-import { createEnemyFromTemplate, ENEMY_TEMPLATES, generateRandomEncounter } from '../../data/combat/enemies';
-import { v4 as uuidv4 } from 'uuid';
+import type { Combatant } from '../../data/combat';
+import { generateRandomEncounter } from '../../data/combat/enemies';
+import { getSkillsByElement } from '../../data/combat/skills';
 
 // 战斗单位卡片
 const CombatantCard: React.FC<{
@@ -135,6 +135,7 @@ const BattleLogPanel: React.FC = () => {
 // 主战斗面板
 export const CombatPanel: React.FC = () => {
   const player = usePlayerStore((state) => state.player);
+  const addCultivation = usePlayerStore((state) => state.addCultivation);
   const battle = useCombatStore((state) => state.battle);
   const isAutoBattle = useCombatStore((state) => state.isAutoBattle);
   const battleSpeed = useCombatStore((state) => state.battleSpeed);
@@ -144,6 +145,16 @@ export const CombatPanel: React.FC = () => {
   const executeAIAction = useCombatStore((state) => state.executeAIAction);
   const toggleAutoBattle = useCombatStore((state) => state.toggleAutoBattle);
   const setBattleSpeed = useCombatStore((state) => state.setBattleSpeed);
+
+  // 战斗胜利时发放奖励
+  const rewardClaimedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (battle?.phase === 'victory' && battle.rewards && rewardClaimedRef.current !== battle.id) {
+      rewardClaimedRef.current = battle.id;
+      // 经验转化为修为
+      addCultivation(battle.rewards.exp);
+    }
+  }, [battle?.phase, battle?.id, battle?.rewards, addCultivation]);
 
   // 自动战斗循环
   useEffect(() => {
@@ -161,6 +172,13 @@ export const CombatPanel: React.FC = () => {
     if (!player) return;
 
     const playerLevel = player.realm.level;
+    const playerElement = player.spiritualRoot.elements[0] || 'neutral';
+
+    // 获取玩家技能
+    const playerSkills = getSkillsByElement(playerElement as any).map(skill => ({
+      ...skill,
+      currentCooldown: 0,
+    }));
 
     // 创建玩家战斗单位
     const playerCombatant: Combatant = {
@@ -177,8 +195,8 @@ export const CombatPanel: React.FC = () => {
       speed: player.attributes.speed,
       critRate: player.attributes.critRate,
       critDamage: player.attributes.critDamage,
-      element: player.spiritualRoot.elements[0] || 'neutral',
-      skills: [],
+      element: playerElement,
+      skills: playerSkills,
       buffs: [],
       debuffs: [],
       isAlive: true,
@@ -189,8 +207,8 @@ export const CombatPanel: React.FC = () => {
     const enemies = generateRandomEncounter(playerLevel, 1);
 
     // 计算奖励
-    const totalExp = enemies.reduce((sum, e) => sum + 30, 0);
-    const totalStones = enemies.reduce((sum, e) => sum + 10, 0);
+    const totalExp = enemies.reduce((sum, _e) => sum + 30, 0);
+    const totalStones = enemies.reduce((sum, _e) => sum + 10, 0);
 
     startBattle([playerCombatant], enemies, {
       exp: totalExp,

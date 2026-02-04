@@ -87,18 +87,18 @@ export function PvpPage() {
   const matchColumns = [
     { key: 'playerName', title: '玩家' },
     { key: 'opponentName', title: '对手' },
-    { key: 'result', title: '结果', render: (v: string) => resultLabels[v] || v },
-    { key: 'playerRatingChange', title: '积分变化', render: (v: number) => v > 0 ? `+${v}` : v },
+    { key: 'result', title: '结果', render: (v: unknown) => { const s = String(v); return resultLabels[s] || s; } },
+    { key: 'playerRatingChange', title: '积分变化', render: (v: unknown) => { const n = Number(v); return n > 0 ? `+${n}` : n; } },
     { key: 'duration', title: '时长(秒)' },
-    { key: 'createdAt', title: '时间', render: (v: string) => new Date(v).toLocaleString() },
+    { key: 'createdAt', title: '时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleString(); } },
   ];
 
   const seasonColumns = [
     { key: 'id', title: 'ID' },
     { key: 'name', title: '赛季名称' },
-    { key: 'startAt', title: '开始时间', render: (v: string) => new Date(v).toLocaleDateString() },
-    { key: 'endAt', title: '结束时间', render: (v: string) => new Date(v).toLocaleDateString() },
-    { key: 'isActive', title: '状态', render: (v: boolean) => v ? '进行中' : '未激活' },
+    { key: 'startAt', title: '开始时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleDateString(); } },
+    { key: 'endAt', title: '结束时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleDateString(); } },
+    { key: 'isActive', title: '状态', render: (v: unknown) => { const b = Boolean(v); return b ? '进行中' : '未激活'; } },
     {
       key: 'actions',
       title: '操作',
@@ -172,7 +172,7 @@ export function PvpPage() {
 
       <DataTable
         columns={tab === 'matches' ? matchColumns : seasonColumns}
-        data={tab === 'matches' ? matches : seasons}
+        data={(tab === 'matches' ? matches : seasons) as any}
         loading={loading}
         pagination={tab === 'matches' ? {
           page,

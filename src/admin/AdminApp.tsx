@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAdminStore } from './stores/adminStore';
 import { Sidebar } from './components/Sidebar';
 import { LoginPage } from './pages/LoginPage';
@@ -21,15 +21,12 @@ export type TabType = 'dashboard' | 'users' | 'saves' | 'announcements' | 'activ
 export function AdminApp() {
   const isAuthenticated = useAdminStore((s) => s.isAuthenticated);
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => { setReady(true); }, []);
 
   if (!isAuthenticated) {
     return <LoginPage />;
   }
 
-  const pages: Record<TabType, JSX.Element> = {
+  const pages: Record<TabType, React.ReactNode> = {
     dashboard: <DashboardPage />,
     users: <UsersPage />,
     saves: <SavesPage />,
@@ -47,13 +44,7 @@ export function AdminApp() {
   return (
     <div className="admin-root flex h-screen overflow-hidden">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <main
-        className="flex-1 overflow-y-auto"
-        style={{
-          opacity: ready ? 1 : 0,
-          transition: 'opacity 0.4s ease',
-        }}
-      >
+      <main className="flex-1 overflow-y-auto">
         <div className="max-w-[1200px] mx-auto px-8 py-8">
           {pages[activeTab]}
         </div>

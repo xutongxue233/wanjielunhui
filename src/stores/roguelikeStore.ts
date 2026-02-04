@@ -1,17 +1,17 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { persist } from 'zustand/middleware';
-import {
-  SecretRealm,
+import type {
   RealmRunState,
   Room,
   TemporaryTalent,
   RealmReward,
+} from '../data/roguelike';
+import {
   SECRET_REALMS,
-  TEMPORARY_TALENTS,
   generateRealmRooms,
   selectRandomTalents,
-} from '../../data/roguelike';
+} from '../data/roguelike';
 
 // 永久天赋节点
 export interface PermanentTalentNode {
@@ -174,7 +174,7 @@ export const useRoguelikeStore = create<RoguelikeStore>()(
       },
 
       exitRealm: (completed) => {
-        const { currentRun, permanentTalents } = get();
+        const { currentRun } = get();
         if (!currentRun) return { destinyPoints: 0, rewards: [] };
 
         const realm = SECRET_REALMS[currentRun.realmId];

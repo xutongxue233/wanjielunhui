@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Button } from '../ui';
 import { usePlayerStore } from '../../stores/playerStore';
 import { useGameLoop, formatNumber } from '../../core/game-loop';
-import { getRealmColor, getNextRealm, REALM_CONFIGS, STAGE_DISPLAY_NAMES } from '../../data/realms';
+import { getRealmColor, getNextRealm, REALM_CONFIGS } from '../../data/realms';
 
 export const CultivationPanel: React.FC = () => {
   const player = usePlayerStore((state) => state.player);

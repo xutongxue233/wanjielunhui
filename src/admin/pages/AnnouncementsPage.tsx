@@ -30,24 +30,24 @@ export function AnnouncementsPage() {
     {
       key: 'isActive',
       title: '状态',
-      render: (item: Announcement) => (
-        <span className={`admin-badge ${item.isActive ? 'jade' : 'muted'}`}>
-          {item.isActive ? '启用' : '禁用'}
+      render: (_: unknown, row: Announcement) => (
+        <span className={`admin-badge ${row.isActive ? 'jade' : 'muted'}`}>
+          {row.isActive ? '启用' : '禁用'}
         </span>
       ),
     },
     {
       key: 'createdAt',
       title: '创建时间',
-      render: (item: Announcement) => new Date(item.createdAt).toLocaleString(),
+      render: (_: unknown, row: Announcement) => new Date(row.createdAt).toLocaleString(),
     },
     {
       key: 'actions',
       title: '操作',
-      render: (item: Announcement) => (
+      render: (_: unknown, row: Announcement) => (
         <div style={{ display: 'flex', gap: 6 }}>
-          <button className="admin-btn-inline azure" onClick={(e) => { e.stopPropagation(); setEditing(item); setShowModal(true); }}>编辑</button>
-          <button className="admin-btn-inline crimson" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>删除</button>
+          <button className="admin-btn-inline azure" onClick={(e) => { e.stopPropagation(); setEditing(row); setShowModal(true); }}>编辑</button>
+          <button className="admin-btn-inline crimson" onClick={(e) => { e.stopPropagation(); handleDelete(row.id); }}>删除</button>
         </div>
       ),
     },

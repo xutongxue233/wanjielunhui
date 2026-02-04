@@ -58,12 +58,13 @@ export function MarketPage() {
     { key: 'sellerName', title: '卖家' },
     { key: 'itemType', title: '物品类型' },
     { key: 'amount', title: '数量' },
-    { key: 'price', title: '价格', render: (v: number) => v.toLocaleString() },
-    { key: 'status', title: '状态', render: (v: string) => {
+    { key: 'price', title: '价格', render: (v: unknown) => { const n = Number(v); return n.toLocaleString(); } },
+    { key: 'status', title: '状态', render: (v: unknown) => {
+      const s = String(v);
       const labels: Record<string, string> = { ACTIVE: '上架中', SOLD: '已售出', CANCELLED: '已取消', EXPIRED: '已过期' };
-      return labels[v] || v;
+      return labels[s] || s;
     }},
-    { key: 'createdAt', title: '上架时间', render: (v: string) => new Date(v).toLocaleDateString() },
+    { key: 'createdAt', title: '上架时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleDateString(); } },
     {
       key: 'actions',
       title: '操作',
@@ -80,9 +81,9 @@ export function MarketPage() {
     { key: 'buyerName', title: '买家' },
     { key: 'itemType', title: '物品类型' },
     { key: 'amount', title: '数量' },
-    { key: 'price', title: '成交价', render: (v: number) => v.toLocaleString() },
-    { key: 'fee', title: '手续费', render: (v: number) => v.toLocaleString() },
-    { key: 'createdAt', title: '成交时间', render: (v: string) => new Date(v).toLocaleString() },
+    { key: 'price', title: '成交价', render: (v: unknown) => { const n = Number(v); return n.toLocaleString(); } },
+    { key: 'fee', title: '手续费', render: (v: unknown) => { const n = Number(v); return n.toLocaleString(); } },
+    { key: 'createdAt', title: '成交时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleString(); } },
   ];
 
   return (
@@ -130,7 +131,7 @@ export function MarketPage() {
 
       <DataTable
         columns={tab === 'listings' ? listingColumns : tradeColumns}
-        data={tab === 'listings' ? listings : trades}
+        data={(tab === 'listings' ? listings : trades) as any}
         loading={loading}
         pagination={{
           page,

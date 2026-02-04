@@ -1,15 +1,16 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { persist } from 'zustand/middleware';
-import {
+import type {
   Disciple,
-  Expedition,
   ExpeditionReward,
+} from '../data/disciples';
+import {
   generateRandomDisciple,
   EXPEDITIONS,
   calculateExpeditionSuccess,
   calculateExpeditionRewards,
-} from '../../data/disciples';
+} from '../data/disciples';
 
 interface ActiveExpedition {
   expeditionId: string;
@@ -157,7 +158,7 @@ export const useDiscipleStore = create<DiscipleStore>()(
       },
 
       startExpedition: (expeditionId, discipleIds) => {
-        const { disciples, activeExpeditions } = get();
+        const { disciples } = get();
         const expedition = EXPEDITIONS[expeditionId];
 
         if (!expedition) return false;

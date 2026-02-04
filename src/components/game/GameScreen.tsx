@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PlayerStatus } from './PlayerStatus';
 import { CultivationPanel } from './CultivationPanel';
 import { StoryPanel } from './StoryPanel';
+import { CombatPanel } from './CombatPanel';
+import { AlchemyPanel } from './AlchemyPanel';
+import { DisciplePanel } from './DisciplePanel';
+import { ExplorationPanel } from './ExplorationPanel';
 import { useGameLoop } from '../../core/game-loop';
 import { usePlayerStore } from '../../stores/playerStore';
 import { useGameStore } from '../../stores/gameStore';
@@ -20,10 +24,10 @@ type TabType = 'cultivation' | 'story' | 'combat' | 'alchemy' | 'disciples' | 'e
 const TABS: { id: TabType; name: string; icon: string; available: boolean }[] = [
   { id: 'cultivation', name: '修炼', icon: '/', available: true },
   { id: 'story', name: '剧情', icon: '/', available: true },
-  { id: 'combat', name: '战斗', icon: '/', available: false },
-  { id: 'alchemy', name: '炼丹', icon: '/', available: false },
-  { id: 'disciples', name: '弟子', icon: '/', available: false },
-  { id: 'exploration', name: '探索', icon: '/', available: false },
+  { id: 'combat', name: '战斗', icon: '/', available: true },
+  { id: 'alchemy', name: '炼丹', icon: '/', available: true },
+  { id: 'disciples', name: '弟子', icon: '/', available: true },
+  { id: 'exploration', name: '探索', icon: '/', available: true },
 ];
 
 export const GameScreen: React.FC = () => {
@@ -68,49 +72,13 @@ export const GameScreen: React.FC = () => {
       case 'story':
         return <StoryPanel />;
       case 'combat':
-        return (
-          <div className="h-full flex items-center justify-center" style={{ color: 'var(--text-muted)' }}>
-            <div className="text-center">
-              <div className="text-4xl mb-4" style={{ color: 'var(--gold-immortal)', opacity: 0.3 }}>
-                /
-              </div>
-              <p>战斗系统开发中...</p>
-            </div>
-          </div>
-        );
+        return <CombatPanel />;
       case 'alchemy':
-        return (
-          <div className="h-full flex items-center justify-center" style={{ color: 'var(--text-muted)' }}>
-            <div className="text-center">
-              <div className="text-4xl mb-4" style={{ color: 'var(--gold-immortal)', opacity: 0.3 }}>
-                /
-              </div>
-              <p>炼丹系统开发中...</p>
-            </div>
-          </div>
-        );
+        return <AlchemyPanel />;
       case 'disciples':
-        return (
-          <div className="h-full flex items-center justify-center" style={{ color: 'var(--text-muted)' }}>
-            <div className="text-center">
-              <div className="text-4xl mb-4" style={{ color: 'var(--gold-immortal)', opacity: 0.3 }}>
-                /
-              </div>
-              <p>弟子系统开发中...</p>
-            </div>
-          </div>
-        );
+        return <DisciplePanel />;
       case 'exploration':
-        return (
-          <div className="h-full flex items-center justify-center" style={{ color: 'var(--text-muted)' }}>
-            <div className="text-center">
-              <div className="text-4xl mb-4" style={{ color: 'var(--gold-immortal)', opacity: 0.3 }}>
-                /
-              </div>
-              <p>探索系统开发中...</p>
-            </div>
-          </div>
-        );
+        return <ExplorationPanel />;
       default:
         return null;
     }

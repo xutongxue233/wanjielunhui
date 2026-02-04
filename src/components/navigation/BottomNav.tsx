@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './BottomNav.css';
 
 export type NavTab = 'game' | 'social' | 'market' | 'pvp' | 'ranking';

@@ -1,4 +1,4 @@
-import { Combatant, CombatSkill } from './index';
+import type { Combatant, CombatSkill } from './index';
 import type { Element } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -27,16 +27,53 @@ export interface EnemyTemplate {
 
 // 预设敌人模板
 export const ENEMY_TEMPLATES: Record<string, EnemyTemplate> = {
+  // 入门级敌人 (level 0-1)
+  wild_rabbit: {
+    id: 'wild_rabbit',
+    name: '野兔',
+    description: '温顺的山林小兽',
+    element: 'wood',
+    level: 0,
+    hpMultiplier: 0.6,
+    attackMultiplier: 0.4,
+    defenseMultiplier: 0.3,
+    speedMultiplier: 1.0,
+    skills: [],
+    expReward: 5,
+    spiritStoneReward: 1,
+    dropTable: [
+      { itemId: 'beast_meat', chance: 0.5, quantity: 1 },
+    ],
+  },
+
+  wild_chicken: {
+    id: 'wild_chicken',
+    name: '野鸡',
+    description: '林间觅食的禽类',
+    element: 'wood',
+    level: 0,
+    hpMultiplier: 0.5,
+    attackMultiplier: 0.5,
+    defenseMultiplier: 0.2,
+    speedMultiplier: 0.8,
+    skills: [],
+    expReward: 5,
+    spiritStoneReward: 1,
+    dropTable: [
+      { itemId: 'feather', chance: 0.6, quantity: 1 },
+    ],
+  },
+
   wild_boar: {
     id: 'wild_boar',
     name: '野猪',
     description: '山林中常见的野兽',
     element: 'earth',
     level: 1,
-    hpMultiplier: 1.0,
-    attackMultiplier: 0.8,
-    defenseMultiplier: 0.5,
-    speedMultiplier: 0.7,
+    hpMultiplier: 0.8,
+    attackMultiplier: 0.6,
+    defenseMultiplier: 0.4,
+    speedMultiplier: 0.6,
     skills: [],
     expReward: 10,
     spiritStoneReward: 2,
@@ -51,11 +88,11 @@ export const ENEMY_TEMPLATES: Record<string, EnemyTemplate> = {
     name: '灵狼',
     description: '吸收了天地灵气的狼妖',
     element: 'wood',
-    level: 3,
-    hpMultiplier: 1.2,
-    attackMultiplier: 1.2,
-    defenseMultiplier: 0.8,
-    speedMultiplier: 1.3,
+    level: 2,
+    hpMultiplier: 1.0,
+    attackMultiplier: 0.9,
+    defenseMultiplier: 0.6,
+    speedMultiplier: 1.2,
     skills: [
       {
         id: 'wolf_claw',
@@ -64,10 +101,10 @@ export const ENEMY_TEMPLATES: Record<string, EnemyTemplate> = {
         type: 'attack',
         element: 'wood',
         mpCost: 10,
-        cooldown: 2,
+        cooldown: 3,
         currentCooldown: 0,
-        damageMultiplier: 1.5,
-        hitCount: 2,
+        damageMultiplier: 1.3,
+        hitCount: 1,
         targetType: 'single',
         effects: [],
       },
@@ -85,11 +122,11 @@ export const ENEMY_TEMPLATES: Record<string, EnemyTemplate> = {
     name: '火蛇',
     description: '浑身燃烧着烈焰的妖蛇',
     element: 'fire',
-    level: 5,
-    hpMultiplier: 1.0,
-    attackMultiplier: 1.5,
-    defenseMultiplier: 0.6,
-    speedMultiplier: 1.5,
+    level: 4,
+    hpMultiplier: 0.9,
+    attackMultiplier: 1.0,
+    defenseMultiplier: 0.5,
+    speedMultiplier: 1.3,
     skills: [
       {
         id: 'fire_breath',
@@ -98,13 +135,13 @@ export const ENEMY_TEMPLATES: Record<string, EnemyTemplate> = {
         type: 'attack',
         element: 'fire',
         mpCost: 15,
-        cooldown: 3,
+        cooldown: 4,
         currentCooldown: 0,
-        damageMultiplier: 2.0,
+        damageMultiplier: 1.5,
         hitCount: 1,
-        targetType: 'all',
+        targetType: 'single',
         effects: [
-          { type: 'dot', value: 10, duration: 2, statusType: 'burn', chance: 0.3 },
+          { type: 'dot', value: 5, duration: 2, statusType: 'burn', chance: 0.3 },
         ],
       },
     ],
@@ -207,11 +244,12 @@ export function calculateEnemyStats(level: number): {
   defense: number;
   speed: number;
 } {
-  const baseHp = 50 + level * 30;
-  const baseMp = 30 + level * 15;
-  const baseAttack = 10 + level * 5;
-  const baseDefense = 5 + level * 3;
-  const baseSpeed = 10 + level * 2;
+  // 降低敌人基础属性，使战斗更平衡
+  const baseHp = 30 + level * 15;
+  const baseMp = 20 + level * 10;
+  const baseAttack = 5 + level * 3;
+  const baseDefense = 3 + level * 2;
+  const baseSpeed = 8 + level * 1;
 
   return {
     hp: baseHp,
@@ -260,21 +298,34 @@ export function generateRandomEncounter(playerLevel: number, difficulty: number 
   // 根据玩家等级筛选合适的敌人
   const suitableTemplates = templateKeys.filter(key => {
     const template = ENEMY_TEMPLATES[key];
-    return template.level <= playerLevel + 5 && template.level >= playerLevel - 3;
+    return template.level <= playerLevel + 2 && template.level >= Math.max(0, playerLevel - 2);
   });
 
   if (suitableTemplates.length === 0) {
-    suitableTemplates.push('wild_boar');
+    // 如果没有合适的敌人，使用最低级的
+    suitableTemplates.push('wild_rabbit', 'wild_chicken', 'wild_boar');
   }
 
-  // 生成1-3个敌人
-  const enemyCount = Math.min(3, Math.ceil(Math.random() * difficulty + 1));
+  // 根据难度和玩家等级决定敌人数量
+  // 低等级玩家更容易遇到单个敌人
+  let enemyCount: number;
+  if (playerLevel <= 1) {
+    // 炼气初期：70%几率1个敌人，30%几率2个
+    enemyCount = Math.random() < 0.7 ? 1 : 2;
+  } else if (playerLevel <= 3) {
+    // 炼气中后期：50%几率1个，50%几率2个
+    enemyCount = Math.random() < 0.5 ? 1 : 2;
+  } else {
+    // 更高境界：1-3个敌人
+    enemyCount = Math.min(3, Math.ceil(Math.random() * difficulty + 1));
+  }
+
   const enemies: Combatant[] = [];
 
   for (let i = 0; i < enemyCount; i++) {
     const templateKey = suitableTemplates[Math.floor(Math.random() * suitableTemplates.length)];
     const template = ENEMY_TEMPLATES[templateKey];
-    const levelBonus = Math.floor(Math.random() * 3) - 1;
+    const levelBonus = Math.floor(Math.random() * 2) - 1; // -1 到 0
     enemies.push(createEnemyFromTemplate(template, levelBonus));
   }
 

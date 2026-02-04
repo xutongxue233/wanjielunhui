@@ -66,8 +66,8 @@ export function RankingPage() {
     { key: 'rank', title: '排名', width: 80 },
     { key: 'playerName', title: '玩家' },
     { key: 'playerRealm', title: '境界' },
-    { key: 'score', title: '分数', render: (v: number) => v.toLocaleString() },
-    { key: 'sectName', title: '门派', render: (v: string) => v || '-' },
+    { key: 'score', title: '分数', render: (v: unknown) => { const n = Number(v); return n.toLocaleString(); } },
+    { key: 'sectName', title: '门派', render: (v: unknown) => { const s = v ? String(v) : ''; return s || '-'; } },
   ];
 
   return (

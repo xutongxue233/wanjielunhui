@@ -4,7 +4,6 @@ import { persist } from 'zustand/middleware';
 import type {
   Player,
   PlayerAttributes,
-  Realm,
   SpiritualRoot,
   OriginType,
   Equipment,
@@ -86,7 +85,7 @@ function createInitialAttributes(origin: OriginType, spiritualRoot: SpiritualRoo
   if (originConfig.startingBonus.attributes) {
     for (const [key, value] of Object.entries(originConfig.startingBonus.attributes)) {
       if (key in base && typeof value === 'number') {
-        (base as Record<string, number>)[key] += value;
+        (base as unknown as Record<string, number>)[key] += value;
       }
     }
   }

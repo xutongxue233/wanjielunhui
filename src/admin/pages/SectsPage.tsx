@@ -79,10 +79,10 @@ export function SectsPage() {
   const columns = [
     { key: 'name', title: '门派名称' },
     { key: 'level', title: '等级' },
-    { key: 'memberCount', title: '成员数', render: (v: number, row: SectInfo) => `${v}/${row.maxMembers}` },
-    { key: 'totalPower', title: '总战力', render: (v: number) => v.toLocaleString() },
-    { key: 'joinType', title: '加入方式', render: (v: string) => v === 'OPEN' ? '开放' : v === 'APPROVAL' ? '审批' : '邀请' },
-    { key: 'createdAt', title: '创建时间', render: (v: string) => new Date(v).toLocaleDateString() },
+    { key: 'memberCount', title: '成员数', render: (_: unknown, row: SectInfo) => `${row.memberCount}/${row.maxMembers}` },
+    { key: 'totalPower', title: '总战力', render: (v: unknown) => { const n = Number(v); return n.toLocaleString(); } },
+    { key: 'joinType', title: '加入方式', render: (v: unknown) => { const s = String(v); return s === 'OPEN' ? '开放' : s === 'APPROVAL' ? '审批' : '邀请'; } },
+    { key: 'createdAt', title: '创建时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleDateString(); } },
     {
       key: 'actions',
       title: '操作',
@@ -101,11 +101,11 @@ export function SectsPage() {
 
   const memberColumns = [
     { key: 'playerName', title: '玩家' },
-    { key: 'role', title: '职位', render: (v: string) => roleLabels[v] || v },
+    { key: 'role', title: '职位', render: (v: unknown) => { const s = String(v); return roleLabels[s] || s; } },
     { key: 'playerRealm', title: '境界' },
-    { key: 'combatPower', title: '战力', render: (v: number) => v.toLocaleString() },
+    { key: 'combatPower', title: '战力', render: (v: unknown) => { const n = Number(v); return n.toLocaleString(); } },
     { key: 'contribution', title: '贡献' },
-    { key: 'joinedAt', title: '加入时间', render: (v: string) => new Date(v).toLocaleDateString() },
+    { key: 'joinedAt', title: '加入时间', render: (v: unknown) => { const s = String(v); return new Date(s).toLocaleDateString(); } },
     {
       key: 'actions',
       title: '操作',

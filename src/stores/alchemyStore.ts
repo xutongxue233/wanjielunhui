@@ -2,17 +2,18 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  PillRecipe,
+import type {
   Pill,
   Furnace,
   AlchemyState,
+} from '../data/alchemy';
+import {
   PILL_RECIPES,
   FURNACES,
   calculateSuccessRate,
   calculatePillQuality,
   QUALITY_MULTIPLIERS,
-} from '../../data/alchemy';
+} from '../data/alchemy';
 
 interface AlchemyStore {
   // 炼丹状态
@@ -69,7 +70,7 @@ export const useAlchemyStore = create<AlchemyStore>()(
 
       pillInventory: [],
 
-      startRefining: (recipeId, comprehension, luck) => {
+      startRefining: (recipeId, _comprehension, _luck) => {
         const { alchemyLevel, currentFurnace, learnedRecipes, refiningState } = get();
 
         if (refiningState.isRefining) return false;

@@ -3,7 +3,8 @@ import React from 'react';
 interface ProgressBarProps {
   current: number;
   max: number;
-  type?: 'hp' | 'mp' | 'exp' | 'cultivation';
+  type?: 'hp' | 'mp' | 'exp' | 'cultivation' | 'custom';
+  customColor?: string;
   label?: string;
   showText?: boolean;
   height?: number;
@@ -13,6 +14,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   current,
   max,
   type = 'exp',
+  customColor,
   label,
   showText = true,
   height = 8,
@@ -24,7 +26,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     mp: 'progress-mp',
     exp: 'progress-exp',
     cultivation: 'progress-cultivation',
+    custom: '',
   }[type];
+
+  const customStyle = type === 'custom' && customColor ? { background: customColor } : {};
 
   return (
     <div style={{ width: '100%' }}>
@@ -41,7 +46,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       <div className="progress-container" style={{ height: `${height}px` }}>
         <div
           className={`progress-bar ${typeClass}`}
-          style={{ width: `${percentage}%` }}
+          style={{ width: `${percentage}%`, ...customStyle }}
         />
       </div>
     </div>

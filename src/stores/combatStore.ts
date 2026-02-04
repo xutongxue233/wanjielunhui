@@ -2,11 +2,14 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
-import {
+import type {
   BattleState,
   Combatant,
   CombatSkill,
   BattleRewards,
+  StatusEffect,
+} from '../data/combat';
+import {
   calculateDamage,
   calculateHeal,
   calculateTurnOrder,
@@ -14,10 +17,9 @@ import {
   isStunned,
   selectSkillAI,
   applyStatusEffect,
-  StatusEffect,
 } from '../data/combat';
-import { DungeonConfig, getDungeonById, generateDungeonEnemies, calculateSweepRewards, CHAPTERS } from '../data/combat/dungeons';
-import { getSkillsByElement, PLAYER_SKILLS } from '../data/combat/skills';
+import { getDungeonById, generateDungeonEnemies, calculateSweepRewards, CHAPTERS } from '../data/combat/dungeons';
+import { getSkillsByElement } from '../data/combat/skills';
 
 // 副本进度
 export interface DungeonProgress {
@@ -139,7 +141,7 @@ export const useCombatStore = create<CombatState>()(
       },
 
       endBattle: (victory) => {
-        const { currentDungeonId, battle } = get();
+        const { currentDungeonId } = get();
 
         set((state) => {
           if (state.battle) {
@@ -208,10 +210,35 @@ export const useCombatStore = create<CombatState>()(
             return;
           }
 
-          // 更新回合顺序
-          state.battle.turnOrder = calculateTurnOrder(aliveCombatants);
-          state.battle.currentActorId = state.battle.turnOrder[0] || null;
-          state.battle.turn++;
+          // 从当前行动顺序中移除已行动的角色，选择下一个
+          const currentIndex = state.battle.turnOrder.indexOf(state.battle.currentActorId || '');
+          const nextIndex = currentIndex + 1;
+
+          if (nextIndex >= state.battle.turnOrder.length) {
+            // 所有人都行动过了，进入下一回合
+            state.battle.turnOrder = calculateTurnOrder(aliveCombatants);
+            state.battle.currentActorId = state.battle.turnOrder[0] || null;
+            state.battle.turn++;
+          } else {
+            // 当前回合内，下一个角色行动
+            // 确保下一个角色还活着
+            let validNextIndex = nextIndex;
+            while (validNextIndex < state.battle.turnOrder.length) {
+              const nextActorId = state.battle.turnOrder[validNextIndex];
+              const nextActor = aliveCombatants.find(c => c.id === nextActorId);
+              if (nextActor && nextActor.isAlive) {
+                state.battle.currentActorId = nextActorId;
+                break;
+              }
+              validNextIndex++;
+            }
+            // 如果剩余的都死了，进入下一回合
+            if (validNextIndex >= state.battle.turnOrder.length) {
+              state.battle.turnOrder = calculateTurnOrder(aliveCombatants);
+              state.battle.currentActorId = state.battle.turnOrder[0] || null;
+              state.battle.turn++;
+            }
+          }
 
           // 处理当前行动者的状态效果
           const currentActor = aliveCombatants.find(c => c.id === state.battle!.currentActorId);

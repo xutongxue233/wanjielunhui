@@ -6,13 +6,6 @@ import { useGameStore } from '../../stores/gameStore';
 import { getStoryNode } from '../../data/stories/prologue';
 import type { StoryNode, StoryChoice } from '../../types';
 
-interface StoryEntry {
-  id: string;
-  content: string;
-  isChoice?: boolean;
-  choiceText?: string;
-}
-
 export const StoryPanel: React.FC = () => {
   const player = usePlayerStore((state) => state.player);
   const modifyAttribute = usePlayerStore((state) => state.modifyAttribute);
@@ -34,83 +27,64 @@ export const StoryPanel: React.FC = () => {
   const [displayedText, setDisplayedText] = useState('');
   // 是否正在打字
   const [isTyping, setIsTyping] = useState(false);
+  // 需要打字的文本
+  const [textToType, setTextToType] = useState<string | null>(null);
 
-  const intervalRef = useRef<number | null>(null);
-  const lastNodeIdRef = useRef<string>('');
   const contentRef = useRef<HTMLDivElement>(null);
-  const isInitializedRef = useRef(false);
 
-  // 滚动到底部
-  const scrollToBottom = useCallback(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTop = contentRef.current.scrollHeight;
-    }
-  }, []);
+  // 打字效果 - 使用独立的effect管理
+  useEffect(() => {
+    if (textToType === null) return;
 
-  // 打字效果
-  const typeText = useCallback((text: string) => {
-    if (intervalRef.current) {
-      window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    setIsTyping(true);
-    setDisplayedText('');
     let index = 0;
+    const text = textToType;
+    setDisplayedText('');
+    setIsTyping(true);
 
-    intervalRef.current = window.setInterval(() => {
+    const intervalId = window.setInterval(() => {
       if (index < text.length) {
-        setDisplayedText(text.slice(0, index + 1));
         index++;
-        scrollToBottom();
+        setDisplayedText(text.slice(0, index));
+        if (contentRef.current) {
+          contentRef.current.scrollTop = contentRef.current.scrollHeight;
+        }
       } else {
         setIsTyping(false);
-        if (intervalRef.current) {
-          window.clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
+        window.clearInterval(intervalId);
       }
     }, 25);
-  }, [scrollToBottom]);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [textToType]);
 
   // 跳过打字
   const skipTyping = useCallback(() => {
-    if (intervalRef.current) {
-      window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (textToType) {
+      setDisplayedText(textToType);
+      setIsTyping(false);
     }
-    if (currentNode) {
-      setDisplayedText(currentNode.content);
-    }
-    setIsTyping(false);
-  }, [currentNode]);
+  }, [textToType]);
 
-  // 初始化和恢复显示状态
+  // 初始化和加载节点
   useEffect(() => {
     if (!player) return;
 
+    const currentNodeId = storyProgress.currentNodeId;
+    const node = getStoryNode(player.origin, currentNodeId);
+    setCurrentNodeState(node);
+
     // 恢复之前的显示状态
-    if (storyDisplayState.displayedText && !isInitializedRef.current) {
+    if (storyDisplayState.displayedText) {
       setDisplayedText(storyDisplayState.displayedText);
       setIsTyping(false);
-      isInitializedRef.current = true;
-      lastNodeIdRef.current = storyProgress.currentNodeId;
-
-      const node = getStoryNode(player.origin, storyProgress.currentNodeId);
-      setCurrentNodeState(node);
-      return;
+      setTextToType(null);
+    } else if (node) {
+      // 触发打字效果
+      setTextToType(node.content);
     }
-
-    // 加载新节点
-    if (storyProgress.currentNodeId !== lastNodeIdRef.current) {
-      lastNodeIdRef.current = storyProgress.currentNodeId;
-      const node = getStoryNode(player.origin, storyProgress.currentNodeId);
-      setCurrentNodeState(node);
-      if (node) {
-        typeText(node.content);
-      }
-      isInitializedRef.current = true;
-    }
-  }, [player, storyProgress.currentNodeId, storyDisplayState.displayedText, typeText]);
+  }, [player, storyProgress.currentNodeId]);
 
   // 保存显示状态
   useEffect(() => {
@@ -121,15 +95,6 @@ export const StoryPanel: React.FC = () => {
       });
     }
   }, [displayedText, isTyping, setStoryDisplayState, storyDisplayState.isCompleted]);
-
-  // 清理 interval
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        window.clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
 
   // 应用效果
   const applyEffects = (effects?: StoryNode['effects']) => {

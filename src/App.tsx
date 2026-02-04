@@ -4,7 +4,6 @@ import { useGameStore } from './stores/gameStore';
 import { usePlayerStore } from './stores/playerStore';
 import { useAuthStore } from './stores/authStore';
 import { TitleScreen, CharacterCreation, GameScreen } from './components/game';
-import { AuthPage } from './components/auth/AuthPage';
 import { SaveManager } from './components/save/SaveManager';
 import { useGameLoop } from './core/game-loop';
 import { saveSyncService } from './services/saveSync';

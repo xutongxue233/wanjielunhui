@@ -64,23 +64,23 @@ export function ActivitiesPage() {
   const columns = [
     { key: 'name', title: '活动名称' },
     { key: 'type', title: '类型' },
-    { key: 'startAt', title: '开始时间', render: (item: Activity) => new Date(item.startAt).toLocaleDateString() },
-    { key: 'endAt', title: '结束时间', render: (item: Activity) => new Date(item.endAt).toLocaleDateString() },
+    { key: 'startAt', title: '开始时间', render: (_: unknown, row: Activity) => new Date(row.startAt).toLocaleDateString() },
+    { key: 'endAt', title: '结束时间', render: (_: unknown, row: Activity) => new Date(row.endAt).toLocaleDateString() },
     {
       key: 'isActive',
       title: '状态',
-      render: (item: Activity) => (
-        <span className={`admin-badge ${item.isActive ? 'jade' : 'muted'}`}>
-          {item.isActive ? '进行中' : '已结束'}
+      render: (_: unknown, row: Activity) => (
+        <span className={`admin-badge ${row.isActive ? 'jade' : 'muted'}`}>
+          {row.isActive ? '进行中' : '已结束'}
         </span>
       ),
     },
     {
       key: 'actions',
       title: '操作',
-      render: (item: Activity) => (
+      render: (_: unknown, row: Activity) => (
         <div style={{ display: 'flex', gap: 6 }}>
-          <button className="admin-btn-inline crimson" onClick={() => handleDelete(item.id)}>删除</button>
+          <button className="admin-btn-inline crimson" onClick={() => handleDelete(row.id)}>删除</button>
         </div>
       ),
     },
