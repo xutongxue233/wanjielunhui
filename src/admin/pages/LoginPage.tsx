@@ -106,6 +106,8 @@ export function LoginPage() {
             <div>
               <label className="admin-label">账号</label>
               <input
+                id="login-account"
+                name="login-account"
                 type="text"
                 value={account}
                 onChange={(e) => setAccount(e.target.value)}
@@ -117,6 +119,8 @@ export function LoginPage() {
             <div>
               <label className="admin-label">密码</label>
               <input
+                id="login-password"
+                name="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

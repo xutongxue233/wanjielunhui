@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { activityApi, type Activity, type CreateActivityInput } from '../api';
-import { message } from '../../components/ui';
+import { message, Confirm } from '../../components/ui';
 
 export function ActivitiesPage() {
   const [items, setItems] = useState<Activity[]>([]);
@@ -16,6 +16,8 @@ export function ActivitiesPage() {
     endAt: '',
   });
   const [saving, setSaving] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
 
   const load = async () => {
     setLoading(true);
@@ -53,13 +55,15 @@ export function ActivitiesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('确定要删除此活动吗？')) return;
-    try {
-      await activityApi.delete(id);
-      load();
-    } catch (err) {
-      message.error('删除失败');
-    }
+    setConfirmAction(() => async () => {
+      try {
+        await activityApi.delete(id);
+        load();
+      } catch (err) {
+        message.error('删除失败');
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const columns = [
@@ -113,6 +117,8 @@ export function ActivitiesPage() {
               <div>
                 <label className="admin-label">活动名称</label>
                 <input
+                  id="activity-name"
+                  name="activity-name"
                   type="text"
                   className="admin-input"
                   value={form.name}
@@ -123,6 +129,8 @@ export function ActivitiesPage() {
               <div>
                 <label className="admin-label">活动描述</label>
                 <textarea
+                  id="activity-description"
+                  name="activity-description"
                   className="admin-textarea"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -133,6 +141,8 @@ export function ActivitiesPage() {
               <div>
                 <label className="admin-label">活动类型</label>
                 <select
+                  id="activity-type"
+                  name="activity-type"
                   className="admin-select"
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
@@ -147,6 +157,8 @@ export function ActivitiesPage() {
                 <div>
                   <label className="admin-label">开始时间</label>
                   <input
+                    id="activity-start-at"
+                    name="activity-start-at"
                     type="datetime-local"
                     className="admin-input"
                     value={form.startAt}
@@ -157,6 +169,8 @@ export function ActivitiesPage() {
                 <div>
                   <label className="admin-label">结束时间</label>
                   <input
+                    id="activity-end-at"
+                    name="activity-end-at"
                     type="datetime-local"
                     className="admin-input"
                     value={form.endAt}
@@ -175,6 +189,15 @@ export function ActivitiesPage() {
           </div>
         </div>
       )}
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title="确认删除"
+        message="确定要删除此活动吗？"
+        danger={true}
+      />
     </div>
   );
 }

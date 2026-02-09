@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { chatApi, type ChatMessage } from '../api';
+import { Confirm } from '../../components/ui';
 
 type Channel = 'WORLD' | 'SECT' | 'PRIVATE';
 
@@ -17,6 +18,10 @@ export function ChatPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<{ totalMessages: number; todayMessages: number } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -39,24 +44,32 @@ export function ChatPage() {
     loadData();
   }, [channel, page]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('确定要删除这条消息吗？')) return;
-    try {
-      await chatApi.delete(id);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to delete message:', err);
-    }
+  const handleDelete = (id: string) => {
+    setConfirmTitle('确认删除');
+    setConfirmMessage('确定要删除这条消息吗？');
+    setConfirmAction(() => async () => {
+      try {
+        await chatApi.delete(id);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to delete message:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
-  const handleClearChannel = async () => {
-    if (!confirm(`确定要清空${CHANNELS.find(c => c.value === channel)?.label}的所有消息吗？`)) return;
-    try {
-      await chatApi.clearChannel(channel);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to clear channel:', err);
-    }
+  const handleClearChannel = () => {
+    setConfirmTitle('确认清空');
+    setConfirmMessage(`确定要清空${CHANNELS.find(c => c.value === channel)?.label}的所有消息吗？`);
+    setConfirmAction(() => async () => {
+      try {
+        await chatApi.clearChannel(channel);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to clear channel:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const columns = [
@@ -123,6 +136,14 @@ export function ChatPage() {
           total,
           onChange: setPage,
         }}
+      />
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
       />
     </div>
   );

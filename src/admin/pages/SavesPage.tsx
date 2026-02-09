@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { saveApi, type GameSave, type GameSaveDetail, type SaveStats } from '../api';
-import { message } from '../../components/ui';
+import { message, Confirm } from '../../components/ui';
 
 function formatPlayTime(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
@@ -21,6 +21,8 @@ export function SavesPage() {
   const [stats, setStats] = useState<SaveStats | null>(null);
   const [selectedSave, setSelectedSave] = useState<GameSaveDetail | null>(null);
   const [showDetail, setShowDetail] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
   const pageSize = 20;
 
   const load = async () => {
@@ -50,13 +52,15 @@ export function SavesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('确定要删除该存档吗？此操作不可恢复！')) return;
-    try {
-      await saveApi.delete(id);
-      load();
-    } catch (err) {
-      message.error('删除失败');
-    }
+    setConfirmAction(() => async () => {
+      try {
+        await saveApi.delete(id);
+        load();
+      } catch (err) {
+        message.error('删除失败');
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const handleViewDetail = async (id: string) => {
@@ -156,6 +160,8 @@ export function SavesPage() {
 
       <div style={{ display: 'flex', gap: 12 }}>
         <input
+          id="saves-search"
+          name="saves-search"
           type="text"
           placeholder="搜索玩家名或存档名..."
           value={search}
@@ -283,6 +289,15 @@ export function SavesPage() {
           </div>
         </div>
       )}
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title="确认删除"
+        message="确定要删除该存档吗？此操作不可恢复！"
+        danger={true}
+      />
     </div>
   );
 }

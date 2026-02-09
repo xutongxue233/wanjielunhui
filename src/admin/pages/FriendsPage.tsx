@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { friendApi, type FriendRelation } from '../api';
+import { Confirm } from '../../components/ui';
 
 export function FriendsPage() {
   const [relations, setRelations] = useState<FriendRelation[]>([]);
@@ -9,6 +10,10 @@ export function FriendsPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<{ totalRelations: number; avgFriends: number } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -31,14 +36,18 @@ export function FriendsPage() {
     loadData();
   }, [page, search]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('确定要删除这个好友关系吗？')) return;
-    try {
-      await friendApi.delete(id);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to delete relation:', err);
-    }
+  const handleDelete = (id: string) => {
+    setConfirmTitle('确认删除');
+    setConfirmMessage('确定要删除这个好友关系吗？');
+    setConfirmAction(() => async () => {
+      try {
+        await friendApi.delete(id);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to delete relation:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const columns = [
@@ -81,6 +90,8 @@ export function FriendsPage() {
 
       <div style={{ display: 'flex', gap: 12 }}>
         <input
+          id="friends-search"
+          name="friends-search"
           type="text"
           className="admin-input"
           placeholder="搜索玩家名..."
@@ -100,6 +111,14 @@ export function FriendsPage() {
           total,
           onChange: setPage,
         }}
+      />
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
       />
     </div>
   );

@@ -36,6 +36,8 @@ export function MailPage() {
             <div style={{ display: 'flex', gap: 20, marginTop: 6 }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-1)', fontSize: '0.9rem', cursor: 'pointer' }}>
                 <input
+                  id="mail-target-all"
+                  name="mail-target-type"
                   type="radio"
                   className="admin-radio"
                   value="all"
@@ -46,6 +48,8 @@ export function MailPage() {
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-1)', fontSize: '0.9rem', cursor: 'pointer' }}>
                 <input
+                  id="mail-target-specific"
+                  name="mail-target-type"
                   type="radio"
                   className="admin-radio"
                   value="specific"
@@ -61,6 +65,8 @@ export function MailPage() {
             <div>
               <label className="admin-label">玩家ID列表</label>
               <textarea
+                id="mail-target-ids"
+                name="mail-target-ids"
                 value={form.targetIds}
                 onChange={(e) => setForm({ ...form, targetIds: e.target.value })}
                 className="admin-textarea"
@@ -73,6 +79,8 @@ export function MailPage() {
           <div>
             <label className="admin-label">邮件标题</label>
             <input
+              id="mail-title"
+              name="mail-title"
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -85,6 +93,8 @@ export function MailPage() {
           <div>
             <label className="admin-label">邮件内容</label>
             <textarea
+              id="mail-content"
+              name="mail-content"
               value={form.content}
               onChange={(e) => setForm({ ...form, content: e.target.value })}
               className="admin-textarea"
@@ -97,6 +107,8 @@ export function MailPage() {
           <div>
             <label className="admin-label">附件 (JSON格式)</label>
             <textarea
+              id="mail-attachments"
+              name="mail-attachments"
               value={form.attachments}
               onChange={(e) => setForm({ ...form, attachments: e.target.value })}
               className="admin-textarea"

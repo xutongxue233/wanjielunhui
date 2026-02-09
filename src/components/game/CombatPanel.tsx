@@ -110,7 +110,7 @@ const SkillBar: React.FC<{
     <div className="skill-bar-container">
       <div className="skill-bar-header">
         <span className="text-xs text-text-muted">技能栏</span>
-        <span className="text-xs text-blue-400">MP: {currentMp}</span>
+        <span className="text-xs text-blue-400">MP: {Math.round(currentMp)}</span>
       </div>
       <div className="skill-bar-content">
         {/* 普通攻击按钮 */}
@@ -194,7 +194,7 @@ const CombatantCard: React.FC<{
             />
           </div>
           <span className="text-xs text-text-secondary w-16 text-right">
-            {combatant.hp}/{combatant.maxHp}
+            {Math.round(combatant.hp)}/{Math.round(combatant.maxHp)}
           </span>
         </div>
 
@@ -207,7 +207,7 @@ const CombatantCard: React.FC<{
             />
           </div>
           <span className="text-xs text-text-secondary w-16 text-right">
-            {combatant.mp}/{combatant.maxMp}
+            {Math.round(combatant.mp)}/{Math.round(combatant.maxMp)}
           </span>
         </div>
       </div>

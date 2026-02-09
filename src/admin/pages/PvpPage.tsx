@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
+import { Confirm } from '../../components/ui';
 import { pvpApi, type PvpMatch, type PvpSeason } from '../api';
 
 type TabType = 'matches' | 'seasons';
@@ -19,6 +20,10 @@ export function PvpPage() {
   } | null>(null);
   const [showSeasonForm, setShowSeasonForm] = useState(false);
   const [seasonForm, setSeasonForm] = useState({ name: '', startAt: '', endAt: '', rewards: '{}' });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -62,24 +67,32 @@ export function PvpPage() {
     }
   };
 
-  const handleActivateSeason = async (id: number) => {
-    if (!confirm('确定要激活这个赛季吗？当前赛季将被关闭。')) return;
-    try {
-      await pvpApi.activateSeason(id);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to activate season:', err);
-    }
+  const handleActivateSeason = (id: number) => {
+    setConfirmTitle('确认操作');
+    setConfirmMessage('确定要激活这个赛季吗？当前赛季将被关闭。');
+    setConfirmAction(() => async () => {
+      try {
+        await pvpApi.activateSeason(id);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to activate season:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
-  const handleEndSeason = async (id: number) => {
-    if (!confirm('确定要结束这个赛季吗？将发放赛季奖励并重置积分。')) return;
-    try {
-      await pvpApi.endSeason(id);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to end season:', err);
-    }
+  const handleEndSeason = (id: number) => {
+    setConfirmTitle('确认操作');
+    setConfirmMessage('确定要结束这个赛季吗？将发放赛季奖励并重置积分。');
+    setConfirmAction(() => async () => {
+      try {
+        await pvpApi.endSeason(id);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to end season:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const resultLabels: Record<string, string> = { WIN: '胜利', LOSE: '失败', DRAW: '平局' };
@@ -194,6 +207,8 @@ export function PvpPage() {
                 <div>
                   <label className="admin-label">赛季名称</label>
                   <input
+                    id="pvp-season-name"
+                    name="pvp-season-name"
                     type="text"
                     className="admin-input"
                     value={seasonForm.name}
@@ -205,6 +220,8 @@ export function PvpPage() {
                   <div>
                     <label className="admin-label">开始时间</label>
                     <input
+                      id="pvp-season-start-at"
+                      name="pvp-season-start-at"
                       type="datetime-local"
                       className="admin-input"
                       value={seasonForm.startAt}
@@ -214,6 +231,8 @@ export function PvpPage() {
                   <div>
                     <label className="admin-label">结束时间</label>
                     <input
+                      id="pvp-season-end-at"
+                      name="pvp-season-end-at"
                       type="datetime-local"
                       className="admin-input"
                       value={seasonForm.endAt}
@@ -224,6 +243,8 @@ export function PvpPage() {
                 <div>
                   <label className="admin-label">奖励配置 (JSON)</label>
                   <textarea
+                    id="pvp-season-rewards"
+                    name="pvp-season-rewards"
                     className="admin-input"
                     value={seasonForm.rewards}
                     onChange={e => setSeasonForm({ ...seasonForm, rewards: e.target.value })}
@@ -239,6 +260,15 @@ export function PvpPage() {
           </div>
         </div>
       )}
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
+      />
     </div>
   );
 }

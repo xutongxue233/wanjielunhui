@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { userApi, type User } from '../api';
-import { message } from '../../components/ui';
+import { message, Confirm } from '../../components/ui';
 
 export function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -10,6 +10,11 @@ export function UsersPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const pageSize = 20;
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -34,23 +39,31 @@ export function UsersPage() {
   };
 
   const handleBan = async (id: string) => {
-    if (!confirm('确定要封禁该用户吗？')) return;
-    try {
-      await userApi.ban(id);
-      load();
-    } catch (err) {
-      message.error('操作失败');
-    }
+    setConfirmTitle('确认封禁');
+    setConfirmMessage('确定要封禁该用户吗？');
+    setConfirmAction(() => async () => {
+      try {
+        await userApi.ban(id);
+        load();
+      } catch (err) {
+        message.error('操作失败');
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const handleUnban = async (id: string) => {
-    if (!confirm('确定要解封该用户吗？')) return;
-    try {
-      await userApi.unban(id);
-      load();
-    } catch (err) {
-      message.error('操作失败');
-    }
+    setConfirmTitle('确认解封');
+    setConfirmMessage('确定要解封该用户吗？');
+    setConfirmAction(() => async () => {
+      try {
+        await userApi.unban(id);
+        load();
+      } catch (err) {
+        message.error('操作失败');
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const columns = [
@@ -118,6 +131,8 @@ export function UsersPage() {
 
       <div style={{ display: 'flex', gap: 12 }}>
         <input
+          id="user-search"
+          name="user-search"
           type="text"
           placeholder="搜索用户名或邮箱..."
           value={search}
@@ -154,6 +169,15 @@ export function UsersPage() {
           </button>
         </div>
       )}
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
+      />
     </div>
   );
 }

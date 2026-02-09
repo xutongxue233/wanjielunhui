@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { rankingApi, type RankingEntry } from '../api';
+import { Confirm } from '../../components/ui';
 
 type RankingType = 'COMBAT_POWER' | 'REALM' | 'REINCARNATION' | 'PVP_RATING' | 'WEALTH';
 
@@ -19,6 +20,10 @@ export function RankingPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -49,17 +54,21 @@ export function RankingPage() {
     }
   };
 
-  const handleRebuild = async () => {
-    if (!confirm(`确定要重建${RANKING_TYPES.find(t => t.value === type)?.label}吗？`)) return;
-    setSyncing(true);
-    try {
-      await rankingApi.rebuild(type);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to rebuild ranking:', err);
-    } finally {
-      setSyncing(false);
-    }
+  const handleRebuild = () => {
+    setConfirmTitle('确认操作');
+    setConfirmMessage(`确定要重建${RANKING_TYPES.find(t => t.value === type)?.label}吗？`);
+    setConfirmAction(() => async () => {
+      setSyncing(true);
+      try {
+        await rankingApi.rebuild(type);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to rebuild ranking:', err);
+      } finally {
+        setSyncing(false);
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const columns = [
@@ -116,6 +125,15 @@ export function RankingPage() {
           total,
           onChange: setPage,
         }}
+      />
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
       />
     </div>
   );

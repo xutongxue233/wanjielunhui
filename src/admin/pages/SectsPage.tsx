@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { sectApi, type SectInfo, type SectMemberInfo } from '../api';
+import { Confirm } from '../../components/ui';
 
 export function SectsPage() {
   const [sects, setSects] = useState<SectInfo[]>([]);
@@ -12,6 +13,10 @@ export function SectsPage() {
   const [members, setMembers] = useState<SectMemberInfo[]>([]);
   const [membersLoading, setMembersLoading] = useState(false);
   const [stats, setStats] = useState<{ totalSects: number; totalMembers: number; avgMembers: number } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -47,26 +52,34 @@ export function SectsPage() {
     }
   };
 
-  const handleDisband = async (id: string) => {
-    if (!confirm('确定要解散这个门派吗？此操作不可恢复！')) return;
-    try {
-      await sectApi.disband(id);
-      await loadData();
-      setSelectedSect(null);
-    } catch (err) {
-      console.error('Failed to disband sect:', err);
-    }
+  const handleDisband = (id: string) => {
+    setConfirmTitle('确认操作');
+    setConfirmMessage('确定要解散这个门派吗？此操作不可恢复！');
+    setConfirmAction(() => async () => {
+      try {
+        await sectApi.disband(id);
+        await loadData();
+        setSelectedSect(null);
+      } catch (err) {
+        console.error('Failed to disband sect:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
-  const handleKickMember = async (memberId: string) => {
-    if (!confirm('确定要将该成员踢出门派吗？')) return;
+  const handleKickMember = (memberId: string) => {
     if (!selectedSect) return;
-    try {
-      await sectApi.kickMember(selectedSect.id, memberId);
-      handleViewMembers(selectedSect);
-    } catch (err) {
-      console.error('Failed to kick member:', err);
-    }
+    setConfirmTitle('确认操作');
+    setConfirmMessage('确定要将该成员踢出门派吗？');
+    setConfirmAction(() => async () => {
+      try {
+        await sectApi.kickMember(selectedSect.id, memberId);
+        handleViewMembers(selectedSect);
+      } catch (err) {
+        console.error('Failed to kick member:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const roleLabels: Record<string, string> = {
@@ -143,6 +156,8 @@ export function SectsPage() {
 
       <div style={{ display: 'flex', gap: 12 }}>
         <input
+          id="sect-search"
+          name="sect-search"
           type="text"
           className="admin-input"
           placeholder="搜索门派名..."
@@ -181,6 +196,15 @@ export function SectsPage() {
           </div>
         </div>
       )}
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
+      />
     </div>
   );
 }

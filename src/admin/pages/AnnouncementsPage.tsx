@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { announcementApi, type Announcement, type CreateAnnouncementInput } from '../api';
-import { message } from '../../components/ui';
+import { message, Confirm } from '../../components/ui';
 
 export function AnnouncementsPage() {
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -20,8 +24,11 @@ export function AnnouncementsPage() {
   useEffect(() => { load(); }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('确定删除此公告?')) return;
-    try { await announcementApi.delete(id); load(); } catch { message.error('删除失败'); }
+    setConfirmMessage('确定删除此公告?');
+    setConfirmAction(() => async () => {
+      try { await announcementApi.delete(id); load(); } catch { message.error('删除失败'); }
+    });
+    setConfirmOpen(true);
   };
 
   const columns = [
@@ -77,6 +84,15 @@ export function AnnouncementsPage() {
           onSave={() => { setShowModal(false); load(); }}
         />
       )}
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title="确认删除"
+        message={confirmMessage}
+        danger={true}
+      />
     </div>
   );
 }
@@ -110,6 +126,8 @@ function AnnouncementModal({ item, onClose, onSave }: { item: Announcement | nul
           <div>
             <label className="admin-label">标题</label>
             <input
+              id="announcement-title"
+              name="announcement-title"
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -120,6 +138,8 @@ function AnnouncementModal({ item, onClose, onSave }: { item: Announcement | nul
           <div>
             <label className="admin-label">内容</label>
             <textarea
+              id="announcement-content"
+              name="announcement-content"
               value={form.content}
               onChange={(e) => setForm({ ...form, content: e.target.value })}
               className="admin-textarea"
@@ -131,6 +151,8 @@ function AnnouncementModal({ item, onClose, onSave }: { item: Announcement | nul
             <div>
               <label className="admin-label">类型</label>
               <select
+                id="announcement-type"
+                name="announcement-type"
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value })}
                 className="admin-select"
@@ -144,6 +166,8 @@ function AnnouncementModal({ item, onClose, onSave }: { item: Announcement | nul
             <div>
               <label className="admin-label">优先级</label>
               <input
+                id="announcement-priority"
+                name="announcement-priority"
                 type="number"
                 value={form.priority}
                 onChange={(e) => setForm({ ...form, priority: parseInt(e.target.value) })}

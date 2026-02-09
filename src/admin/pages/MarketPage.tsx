@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
+import { Confirm } from '../../components/ui';
 import { marketApi, type MarketListing, type TradeLog } from '../api';
 
 type TabType = 'listings' | 'trades';
@@ -17,6 +18,10 @@ export function MarketPage() {
     todayVolume: number;
     totalFees: number;
   } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   const loadData = async () => {
     setLoading(true);
@@ -44,14 +49,18 @@ export function MarketPage() {
     loadData();
   }, [tab, page]);
 
-  const handleCancelListing = async (id: string) => {
-    if (!confirm('确定要强制下架这个商品吗？')) return;
-    try {
-      await marketApi.cancelListing(id);
-      await loadData();
-    } catch (err) {
-      console.error('Failed to cancel listing:', err);
-    }
+  const handleCancelListing = (id: string) => {
+    setConfirmTitle('确认操作');
+    setConfirmMessage('确定要强制下架这个商品吗？');
+    setConfirmAction(() => async () => {
+      try {
+        await marketApi.cancelListing(id);
+        await loadData();
+      } catch (err) {
+        console.error('Failed to cancel listing:', err);
+      }
+    });
+    setConfirmOpen(true);
   };
 
   const listingColumns = [
@@ -139,6 +148,15 @@ export function MarketPage() {
           total,
           onChange: setPage,
         }}
+      />
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => { confirmAction(); setConfirmOpen(false); }}
+        title={confirmTitle}
+        message={confirmMessage}
+        danger={true}
       />
     </div>
   );
