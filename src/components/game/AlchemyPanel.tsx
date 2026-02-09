@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Button, ProgressBar, message } from '../ui';
 import { useAlchemyStore } from '../../stores/alchemyStore';
 import { usePlayerStore } from '../../stores/playerStore';
-import { PILL_RECIPES, calculateSuccessRate } from '../../data/alchemy';
+import { PILL_RECIPES, ALCHEMY_MATERIALS, calculateSuccessRate } from '../../data/alchemy';
 
 const QUALITY_COLORS = {
   low: 'text-gray-400',
@@ -44,6 +44,31 @@ export const AlchemyPanel: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [refiningProgress, setRefiningProgress] = useState(0);
   const [resultMessage, setResultMessage] = useState<string | null>(null);
+
+  // 计算材料持有情况
+  const materialStatus = useMemo(() => {
+    if (!selectedRecipe || !player) return null;
+
+    const recipe = PILL_RECIPES[selectedRecipe];
+    if (!recipe) return null;
+
+    const inventory = player.inventory || [];
+    const materials = recipe.materials.map((mat) => {
+      const owned = inventory.find((i) => i.item.id === mat.itemId);
+      const ownedQty = owned ? owned.quantity : 0;
+      const materialInfo = ALCHEMY_MATERIALS[mat.itemId];
+      return {
+        itemId: mat.itemId,
+        name: materialInfo?.name || mat.itemId,
+        required: mat.quantity,
+        owned: ownedQty,
+        sufficient: ownedQty >= mat.quantity,
+      };
+    });
+
+    const allSufficient = materials.every((m) => m.sufficient);
+    return { materials, allSufficient };
+  }, [selectedRecipe, player]);
 
   // 更新炼制进度
   useEffect(() => {
@@ -214,6 +239,47 @@ export const AlchemyPanel: React.FC = () => {
               <h4 className="font-medium text-amber-400">{recipe.name}</h4>
               <p className="text-sm text-gray-400 mt-1">{recipe.description}</p>
 
+              {/* 材料需求列表 */}
+              {materialStatus && (
+                <div className="mt-3 border-t border-gray-600/50 pt-3">
+                  <div className="text-sm text-gray-300 mb-2 font-medium">
+                    所需材料
+                  </div>
+                  <div className="space-y-1.5">
+                    {materialStatus.materials.map((mat) => (
+                      <div
+                        key={mat.itemId}
+                        className={`flex justify-between items-center text-sm px-2 py-1 rounded ${
+                          mat.sufficient
+                            ? 'bg-gray-600/30'
+                            : 'bg-red-900/30 border border-red-700/50'
+                        }`}
+                      >
+                        <span
+                          className={
+                            mat.sufficient ? 'text-gray-300' : 'text-red-400'
+                          }
+                        >
+                          {mat.name}
+                        </span>
+                        <span
+                          className={`font-mono ${
+                            mat.sufficient ? 'text-green-400' : 'text-red-400'
+                          }`}
+                        >
+                          {mat.owned}/{mat.required}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {!materialStatus.allSufficient && (
+                    <div className="mt-2 text-xs text-red-400 text-center">
+                      材料不足，无法炼制
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="mt-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">成功率</span>
@@ -230,8 +296,9 @@ export const AlchemyPanel: React.FC = () => {
               <Button
                 className="w-full mt-3"
                 onClick={handleStartRefining}
+                disabled={!materialStatus?.allSufficient}
               >
-                开始炼制
+                {materialStatus?.allSufficient ? '开始炼制' : '材料不足'}
               </Button>
             </div>
           )}

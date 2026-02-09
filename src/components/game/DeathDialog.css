@@ -1,0 +1,103 @@
+/* DeathDialog - 死亡对话框样式 */
+
+.death-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+}
+
+.death-dialog-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--crimson);
+  opacity: 0.8;
+  animation: death-pulse 2s ease-in-out infinite;
+}
+
+.death-dialog-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes death-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.death-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.death-dialog-message {
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.death-dialog-name {
+  color: var(--gold);
+  font-weight: bold;
+}
+
+.death-dialog-hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.death-dialog-info {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.death-dialog-info-item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.death-dialog-info-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.death-dialog-info-value {
+  font-size: 13px;
+  color: var(--jade-light);
+  font-weight: 500;
+}
+
+.death-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+  margin-top: var(--spacing-md);
+}
+
+.death-dialog-btn-reincarnate {
+  width: 100%;
+}
+
+.death-dialog-btn-giveup {
+  width: 100%;
+  opacity: 0.7;
+}
+
+.death-dialog-btn-giveup:hover {
+  opacity: 1;
+}

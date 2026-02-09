@@ -64,7 +64,7 @@ export const STORY_CHAPTERS: StoryChapter[] = [
   {
     id: 'chapter_4',
     name: '第四章：魔影初现',
-    description: '门派中接连发生诡异事件，一切似乎指向一个可怕的阴谋。',
+    description: '魔修入侵青云宗，你在师父云霄真人和师姐苏瑶的并肩作战中成长，与宿敌血影展开宿命之战。',
     order: 3,
     unlockConditions: [
       { type: 'flag', key: 'chapter_3_completed', operator: '==', value: true },
@@ -74,6 +74,23 @@ export const STORY_CHAPTERS: StoryChapter[] = [
     rewards: [
       { type: 'item', target: 'zhujiwan', value: 2 },
       { type: 'item', target: 'lingshi', value: 500 },
+      { type: 'cultivation', target: 'base', value: 500 },
+    ],
+  },
+  {
+    id: 'chapter_5',
+    name: '第五章：风暴将至',
+    description: '元婴初成，过往真相浮出水面。暗影联盟的阴谋远不止于此，域外天魔的封印岌岌可危。',
+    order: 4,
+    unlockConditions: [
+      { type: 'flag', key: 'chapter_4_completed', operator: '==', value: true },
+      { type: 'realm', key: 'level', operator: '>=', value: 5 },
+    ],
+    startNodeId: 'ch5_start',
+    rewards: [
+      { type: 'item', target: 'lingshi', value: 1000 },
+      { type: 'cultivation', target: 'base', value: 800 },
+      { type: 'attribute', target: 'comprehension', value: 10 },
     ],
   },
 ];

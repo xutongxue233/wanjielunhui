@@ -1,11 +1,25 @@
 // 主种子文件 - 初始化游戏数据
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
+import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { storyChaptersData, allChapterNodes } from './story-chapters';
 import { questTemplatesData } from './quests';
 import { itemTemplatesData } from './items';
 import { equipmentTemplatesData } from './equipments';
+import { enemyTemplatesData } from './enemies';
+import { skillTemplatesData } from './skills';
+import { dungeonTemplatesData } from './dungeons';
+import { alchemyRecipesData, alchemyCauldronsData } from './alchemy';
+import { realmConfigsData } from './realms';
+import { originConfigsData, spiritRootConfigsData } from './origins';
+import { roguelikeDungeonsData, roguelikeTalentsData } from './roguelike';
+import { expeditionTemplatesData } from './expeditions';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaLibSql({
+  url: process.env.DATABASE_URL || 'file:./dev.db',
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('开始填充游戏数据...');
@@ -52,7 +66,6 @@ async function main() {
   // 4. 填充剧情节点
   console.log('填充剧情节点...');
   for (const node of allChapterNodes) {
-    // 先获取章节ID
     const chapter = await prisma.storyChapter.findUnique({
       where: { chapterId: node.chapterId },
     });
@@ -101,6 +114,127 @@ async function main() {
     });
   }
   console.log(`已填充 ${questTemplatesData.length} 个任务模板`);
+
+  // 6. 填充敌人模板
+  console.log('填充敌人模板...');
+  for (const enemy of enemyTemplatesData) {
+    await prisma.enemyTemplate.upsert({
+      where: { enemyId: enemy.enemyId },
+      update: enemy,
+      create: enemy,
+    });
+  }
+  console.log(`已填充 ${enemyTemplatesData.length} 个敌人模板`);
+
+  // 7. 填充技能模板
+  console.log('填充技能模板...');
+  for (const skill of skillTemplatesData) {
+    await prisma.skillTemplate.upsert({
+      where: { skillId: skill.skillId },
+      update: skill,
+      create: skill,
+    });
+  }
+  console.log(`已填充 ${skillTemplatesData.length} 个技能模板`);
+
+  // 8. 填充副本模板
+  console.log('填充副本模板...');
+  for (const dungeon of dungeonTemplatesData) {
+    await prisma.dungeonTemplate.upsert({
+      where: { dungeonId: dungeon.dungeonId },
+      update: dungeon,
+      create: dungeon,
+    });
+  }
+  console.log(`已填充 ${dungeonTemplatesData.length} 个副本模板`);
+
+  // 9. 填充炼丹配方
+  console.log('填充炼丹配方...');
+  for (const recipe of alchemyRecipesData) {
+    await prisma.alchemyRecipe.upsert({
+      where: { recipeId: recipe.recipeId },
+      update: recipe,
+      create: recipe,
+    });
+  }
+  console.log(`已填充 ${alchemyRecipesData.length} 个炼丹配方`);
+
+  // 10. 填充丹炉
+  console.log('填充丹炉...');
+  for (const cauldron of alchemyCauldronsData) {
+    await prisma.alchemyCauldron.upsert({
+      where: { cauldronId: cauldron.cauldronId },
+      update: cauldron,
+      create: cauldron,
+    });
+  }
+  console.log(`已填充 ${alchemyCauldronsData.length} 个丹炉`);
+
+  // 11. 填充境界配置
+  console.log('填充境界配置...');
+  for (const realm of realmConfigsData) {
+    await prisma.realmConfig.upsert({
+      where: { realmId: realm.realmId },
+      update: realm,
+      create: realm,
+    });
+  }
+  console.log(`已填充 ${realmConfigsData.length} 个境界配置`);
+
+  // 12. 填充出身配置
+  console.log('填充出身配置...');
+  for (const origin of originConfigsData) {
+    await prisma.originConfig.upsert({
+      where: { originId: origin.originId },
+      update: origin,
+      create: origin,
+    });
+  }
+  console.log(`已填充 ${originConfigsData.length} 个出身配置`);
+
+  // 13. 填充灵根配置
+  console.log('填充灵根配置...');
+  for (const root of spiritRootConfigsData) {
+    await prisma.spiritRootConfig.upsert({
+      where: { rootId: root.rootId },
+      update: root,
+      create: root,
+    });
+  }
+  console.log(`已填充 ${spiritRootConfigsData.length} 个灵根配置`);
+
+  // 14. 填充秘境副本
+  console.log('填充秘境副本...');
+  for (const dungeon of roguelikeDungeonsData) {
+    await prisma.roguelikeDungeon.upsert({
+      where: { dungeonId: dungeon.dungeonId },
+      update: dungeon,
+      create: dungeon,
+    });
+  }
+  console.log(`已填充 ${roguelikeDungeonsData.length} 个秘境副本`);
+
+  // 15. 填充秘境天赋
+  console.log('填充秘境天赋...');
+  for (const talent of roguelikeTalentsData) {
+    await prisma.roguelikeTalent.upsert({
+      where: { talentId: talent.talentId },
+      update: talent,
+      create: talent,
+    });
+  }
+  console.log(`已填充 ${roguelikeTalentsData.length} 个秘境天赋`);
+
+  // 16. 填充弟子派遣任务
+  console.log('填充弟子派遣任务...');
+  for (const expedition of expeditionTemplatesData) {
+    await prisma.expeditionTemplate.upsert({
+      where: { expeditionId: expedition.expeditionId },
+      update: expedition,
+      create: expedition,
+    });
+  }
+  console.log(`已填充 ${expeditionTemplatesData.length} 个派遣任务`);
 
   console.log('游戏数据填充完成!');
 }

@@ -167,6 +167,26 @@ export const SECRET_REALMS: Record<string, SecretRealm> = {
     entryCost: { type: 'spirit_stone', amount: 50 },
   },
 
+  demon_abyss: {
+    id: 'demon_abyss',
+    name: '魔渊深处',
+    description: '通往魔界的裂隙，阴气森森，强大的魔物潜伏其中，金丹期以上修士的试炼之地。',
+    difficulty: 3,
+    floors: 10,
+    requiredLevel: 10,
+    roomPool: ['combat', 'combat', 'elite', 'treasure', 'shop', 'event', 'rest', 'boss'],
+    enemyPool: ['dark_serpent', 'soul_bat', 'fire_scorpion', 'golden_crab', 'jindan_cultivator'],
+    rewardPool: [
+      { type: 'spirit_stone', quantity: 500, chance: 1.0 },
+      { type: 'item', itemId: 'demon_core', quantity: 1, chance: 0.4 },
+      { type: 'item', itemId: 'soul_crystal', quantity: 1, chance: 0.3 },
+      { type: 'item', itemId: 'snake_gallbladder', quantity: 1, chance: 0.3 },
+    ],
+    talentPool: ['attack_boost', 'defense_boost', 'crit_boost', 'life_steal', 'all_stats'],
+    dailyLimit: 2,
+    entryCost: { type: 'spirit_stone', amount: 100 },
+  },
+
   ancient_ruins: {
     id: 'ancient_ruins',
     name: '上古遗迹',

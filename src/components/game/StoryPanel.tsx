@@ -7,7 +7,8 @@ import { getStoryNode, STORY_CHAPTERS, hasChapterData } from '../../data/stories
 import type { StoryNode, StoryChoice } from '../../types';
 import type { ChapterReward } from '../../data/stories';
 import type { Combatant } from '../../data/combat';
-import { generateRandomEncounter } from '../../data/combat/enemies';
+import { generateRandomEncounter, createEnemyFromTemplate, ENEMY_TEMPLATES } from '../../data/combat/enemies';
+import { getStoryDungeonById } from '../../data/combat/storyDungeons';
 import { getSkillsByElement } from '../../data/combat/skills';
 
 // 检查战斗是否激活
@@ -513,9 +514,33 @@ export const StoryPanel: React.FC = () => {
                     isAlive: true,
                     actionGauge: 0,
                   };
-                  const enemies = generateRandomEncounter(playerLevel, 1);
-                  const totalExp = enemies.reduce((sum, _e) => sum + 30, 0);
-                  const totalStones = enemies.reduce((sum, _e) => sum + 10, 0);
+
+                  // 优先使用剧情节点关联的副本敌人
+                  let enemies: Combatant[];
+                  let totalExp: number;
+                  let totalStones: number;
+                  const storyDungeon = currentNode.battleId
+                    ? getStoryDungeonById(currentNode.battleId)
+                    : undefined;
+
+                  if (storyDungeon) {
+                    // 使用剧情副本配置的敌人
+                    enemies = storyDungeon.enemyIds
+                      .map(enemyId => {
+                        const template = ENEMY_TEMPLATES[enemyId];
+                        if (!template) return null;
+                        return createEnemyFromTemplate(template, storyDungeon.enemyLevelBonus);
+                      })
+                      .filter((e): e is Combatant => e !== null);
+                    totalExp = storyDungeon.rewards.exp;
+                    totalStones = storyDungeon.rewards.spiritStones;
+                  } else {
+                    // 无副本配置时回退到随机遭遇
+                    enemies = generateRandomEncounter(playerLevel, 1);
+                    totalExp = enemies.reduce((sum, _e) => sum + 30, 0);
+                    totalStones = enemies.reduce((sum, _e) => sum + 10, 0);
+                  }
+
                   startBattle([playerCombatant], enemies, {
                     exp: totalExp,
                     spiritStones: totalStones,

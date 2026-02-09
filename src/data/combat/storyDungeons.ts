@@ -153,12 +153,68 @@ export const CHAPTER_4_DUNGEONS: Record<string, StoryDungeonConfig> = {
   },
 };
 
+// ==================== 第五章副本 ====================
+
+export const CHAPTER_5_DUNGEONS: Record<string, StoryDungeonConfig> = {
+  story_5_1: {
+    id: 'story_5_1',
+    name: '血影再战',
+    description: '与宿敌血影的元婴对决',
+    chapter: 'story',
+    stage: 1,
+    requiredLevel: 13,
+    enemyIds: ['xueying'],
+    enemyLevelBonus: 2,
+    rewards: {
+      exp: 1200,
+      spiritStones: 500,
+      drops: [
+        { itemId: 'demon_blood', chance: 1.0, quantity: 3 },
+        { itemId: 'blood_sword_fragment', chance: 0.4, quantity: 1 },
+      ],
+    },
+    sweepCost: 35,
+    storyChapter: 5,
+    storyNodeId: 'chapter_5_xueying_battle',
+    isBoss: false,
+    dialogueBefore: '血影：「又见面了，这次可没人来救你了！」',
+    dialogueAfter: '血影负伤遁逃，但他的威胁仍然笼罩着正道修仙界...',
+  },
+
+  story_5_2: {
+    id: 'story_5_2',
+    name: '守护镇魔铜镜',
+    description: '阻止魔修化神期强者破坏镇魔铜镜',
+    chapter: 'story',
+    stage: 2,
+    requiredLevel: 15,
+    enemyIds: ['demon_huashen'],
+    enemyLevelBonus: 3,
+    rewards: {
+      exp: 2000,
+      spiritStones: 800,
+      drops: [
+        { itemId: 'demon_core', chance: 1.0, quantity: 2 },
+        { itemId: 'zhenmo_shard', chance: 0.3, quantity: 1 },
+        { itemId: 'huashen_essence', chance: 0.2, quantity: 1 },
+      ],
+    },
+    sweepCost: 45,
+    storyChapter: 5,
+    storyNodeId: 'chapter_5_boss_battle',
+    isBoss: true,
+    dialogueBefore: '魔修化神：「小辈，凭你也想挡住本座？螳臂当车！」',
+    dialogueAfter: '借助师父的护身剑意和苏瑶的配合，你们将魔修击退，镇魔铜镜安然无恙。',
+  },
+};
+
 // ==================== 汇总导出 ====================
 
 export const ALL_STORY_DUNGEONS: Record<string, StoryDungeonConfig> = {
   ...CHAPTER_2_DUNGEONS,
   ...CHAPTER_3_DUNGEONS,
   ...CHAPTER_4_DUNGEONS,
+  ...CHAPTER_5_DUNGEONS,
 };
 
 // 根据ID获取剧情副本

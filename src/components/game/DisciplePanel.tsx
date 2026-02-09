@@ -145,12 +145,9 @@ export const DisciplePanel: React.FC = () => {
 
   const handleStartExpedition = () => {
     if (!selectedExpedition || selectedForExpedition.length === 0) {
-      console.log('派遣检查失败:', { selectedExpedition, selectedForExpedition });
       return;
     }
-    console.log('开始派遣:', { selectedExpedition, selectedForExpedition });
     const success = startExpedition(selectedExpedition, selectedForExpedition);
-    console.log('派遣结果:', success);
     if (success) {
       setSelectedForExpedition([]);
       setSelectedExpedition(null);

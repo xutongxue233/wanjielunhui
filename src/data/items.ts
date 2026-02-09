@@ -6,7 +6,7 @@
 import type { ItemEffect } from '../types';
 
 // 物品品质
-export type ItemQuality = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+export type ItemQuality = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic';
 
 // 物品类型
 export type ItemType = 'consumable' | 'material' | 'equipment' | 'quest' | 'currency';
@@ -253,7 +253,7 @@ export const CONSUMABLE_ITEMS: Record<string, ItemDefinition> = {
   zhuji_pill: {
     id: 'zhuji_pill',
     name: '筑基丹',
-    description: '辅助突破筑基期的珍贵丹药，提升突破成功率20%',
+    description: '辅助突破筑基期的珍贵丹药，服用后增加200点修为',
     type: 'consumable',
     quality: 'rare',
     stackable: true,
@@ -265,7 +265,7 @@ export const CONSUMABLE_ITEMS: Record<string, ItemDefinition> = {
   jindan_pill: {
     id: 'jindan_pill',
     name: '金丹丹',
-    description: '辅助凝结金丹的稀世丹药，提升突破成功率15%',
+    description: '辅助凝结金丹的稀世丹药，服用后增加500点修为',
     type: 'consumable',
     quality: 'epic',
     stackable: true,
@@ -277,7 +277,7 @@ export const CONSUMABLE_ITEMS: Record<string, ItemDefinition> = {
   yuanying_pill: {
     id: 'yuanying_pill',
     name: '元婴丹',
-    description: '辅助元婴突破的无价丹药，提升突破成功率10%',
+    description: '辅助元婴突破的无价丹药，服用后增加1000点修为',
     type: 'consumable',
     quality: 'legendary',
     stackable: true,
@@ -285,6 +285,178 @@ export const CONSUMABLE_ITEMS: Record<string, ItemDefinition> = {
     sellPrice: 5000,
     buyPrice: 15000,
     effects: [{ type: 'add_cultivation', value: 1000 }],
+  },
+  huashen_pill: {
+    id: 'huashen_pill',
+    name: '化神丹',
+    description: '辅助化神突破的极品丹药，蕴含天地法则之力',
+    type: 'consumable',
+    quality: 'legendary',
+    stackable: true,
+    maxStack: 10,
+    sellPrice: 15000,
+    buyPrice: 50000,
+    effects: [{ type: 'add_cultivation', value: 3000 }],
+  },
+  heti_pill: {
+    id: 'heti_pill',
+    name: '合体丹',
+    description: '辅助合体期突破的仙品丹药，助修士天人合一',
+    type: 'consumable',
+    quality: 'legendary',
+    stackable: true,
+    maxStack: 10,
+    sellPrice: 50000,
+    buyPrice: 150000,
+    effects: [{ type: 'add_cultivation', value: 10000 }],
+  },
+  dacheng_pill: {
+    id: 'dacheng_pill',
+    name: '大乘丹',
+    description: '辅助大乘期突破的绝世丹药，使修士距飞升仅一步之遥',
+    type: 'consumable',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 10,
+    sellPrice: 150000,
+    buyPrice: 500000,
+    effects: [{ type: 'add_cultivation', value: 30000 }],
+  },
+  dujie_pill: {
+    id: 'dujie_pill',
+    name: '渡劫丹',
+    description: '辅助渡劫的神品丹药，可增加渡劫成功率',
+    type: 'consumable',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 10,
+    sellPrice: 500000,
+    buyPrice: 1500000,
+    effects: [{ type: 'add_cultivation', value: 100000 }],
+  },
+
+  // 合体期恢复丹药
+  healing_pill_heti: {
+    id: 'healing_pill_heti',
+    name: '合体恢复丹',
+    description: '合体期修士专用丹药，服用后恢复50000点生命值',
+    type: 'consumable',
+    quality: 'legendary',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 8000,
+    buyPrice: 20000,
+    effects: [{ type: 'heal_hp', value: 50000 }],
+  },
+  mp_pill_heti: {
+    id: 'mp_pill_heti',
+    name: '合体凝灵丹',
+    description: '合体期修士专用，恢复5000点灵力',
+    type: 'consumable',
+    quality: 'legendary',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 6000,
+    buyPrice: 15000,
+    effects: [{ type: 'heal_mp', value: 5000 }],
+  },
+
+  // 大乘期恢复丹药
+  healing_pill_dacheng: {
+    id: 'healing_pill_dacheng',
+    name: '大乘恢复丹',
+    description: '大乘期修士专用丹药，服用后恢复200000点生命值',
+    type: 'consumable',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 25000,
+    buyPrice: 60000,
+    effects: [{ type: 'heal_hp', value: 200000 }],
+  },
+  mp_pill_dacheng: {
+    id: 'mp_pill_dacheng',
+    name: '大乘凝灵丹',
+    description: '大乘期修士专用，恢复15000点灵力',
+    type: 'consumable',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 20000,
+    buyPrice: 50000,
+    effects: [{ type: 'heal_mp', value: 15000 }],
+  },
+
+  // 渡劫期恢复丹药
+  healing_pill_dujie: {
+    id: 'healing_pill_dujie',
+    name: '渡劫恢复丹',
+    description: '渡劫期修士专用丹药，服用后恢复800000点生命值',
+    type: 'consumable',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 80000,
+    buyPrice: 200000,
+    effects: [{ type: 'heal_hp', value: 800000 }],
+  },
+  mp_pill_dujie: {
+    id: 'mp_pill_dujie',
+    name: '渡劫凝灵丹',
+    description: '渡劫期修士专用，恢复50000点灵力',
+    type: 'consumable',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 60000,
+    buyPrice: 150000,
+    effects: [{ type: 'heal_mp', value: 50000 }],
+  },
+
+  // 高级聚元丹和悟道丹
+  juyuan_pill_medium: {
+    id: 'juyuan_pill_medium',
+    name: '中品聚元丹',
+    description: '蕴含浓郁灵气的丹药，服用后增加5000点修为',
+    type: 'consumable',
+    quality: 'epic',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 2000,
+    effects: [{ type: 'add_cultivation', value: 5000 }],
+  },
+  juyuan_pill_high: {
+    id: 'juyuan_pill_high',
+    name: '上品聚元丹',
+    description: '蕴含磅礴灵气的丹药，服用后增加50000点修为',
+    type: 'consumable',
+    quality: 'legendary',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 20000,
+    effects: [{ type: 'add_cultivation', value: 50000 }],
+  },
+  exp_pill_medium: {
+    id: 'exp_pill_medium',
+    name: '中品悟道丹',
+    description: '大幅开启灵智的丹药，服用后增加10000点经验',
+    type: 'consumable',
+    quality: 'epic',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 3000,
+    effects: [{ type: 'add_exp', value: 10000 }],
+  },
+  exp_pill_high: {
+    id: 'exp_pill_high',
+    name: '上品悟道丹',
+    description: '极致开启灵智的丹药，服用后增加100000点经验',
+    type: 'consumable',
+    quality: 'legendary',
+    stackable: true,
+    maxStack: 99,
+    sellPrice: 30000,
+    effects: [{ type: 'add_exp', value: 100000 }],
   },
 };
 
@@ -470,6 +642,36 @@ export const MATERIAL_ITEMS: Record<string, ItemDefinition> = {
     maxStack: 999,
     sellPrice: 500,
   },
+  shura_blood: {
+    id: 'shura_blood',
+    name: '修罗之血',
+    description: '修罗界强者的精血，蕴含无尽战意和杀伐之力',
+    type: 'material',
+    quality: 'epic',
+    stackable: true,
+    maxStack: 999,
+    sellPrice: 300,
+  },
+  golem_core: {
+    id: 'golem_core',
+    name: '傀儡核心',
+    description: '驱动傀儡的核心部件，蕴含精纯能量',
+    type: 'material',
+    quality: 'rare',
+    stackable: true,
+    maxStack: 999,
+    sellPrice: 150,
+  },
+  chaos_essence: {
+    id: 'chaos_essence',
+    name: '混沌精华',
+    description: '混沌之力凝结的精华，蕴含开天辟地之力',
+    type: 'material',
+    quality: 'mythic',
+    stackable: true,
+    maxStack: 999,
+    sellPrice: 5000,
+  },
   golden_crab_shell: {
     id: 'golden_crab_shell',
     name: '金甲蟹壳',
@@ -557,6 +759,7 @@ export const QUALITY_COLORS: Record<ItemQuality, string> = {
   rare: '#3B82F6',       // 蓝色
   epic: '#A855F7',       // 紫色
   legendary: '#F59E0B',  // 橙色
+  mythic: '#EF4444',     // 红色
 };
 
 // 品质中文名
@@ -566,4 +769,5 @@ export const QUALITY_NAMES: Record<ItemQuality, string> = {
   rare: '稀有',
   epic: '史诗',
   legendary: '传说',
+  mythic: '神话',
 };

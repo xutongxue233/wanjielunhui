@@ -2,6 +2,8 @@ import type { StoryNode } from '../../types';
 import { villageOrphanStory, fallenClanStory, reincarnationStory, getStoryNode as getPrologueNode } from './prologue';
 import { chapter2Story, getChapter2Node } from './chapter2';
 import { chapter3Story, getChapter3Node } from './chapter3';
+import { chapter4Story, getChapter4Node } from './chapter4';
+import { chapter5Story, getChapter5Node } from './chapter5';
 import { STORY_CHAPTERS, getChapterById, getNextChapter, getUnlockedChapterIds, checkChapterUnlock } from './chapters';
 import type { StoryChapter, ChapterReward } from './chapters';
 
@@ -14,6 +16,8 @@ export const storyData = {
   },
   chapter_2: chapter2Story,
   chapter_3: chapter3Story,
+  chapter_4: chapter4Story,
+  chapter_5: chapter5Story,
 };
 
 // 统一的节点获取函数
@@ -26,6 +30,10 @@ export function getStoryNode(chapterId: string, nodeId: string, origin?: string)
       return getChapter2Node(nodeId);
     case 'chapter_3':
       return getChapter3Node(nodeId);
+    case 'chapter_4':
+      return getChapter4Node(nodeId);
+    case 'chapter_5':
+      return getChapter5Node(nodeId);
     default:
       return null;
   }
@@ -44,6 +52,8 @@ export function hasChapterData(chapterId: string): boolean {
     case 'prologue':
     case 'chapter_2':
     case 'chapter_3':
+    case 'chapter_4':
+    case 'chapter_5':
       return true;
     default:
       return false;
@@ -62,6 +72,10 @@ export function getChapterNodeCount(chapterId: string): number {
       return Object.keys(chapter2Story).length;
     case 'chapter_3':
       return Object.keys(chapter3Story).length;
+    case 'chapter_4':
+      return Object.keys(chapter4Story).length;
+    case 'chapter_5':
+      return Object.keys(chapter5Story).length;
     default:
       return 0;
   }
@@ -83,3 +97,5 @@ export type { StoryChapter, ChapterReward };
 export { villageOrphanStory, fallenClanStory, reincarnationStory };
 export { chapter2Story };
 export { chapter3Story };
+export { chapter4Story };
+export { chapter5Story };

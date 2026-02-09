@@ -48,8 +48,8 @@ export const ORIGINS: Record<OriginType, Origin> = {
     description: '你前世是一位修为通天的大能，却在渡劫时遭人暗算而陨落。凭借着一丝残魂转世重生，虽然前世记忆被封印，但骨子里的道韵犹存，修炼起来事半功倍。',
     startingBonus: {
       attributes: {
-        comprehension: 30,
-        cultivationSpeed: 0.5,
+        comprehension: 20,
+        cultivationSpeed: 0.3,
       },
       items: [
         { itemId: 'sealed_memory_fragment', quantity: 1 },

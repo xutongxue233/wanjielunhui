@@ -33,7 +33,6 @@ export interface RealmConfig {
   name: RealmName;
   displayName: string;
   baseLifespan: number;           // 基础寿元
-  cultivationMultiplier: number;  // 修为需求倍率
   attributeMultiplier: number;    // 属性倍率
   breakthroughBaseRate: number;   // 基础突破率
   description: string;
@@ -44,7 +43,6 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'lianqi',
     displayName: '炼气',
     baseLifespan: 150,
-    cultivationMultiplier: 1,
     attributeMultiplier: 1,
     breakthroughBaseRate: 0.8,
     description: '引气入体，感应天地灵气，踏入修仙之门。',
@@ -53,7 +51,6 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'zhuji',
     displayName: '筑基',
     baseLifespan: 300,
-    cultivationMultiplier: 3,
     attributeMultiplier: 2,
     breakthroughBaseRate: 0.6,
     description: '筑就道基，脱胎换骨，真正踏入修仙者行列。',
@@ -62,7 +59,6 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'jindan',
     displayName: '金丹',
     baseLifespan: 500,
-    cultivationMultiplier: 9,
     attributeMultiplier: 5,
     breakthroughBaseRate: 0.4,
     description: '凝结金丹，法力大增，可御剑飞行。',
@@ -71,7 +67,6 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'yuanying',
     displayName: '元婴',
     baseLifespan: 1000,
-    cultivationMultiplier: 27,
     attributeMultiplier: 12,
     breakthroughBaseRate: 0.3,
     description: '元婴出窍，神识大成，已是一方强者。',
@@ -80,7 +75,6 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'huashen',
     displayName: '化神',
     baseLifespan: 2000,
-    cultivationMultiplier: 81,
     attributeMultiplier: 30,
     breakthroughBaseRate: 0.2,
     description: '化神归真，天人感应，可窥探天道法则。',
@@ -89,7 +83,6 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'heti',
     displayName: '合体',
     baseLifespan: 5000,
-    cultivationMultiplier: 243,
     attributeMultiplier: 80,
     breakthroughBaseRate: 0.15,
     description: '天人合一，掌控法则，移山倒海不在话下。',
@@ -98,25 +91,22 @@ export const REALM_CONFIGS: Record<RealmName, RealmConfig> = {
     name: 'dacheng',
     displayName: '大乘',
     baseLifespan: 10000,
-    cultivationMultiplier: 729,
     attributeMultiplier: 200,
-    breakthroughBaseRate: 0.1,
+    breakthroughBaseRate: 0.12,
     description: '大道将成，距离飞升仅一步之遥。',
   },
   dujie: {
     name: 'dujie',
     displayName: '渡劫',
     baseLifespan: 20000,
-    cultivationMultiplier: 2187,
     attributeMultiplier: 500,
-    breakthroughBaseRate: 0.05,
+    breakthroughBaseRate: 0.15,
     description: '天劫降临，渡过则飞升成仙，失败则形神俱灭。',
   },
   xianren: {
     name: 'xianren',
     displayName: '仙人',
     baseLifespan: Infinity,
-    cultivationMultiplier: 10000,
     attributeMultiplier: 2000,
     breakthroughBaseRate: 1,
     description: '超脱轮回，长生不死，真正的仙人。',

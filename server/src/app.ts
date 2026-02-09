@@ -32,6 +32,7 @@ import { adminSectRoutes } from './modules/admin/sect/index.js';
 import { adminChatRoutes } from './modules/admin/chat/index.js';
 import { adminMarketRoutes } from './modules/admin/market/index.js';
 import { adminPvpRoutes } from './modules/admin/pvp/index.js';
+import { contentRoutes } from './modules/content/index.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -125,6 +126,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(pvpRoutes, { prefix: `${config.server.apiPrefix}/pvp` });
   await app.register(announcementRoutes, { prefix: `${config.server.apiPrefix}/ops` });
   await app.register(activityRoutes, { prefix: `${config.server.apiPrefix}/ops` });
+  await app.register(contentRoutes, { prefix: `${config.server.apiPrefix}/content` });
   // Admin路由 - 统一添加ADMIN权限守卫
   await app.register(
     async function adminRoutes(adminApp) {

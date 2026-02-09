@@ -117,6 +117,29 @@
 .player-attr-value.luck { color: var(--gold-light); }
 .player-attr-value.lifespan { color: var(--text-secondary); }
 
+/* 寿元警告样式 */
+.player-attr-value.lifespan.lifespan-warning {
+  color: var(--crimson);
+  animation: lifespan-pulse 1.5s ease-in-out infinite;
+}
+
+.lifespan-warning-icon {
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--crimson);
+  font-weight: bold;
+  animation: lifespan-pulse 1s ease-in-out infinite;
+}
+
+@keyframes lifespan-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* 五行亲和 */
 .player-elements {
   margin-top: 0;
@@ -154,6 +177,17 @@
   margin-top: 2px;
 }
 
+/* 移动端展开/折叠按钮 - 桌面端隐藏 */
+.player-mobile-toggle {
+  display: none;
+}
+
+/* 移动端可折叠区域 - 桌面端隐藏 */
+.player-details-mobile {
+  display: none;
+  overflow: hidden;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
   .player-status-header {
@@ -178,5 +212,38 @@
 
   .player-attr-item:last-child {
     padding-left: var(--spacing-sm);
+  }
+
+  /* 移动端隐藏桌面端详情区域 */
+  .player-details-desktop {
+    display: none;
+  }
+
+  /* 移动端显示可折叠区域 */
+  .player-details-mobile {
+    display: block;
+  }
+
+  /* 移动端显示展开/折叠按钮 */
+  .player-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--gold);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    align-self: center;
+  }
+
+  .player-mobile-toggle:hover {
+    background: rgba(201, 162, 39, 0.2);
+    border-color: var(--gold);
   }
 }

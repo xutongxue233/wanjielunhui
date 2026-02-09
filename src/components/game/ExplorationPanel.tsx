@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Button } from '../ui';
 import { useRoguelikeStore } from '../../stores/roguelikeStore';
 import { usePlayerStore } from '../../stores/playerStore';
+import { useCombatStore } from '../../stores/combatStore';
 import type { Room } from '../../data/roguelike';
 import { SECRET_REALMS } from '../../data/roguelike';
+import type { Combatant } from '../../data/combat';
+import { getSkillsByElement } from '../../data/combat/skills';
+import { v4 as uuidv4 } from 'uuid';
 
 const ROOM_TYPE_ICONS: Record<string, string> = {
   combat: '剑',
@@ -24,6 +28,16 @@ const ROOM_TYPE_COLORS: Record<string, string> = {
   rest: 'border-green-500 bg-green-500/20',
   shop: 'border-blue-500 bg-blue-500/20',
   event: 'border-gray-500 bg-gray-500/20',
+};
+
+const ROOM_TYPE_NAMES: Record<string, string> = {
+  combat: '普通战斗',
+  elite: '精英战斗',
+  boss: 'Boss',
+  treasure: '宝箱',
+  rest: '休息点',
+  shop: '商店',
+  event: '随机事件',
 };
 
 // 房间节点组件
@@ -70,12 +84,73 @@ export const ExplorationPanel: React.FC = () => {
   const getCurrentRoom = useRoguelikeStore((state) => state.getCurrentRoom);
   const getAvailableRooms = useRoguelikeStore((state) => state.getAvailableRooms);
   const upgradePermanentTalent = useRoguelikeStore((state) => state.upgradePermanentTalent);
+  const startRoomBattle = useRoguelikeStore((state) => state.startRoomBattle);
+  const onBattleEnd = useRoguelikeStore((state) => state.onBattleEnd);
+
+  // 战斗系统
+  const battle = useCombatStore((state) => state.battle);
+  const startBattle = useCombatStore((state) => state.startBattle);
 
   const [activeTab, setActiveTab] = useState<'realms' | 'run' | 'talents'>('realms');
   const [selectedRealm, setSelectedRealm] = useState<string | null>(null);
+  const [isBattling, setIsBattling] = useState(false);
+
+  // 创建玩家战斗单位
+  const createPlayerCombatant = useCallback((): Combatant | null => {
+    if (!player) return null;
+
+    const element = player.spiritualRoot.elements[0] || 'neutral';
+    const skills = getSkillsByElement(element).map(s => ({ ...s, currentCooldown: 0 }));
+
+    return {
+      id: uuidv4(),
+      name: player.name,
+      isPlayer: true,
+      isAlly: true,
+      hp: player.attributes.hp,
+      maxHp: player.attributes.maxHp,
+      mp: player.attributes.mp,
+      maxMp: player.attributes.maxMp,
+      attack: player.attributes.attack,
+      defense: player.attributes.defense,
+      speed: player.attributes.speed,
+      critRate: player.attributes.critRate,
+      critDamage: player.attributes.critDamage,
+      element: element,
+      skills: skills.slice(0, 4),
+      buffs: [],
+      debuffs: [],
+      isAlive: true,
+      actionGauge: 0,
+    };
+  }, [player]);
+
+  // 监听战斗结束
+  useEffect(() => {
+    if (isBattling && battle && (battle.phase === 'victory' || battle.phase === 'defeat')) {
+      // 获取战斗后玩家状态
+      const playerInBattle = battle.allies.find(a => a.isPlayer);
+      if (playerInBattle) {
+        onBattleEnd(
+          battle.phase === 'victory',
+          playerInBattle.hp,
+          playerInBattle.mp
+        );
+      }
+      setIsBattling(false);
+
+      // 如果战斗失败，退出秘境
+      if (battle.phase === 'defeat') {
+        setTimeout(() => {
+          exitRealm(false);
+          setActiveTab('realms');
+        }, 2000);
+      }
+    }
+  }, [battle, isBattling, onBattleEnd, exitRealm]);
 
   // 如果正在进行秘境，切换到运行标签
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentRun) {
       setActiveTab('run');
     }
@@ -87,7 +162,22 @@ export const ExplorationPanel: React.FC = () => {
   };
 
   const handleClearRoom = () => {
-    clearCurrentRoom();
+    const currentRoom = getCurrentRoom();
+    if (!currentRoom) return;
+
+    // 战斗类型房间启动真正的战斗
+    if (['combat', 'elite', 'boss'].includes(currentRoom.type)) {
+      const playerCombatant = createPlayerCombatant();
+      if (playerCombatant) {
+        const success = startRoomBattle(playerCombatant, startBattle);
+        if (success) {
+          setIsBattling(true);
+        }
+      }
+    } else {
+      // 非战斗房间直接清理
+      clearCurrentRoom();
+    }
   };
 
   const handleExitRealm = () => {
@@ -190,6 +280,22 @@ export const ExplorationPanel: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* 地图 */}
           <Card title={`${SECRET_REALMS[currentRun.realmId]?.name} - 第${currentRun.currentFloor}层`} className="lg:col-span-2">
+            {/* 房间类型图例 */}
+            <div className="flex flex-wrap gap-3 mb-4 p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)' }}>
+              {Object.keys(ROOM_TYPE_ICONS).map((type) => (
+                <div key={type} className="flex items-center gap-1.5">
+                  <div
+                    className={`w-6 h-6 rounded border flex items-center justify-center text-xs font-bold ${ROOM_TYPE_COLORS[type]}`}
+                  >
+                    {ROOM_TYPE_ICONS[type]}
+                  </div>
+                  <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                    {ROOM_TYPE_NAMES[type]}
+                  </span>
+                </div>
+              ))}
+            </div>
+
             <div className="space-y-4">
               {/* 按层显示房间 */}
               {Array.from({ length: SECRET_REALMS[currentRun.realmId]?.floors || 0 }).map((_, floorIndex) => {

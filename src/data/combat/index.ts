@@ -189,7 +189,7 @@ export function calculateHeal(
   _target: Combatant,
   skill: CombatSkill
 ): number {
-  let baseHeal = healer.attack * skill.damageMultiplier * 0.5;
+  let baseHeal = healer.attack * skill.damageMultiplier;
 
   // 随机浮动
   baseHeal *= 0.95 + Math.random() * 0.1;

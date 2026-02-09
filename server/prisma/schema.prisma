@@ -844,25 +844,23 @@ model EnemyTemplate {
   description String?
   type        EnemyType
 
-  // 基础属性
-  baseHp      Int
-  baseAttack  Int
-  baseDefense Int
-  baseSpeed   Int
+  level       Int         @default(1)
 
-  // 属性倍率 (根据等级缩放)
+  // 属性倍率
   hpMultiplier      Float   @default(1.0)
   attackMultiplier  Float   @default(1.0)
   defenseMultiplier Float   @default(1.0)
+  speedMultiplier   Float   @default(1.0)
 
-  // 技能ID列表 JSON
-  skillIds    String?
+  // 技能数据 JSON (完整技能对象数组)
+  skills      String      @default("[]")
 
-  // 掉落表 JSON: [{itemId, rate, minAmount, maxAmount}]
+  // 掉落表 JSON: [{itemId, chance, quantity}]
   dropTable   String?
 
-  // 经验值
-  expReward   Int         @default(10)
+  // 奖励
+  expReward         Int     @default(10)
+  spiritStoneReward Int     @default(0)
 
   // 元素属性
   element     String?
@@ -874,6 +872,7 @@ model EnemyTemplate {
   updatedAt   DateTime    @updatedAt
 
   @@index([type])
+  @@index([level])
 }
 
 enum EnemyType {
@@ -938,8 +937,10 @@ model SkillTemplate {
 
   // 伤害倍率
   damageMultiplier Float @default(1.0)
+  hitCount    Int       @default(1)
+  targetType  String    @default("single") // single, all, self, random
 
-  // 效果 JSON: [{type, target, value, duration?}]
+  // 效果 JSON: [{type, value, duration?, statusType?, chance?}]
   effects     String?
 
   // 学习条件 JSON
@@ -959,6 +960,7 @@ enum SkillType {
   DEFENSE
   SUPPORT
   PASSIVE
+  ULTIMATE
 }
 
 // ==================== 功法模板 ====================
@@ -1025,4 +1027,204 @@ model PlayerSkill {
 
   @@unique([playerId, skillId])
   @@index([playerId])
+}
+
+// ==================== 炼丹系统 ====================
+
+model AlchemyRecipe {
+  id          String   @id @default(uuid())
+  recipeId    String   @unique
+
+  name        String
+  description String?
+  level       Int      @default(1)
+  difficulty  Float    @default(1.0)
+
+  // 所需材料 JSON: [{itemId, quantity}]
+  materials   String
+
+  // 产出物品
+  resultItemId String
+  resultQuantity Int  @default(1)
+
+  // 成功率基础值
+  baseSuccessRate Float @default(0.8)
+
+  // 需要的丹炉等级
+  requiredCauldronLevel Int @default(0)
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([level])
+}
+
+model AlchemyCauldron {
+  id          String   @id @default(uuid())
+  cauldronId  String   @unique
+
+  name        String
+  description String?
+  level       Int      @default(1)
+  quality     String   @default("common")
+
+  // 加成效果 JSON: {successRateBonus, qualityBonus, speedBonus}
+  bonus       String?
+
+  // 获取方式
+  obtainMethod String?
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== 境界配置 ====================
+
+model RealmConfig {
+  id          String   @id @default(uuid())
+  realmId     String   @unique
+
+  name        String
+  displayName String
+  order       Int      // 排序序号
+
+  // 阶段配置 JSON: [{stage, displayName, cultivationNeeded, attributes}]
+  stages      String
+
+  // 突破条件 JSON
+  breakthroughConditions String?
+
+  // 属性加成 JSON
+  attributeBonuses String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// ==================== 出身/灵根配置 ====================
+
+model OriginConfig {
+  id          String   @id @default(uuid())
+  originId    String   @unique
+
+  name        String
+  description String?
+
+  // 初始属性加成 JSON
+  bonuses     String?
+
+  // 起始物品 JSON: [{itemId, quantity}]
+  startItems  String?
+
+  // 起始剧情
+  startStoryId String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SpiritRootConfig {
+  id          String   @id @default(uuid())
+  rootId      String   @unique
+
+  name        String
+  description String?
+  quality     String   // ordinary, excellent, heavenly
+
+  // 元素列表 JSON: ["metal", "wood", ...]
+  elements    String
+
+  // 属性加成 JSON
+  bonuses     String?
+
+  // 修炼速度加成
+  cultivationBonus Float @default(1.0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== 秘境系统 ====================
+
+model RoguelikeDungeon {
+  id          String   @id @default(uuid())
+  dungeonId   String   @unique
+
+  name        String
+  description String?
+  difficulty  Int      @default(1)
+  maxFloors   Int      @default(10)
+
+  // 完整配置 JSON
+  config      String
+
+  // 解锁条件 JSON
+  unlockConditions String?
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([difficulty])
+}
+
+model RoguelikeTalent {
+  id          String   @id @default(uuid())
+  talentId    String   @unique
+
+  name        String
+  description String?
+  tier        Int      @default(1)
+
+  // 效果 JSON: [{type, value, ...}]
+  effects     String
+
+  // 互斥天赋 JSON
+  exclusiveWith String?
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tier])
+}
+
+// ==================== 弟子派遣任务 ====================
+
+model ExpeditionTemplate {
+  id               String   @id @default(uuid())
+  expeditionId     String   @unique
+
+  name             String
+  description      String?
+  type             String   // gather, explore, hunt, special
+
+  minLevel         Int      @default(1)
+  minDiscipleCount Int      @default(1)
+  maxDiscipleCount Int      @default(3)
+  duration         Int      // 秒
+
+  // 基础奖励 JSON: [{type, itemId?, quantity, chance}]
+  baseRewards      String
+
+  // 额外奖励 JSON
+  bonusRewards     String?
+
+  dangerLevel      Int      @default(1)
+  injuryChance     Float    @default(0.05)
+
+  // 特殊要求
+  requiredTalent   String?
+  minTalentValue   Int?
+
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([type])
+  @@index([minLevel])
 }

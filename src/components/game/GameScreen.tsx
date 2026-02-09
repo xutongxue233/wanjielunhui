@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PlayerStatus } from './PlayerStatus';
 import { CultivationPanel } from './CultivationPanel';
 import { StoryPanel } from './StoryPanel';
@@ -6,11 +7,14 @@ import { CombatPanel } from './CombatPanel';
 import { AlchemyPanel } from './AlchemyPanel';
 import { DisciplePanel } from './DisciplePanel';
 import { ExplorationPanel } from './ExplorationPanel';
+import { DeathDialog } from './DeathDialog';
+import { SaveManager } from '../save/SaveManager';
 import { useGameLoop } from '../../core/game-loop';
 import { usePlayerStore } from '../../stores/playerStore';
 import { useGameStore } from '../../stores/gameStore';
 import { useAuthStore } from '../../stores/authStore';
-import { Button } from '../ui';
+import { useContentStore } from '../../stores/contentStore';
+import { Button, Modal } from '../ui';
 import { BottomNav, type NavTab } from '../navigation/BottomNav';
 import { ChatPanel, ChatToggleButton } from '../chat/ChatPanel';
 import { SocialPage } from '../social/SocialPage';
@@ -36,10 +40,30 @@ export const GameScreen: React.FC = () => {
   const [activeNavTab, setActiveNavTab] = useState<NavTab>('game');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showSaveManager, setShowSaveManager] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
+  const contentLoadStarted = useRef(false);
 
   const player = usePlayerStore((state) => state.player);
+  const isPlayerDead = usePlayerStore((state) => state.isPlayerDead);
   const setPhase = useGameStore((state) => state.setPhase);
   const { isAuthenticated, logout } = useAuthStore();
+  const { loadAll, isAllLoaded, getLoadProgress } = useContentStore();
+
+  // 加载游戏内容数据
+  useEffect(() => {
+    if (contentLoadStarted.current) return;
+    contentLoadStarted.current = true;
+
+    if (isAllLoaded()) {
+      setContentReady(true);
+      return;
+    }
+
+    loadAll().then(() => {
+      setContentReady(true);
+    });
+  }, [loadAll, isAllLoaded]);
 
   const fetchUnreadCount = useCallback(async () => {
     try {
@@ -66,6 +90,45 @@ export const GameScreen: React.FC = () => {
   useGameLoop();
 
   if (!player) return null;
+
+  // 显示内容加载进度
+  if (!contentReady) {
+    const { loaded, total } = getLoadProgress();
+    const percent = total > 0 ? Math.round((loaded / total) * 100) : 0;
+    return (
+      <div className="game-screen" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', color: '#d4af37' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>载入天地法则...</h2>
+          <div style={{
+            width: '300px',
+            height: '8px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            margin: '0 auto',
+          }}>
+            <div style={{
+              width: `${percent}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #d4af37, #f5d77a)',
+              borderRadius: '4px',
+              transition: 'width 0.3s ease',
+            }} />
+          </div>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: '#9ca3af' }}>
+            {loaded}/{total}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const pageTransition = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.2, ease: 'easeInOut' as const },
+  };
 
   const renderGameTabContent = () => {
     switch (activeTab) {
@@ -113,7 +176,14 @@ export const GameScreen: React.FC = () => {
               </nav>
 
               <div className="game-content">
-                {renderGameTabContent()}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    {...pageTransition}
+                  >
+                    {renderGameTabContent()}
+                  </motion.div>
+                </AnimatePresence>
               </div>
             </main>
           </div>
@@ -163,6 +233,14 @@ export const GameScreen: React.FC = () => {
             <Button
               size="sm"
               variant="ghost"
+              onClick={() => setShowSaveManager(true)}
+              className="game-btn-save"
+            >
+              存档
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
               onClick={() => setPhase('title')}
               className="game-btn-back"
             >
@@ -185,7 +263,18 @@ export const GameScreen: React.FC = () => {
         </div>
       </header>
 
-      {renderMainContent()}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeNavTab}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeInOut' }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+        >
+          {renderMainContent()}
+        </motion.div>
+      </AnimatePresence>
 
       <BottomNav
         activeTab={activeNavTab}
@@ -203,6 +292,26 @@ export const GameScreen: React.FC = () => {
         onClose={() => setIsChatOpen(false)}
         unreadCount={unreadCount}
       />
+
+      {/* 存档管理弹窗 */}
+      <Modal
+        isOpen={showSaveManager}
+        onClose={() => setShowSaveManager(false)}
+        title="存档管理"
+        size="lg"
+      >
+        <SaveManager
+          onLoad={() => setShowSaveManager(false)}
+          onNewGame={() => {
+            setShowSaveManager(false);
+            setPhase('character_creation');
+          }}
+          onClose={() => setShowSaveManager(false)}
+        />
+      </Modal>
+
+      {/* 死亡对话框 */}
+      <DeathDialog isOpen={isPlayerDead} />
     </div>
   );
 };

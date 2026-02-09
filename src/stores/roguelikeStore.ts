@@ -12,6 +12,9 @@ import {
   generateRealmRooms,
   selectRandomTalents,
 } from '../data/roguelike';
+import type { Combatant, CombatSkill, BattleRewards } from '../data/combat';
+import { ENEMY_TEMPLATES, createEnemyFromTemplate, calculateEnemyStats } from '../data/combat/enemies';
+import { v4 as uuidv4 } from 'uuid';
 
 // 永久天赋节点
 export interface PermanentTalentNode {
@@ -62,6 +65,16 @@ interface RoguelikeStore {
   checkDailyReset: () => void;
   getCurrentRoom: () => Room | null;
   getAvailableRooms: () => Room[];
+
+  // 秘境战斗相关
+  startRoomBattle: (
+    playerCombatant: Combatant,
+    startBattleFn: (allies: Combatant[], enemies: Combatant[], rewards?: BattleRewards) => void
+  ) => boolean;
+  onBattleEnd: (victory: boolean, playerHp: number, playerMp: number) => void;
+  calculateTalentBonuses: () => Record<string, number>;
+  applyTalentBonusesToCombatant: (combatant: Combatant) => Combatant;
+  generateRealmEnemies: (room: Room) => Combatant[];
 }
 
 const PERMANENT_TALENTS: Record<string, PermanentTalentNode> = {
@@ -341,6 +354,236 @@ export const useRoguelikeStore = create<RoguelikeStore>()(
         if (!currentRoom || !currentRoom.isCleared) return [];
 
         return currentRun.rooms.filter(r => currentRoom.connections.includes(r.id));
+      },
+
+      // 计算临时天赋加成
+      calculateTalentBonuses: () => {
+        const { currentRun } = get();
+        const bonuses: Record<string, number> = {};
+
+        if (!currentRun) return bonuses;
+
+        currentRun.acquiredTalents.forEach(({ talent, stacks }) => {
+          talent.effects.forEach(effect => {
+            if (effect.type === 'stat_boost' && effect.stat) {
+              const key = effect.stat;
+              const value = effect.isPercentage ? effect.value * stacks : effect.value * stacks;
+              bonuses[key] = (bonuses[key] || 0) + value;
+            }
+          });
+        });
+
+        return bonuses;
+      },
+
+      // 将临时天赋效果应用到战斗单位
+      applyTalentBonusesToCombatant: (combatant: Combatant) => {
+        const bonuses = get().calculateTalentBonuses();
+        const modified = { ...combatant };
+
+        // 百分比加成
+        if (bonuses.attack) {
+          modified.attack = Math.floor(modified.attack * (1 + bonuses.attack / 100));
+        }
+        if (bonuses.defense) {
+          modified.defense = Math.floor(modified.defense * (1 + bonuses.defense / 100));
+        }
+        if (bonuses.speed) {
+          modified.speed = Math.floor(modified.speed * (1 + bonuses.speed / 100));
+        }
+        if (bonuses.hp) {
+          const hpRatio = modified.hp / modified.maxHp;
+          modified.maxHp = Math.floor(modified.maxHp * (1 + bonuses.hp / 100));
+          modified.hp = Math.floor(modified.maxHp * hpRatio);
+        }
+        if (bonuses.critRate) {
+          modified.critRate = Math.min(1, modified.critRate + bonuses.critRate / 100);
+        }
+        if (bonuses.critDamage) {
+          modified.critDamage = modified.critDamage + bonuses.critDamage / 100;
+        }
+        if (bonuses.damage_reduction) {
+          // 伤害减免作为防御力百分比提升
+          modified.defense = Math.floor(modified.defense * (1 + bonuses.damage_reduction / 100));
+        }
+
+        return modified;
+      },
+
+      // 生成秘境敌人
+      generateRealmEnemies: (room: Room) => {
+        const { currentRun } = get();
+        if (!currentRun || !room.enemies) return [];
+
+        const realm = SECRET_REALMS[currentRun.realmId];
+        if (!realm) return [];
+
+        const enemies: Combatant[] = [];
+
+        room.enemies.forEach(enemyId => {
+          // 尝试从预设敌人模板中获取
+          const template = ENEMY_TEMPLATES[enemyId];
+          if (template) {
+            // 根据秘境难度和层数调整等级
+            const levelBonus = currentRun.currentFloor - 1 + (realm.difficulty - 1) * 2;
+            enemies.push(createEnemyFromTemplate(template, levelBonus));
+          } else {
+            // 如果没有预设模板，生成一个基础敌人
+            const baseLevel = realm.difficulty * 2 + currentRun.currentFloor;
+            const stats = calculateEnemyStats(baseLevel);
+
+            // 根据房间类型调整属性
+            let hpMultiplier = 1.0;
+            let attackMultiplier = 1.0;
+            let name = '妖兽';
+
+            if (room.type === 'elite') {
+              hpMultiplier = 2.0;
+              attackMultiplier = 1.5;
+              name = '精英妖兽';
+            } else if (room.type === 'boss') {
+              hpMultiplier = 3.5;
+              attackMultiplier = 2.0;
+              name = '秘境守护者';
+            }
+
+            const basicSkill: CombatSkill = {
+              id: 'realm_attack',
+              name: '猛击',
+              description: '强力攻击',
+              type: 'attack',
+              element: 'neutral',
+              mpCost: 10,
+              cooldown: 2,
+              currentCooldown: 0,
+              damageMultiplier: 1.5,
+              hitCount: 1,
+              targetType: 'single',
+              effects: [],
+            };
+
+            const enemy: Combatant = {
+              id: uuidv4(),
+              name,
+              isPlayer: false,
+              isAlly: false,
+              hp: Math.floor(stats.hp * hpMultiplier),
+              maxHp: Math.floor(stats.hp * hpMultiplier),
+              mp: stats.mp,
+              maxMp: stats.mp,
+              attack: Math.floor(stats.attack * attackMultiplier),
+              defense: stats.defense,
+              speed: stats.speed,
+              critRate: 0.05,
+              critDamage: 1.5,
+              element: 'neutral',
+              skills: [basicSkill],
+              buffs: [],
+              debuffs: [],
+              isAlive: true,
+              actionGauge: Math.random() * 10,
+            };
+
+            enemies.push(enemy);
+          }
+        });
+
+        return enemies;
+      },
+
+      // 启动秘境战斗
+      startRoomBattle: (playerCombatant, startBattleFn) => {
+        const { currentRun } = get();
+        if (!currentRun) return false;
+
+        const currentRoom = currentRun.rooms.find(r => r.id === currentRun.currentRoomId);
+        if (!currentRoom) return false;
+
+        // 只有战斗类型房间才能启动战斗
+        if (!['combat', 'elite', 'boss'].includes(currentRoom.type)) {
+          return false;
+        }
+
+        // 已清理的房间不能再战斗
+        if (currentRoom.isCleared) {
+          return false;
+        }
+
+        // 生成敌人
+        const enemies = get().generateRealmEnemies(currentRoom);
+        if (enemies.length === 0) {
+          return false;
+        }
+
+        // 应用临时天赋加成到玩家
+        const enhancedPlayer = get().applyTalentBonusesToCombatant(playerCombatant);
+
+        // 更新玩家在秘境中的HP/MP状态到战斗单位
+        enhancedPlayer.hp = Math.min(enhancedPlayer.maxHp, currentRun.hp);
+        enhancedPlayer.mp = Math.min(enhancedPlayer.maxMp, currentRun.mp);
+
+        // 计算战斗奖励
+        const realm = SECRET_REALMS[currentRun.realmId];
+        const rewardMultiplier = currentRoom.type === 'boss' ? 3 : currentRoom.type === 'elite' ? 2 : 1;
+
+        const rewards: BattleRewards = {
+          exp: 50 * realm.difficulty * currentRun.currentFloor * rewardMultiplier,
+          spiritStones: 20 * realm.difficulty * currentRun.currentFloor * rewardMultiplier,
+          items: [],
+        };
+
+        // 启动战斗
+        startBattleFn([enhancedPlayer], enemies, rewards);
+
+        return true;
+      },
+
+      // 战斗结束回调
+      onBattleEnd: (victory, playerHp, playerMp) => {
+        set((state) => {
+          if (!state.currentRun) return;
+
+          // 更新玩家HP/MP
+          state.currentRun.hp = playerHp;
+          state.currentRun.mp = playerMp;
+
+          if (victory) {
+            // 战斗胜利，清理房间
+            const room = state.currentRun.rooms.find(r => r.id === state.currentRun!.currentRoomId);
+            if (room && !room.isCleared) {
+              room.isCleared = true;
+              state.currentRun.roomsCleared++;
+
+              // 收集奖励
+              if (room.rewards) {
+                state.currentRun.collectedRewards.push(...room.rewards);
+              }
+
+              // 增加秘境货币
+              state.currentRun.realmCoins += 10 + room.floor * 5;
+
+              // 战斗房间增加击杀数
+              if (room.enemies) {
+                state.currentRun.enemiesKilled += room.enemies.length;
+              }
+
+              // Boss房间特殊处理：如果是最后一层的boss，标记秘境完成
+              if (room.type === 'boss') {
+                const realm = SECRET_REALMS[state.currentRun.realmId];
+                if (room.floor === realm.floors) {
+                  // 秘境通关，额外奖励
+                  state.currentRun.collectedRewards.push(
+                    ...realm.rewardPool.filter(r => Math.random() < r.chance)
+                  );
+                }
+              }
+            }
+          } else {
+            // 战斗失败，秘境结束
+            // 玩家HP归零，标记需要退出秘境
+            state.currentRun.hp = 0;
+          }
+        });
       },
     })),
     {

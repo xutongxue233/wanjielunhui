@@ -1,11 +1,154 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Button } from '../ui';
 import { useCombatStore } from '../../stores/combatStore';
 import { usePlayerStore } from '../../stores/playerStore';
-import type { Combatant } from '../../data/combat';
+import type { Combatant, CombatSkill } from '../../data/combat';
 import { generateRandomEncounter } from '../../data/combat/enemies';
 import { getSkillsByElement } from '../../data/combat/skills';
+import './CombatPanel.css';
+
+// 技能按钮组件
+const SkillButton: React.FC<{
+  skill: CombatSkill;
+  currentMp: number;
+  isSelected: boolean;
+  onSelect: () => void;
+}> = ({ skill, currentMp, isSelected, onSelect }) => {
+  const isOnCooldown = skill.currentCooldown > 0;
+  const isNotEnoughMp = currentMp < skill.mpCost;
+  const isDisabled = isOnCooldown || isNotEnoughMp;
+
+  // 根据技能类型获取边框颜色
+  const getSkillBorderColor = () => {
+    if (isSelected) return 'border-amber-400';
+    if (isDisabled) return 'border-ink-light';
+    switch (skill.type) {
+      case 'ultimate': return 'border-purple-500/50';
+      case 'support': return 'border-green-500/50';
+      case 'defense': return 'border-blue-500/50';
+      default: return 'border-crimson/50';
+    }
+  };
+
+  // 根据技能元素获取背景颜色
+  const getSkillBgColor = () => {
+    if (isSelected) return 'bg-amber-500/20';
+    if (isDisabled) return 'bg-ink-dark/50';
+    switch (skill.element) {
+      case 'fire': return 'bg-red-900/20';
+      case 'water': return 'bg-blue-900/20';
+      case 'wood': return 'bg-green-900/20';
+      case 'metal': return 'bg-gray-700/20';
+      case 'earth': return 'bg-yellow-900/20';
+      default: return 'bg-ink-medium/30';
+    }
+  };
+
+  return (
+    <motion.button
+      className={`skill-slot relative flex flex-col items-center justify-center min-w-[90px] px-3 py-2 rounded-lg border-2 transition-all ${getSkillBorderColor()} ${getSkillBgColor()} ${
+        isDisabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
+      } ${isSelected ? 'ring-2 ring-amber-400/50 shadow-lg shadow-amber-500/20' : ''}`}
+      onClick={() => !isDisabled && onSelect()}
+      whileHover={!isDisabled ? { scale: 1.05 } : undefined}
+      whileTap={!isDisabled ? { scale: 0.95 } : undefined}
+      disabled={isDisabled}
+    >
+      {/* 技能名称 */}
+      <span className={`text-sm font-medium ${isDisabled ? 'text-text-muted' : 'text-text-primary'}`}>
+        {skill.name}
+      </span>
+
+      {/* 法力消耗 */}
+      <span className={`text-xs mt-1 ${isNotEnoughMp ? 'text-red-400' : 'text-blue-400'}`}>
+        {skill.mpCost > 0 ? `${skill.mpCost} MP` : '无消耗'}
+      </span>
+
+      {/* 冷却显示 */}
+      {isOnCooldown && (
+        <div className="absolute inset-0 flex items-center justify-center bg-ink-dark/70 rounded-lg">
+          <span className="text-lg font-bold text-amber-400">{skill.currentCooldown}</span>
+        </div>
+      )}
+
+      {/* 技能类型标识 */}
+      {skill.type === 'ultimate' && !isOnCooldown && (
+        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-purple-500 flex items-center justify-center">
+          <span className="text-[10px] text-white font-bold">!</span>
+        </div>
+      )}
+    </motion.button>
+  );
+};
+
+// 技能栏组件
+const SkillBar: React.FC<{
+  skills: CombatSkill[];
+  currentMp: number;
+  selectedSkillId: string | null;
+  onSelectSkill: (skillId: string) => void;
+  onBasicAttack: () => void;
+}> = ({ skills, currentMp, selectedSkillId, onSelectSkill, onBasicAttack }) => {
+  // 基础攻击技能
+  const basicAttack: CombatSkill = {
+    id: 'basic_attack',
+    name: '普通攻击',
+    description: '基础攻击',
+    type: 'attack',
+    element: 'neutral',
+    mpCost: 0,
+    cooldown: 0,
+    currentCooldown: 0,
+    damageMultiplier: 1,
+    hitCount: 1,
+    targetType: 'single',
+    effects: [],
+  };
+
+  return (
+    <div className="skill-bar-container">
+      <div className="skill-bar-header">
+        <span className="text-xs text-text-muted">技能栏</span>
+        <span className="text-xs text-blue-400">MP: {currentMp}</span>
+      </div>
+      <div className="skill-bar-content">
+        {/* 普通攻击按钮 */}
+        <SkillButton
+          skill={basicAttack}
+          currentMp={currentMp}
+          isSelected={selectedSkillId === 'basic_attack'}
+          onSelect={onBasicAttack}
+        />
+
+        {/* 技能按钮 */}
+        {skills.map((skill) => (
+          <SkillButton
+            key={skill.id}
+            skill={skill}
+            currentMp={currentMp}
+            isSelected={selectedSkillId === skill.id}
+            onSelect={() => onSelectSkill(skill.id)}
+          />
+        ))}
+      </div>
+
+      {/* 操作提示 */}
+      <AnimatePresence>
+        {selectedSkillId && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="skill-bar-hint"
+          >
+            <span className="text-amber-400">请选择目标</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 // 战斗单位卡片
 const CombatantCard: React.FC<{
@@ -146,6 +289,16 @@ export const CombatPanel: React.FC = () => {
   const executeAction = useCombatStore((state) => state.executeAction);
   const toggleAutoBattle = useCombatStore((state) => state.toggleAutoBattle);
   const setBattleSpeed = useCombatStore((state) => state.setBattleSpeed);
+
+  // 当前选中的技能ID
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+
+  // 切换自动/手动模式时清除技能选择
+  useEffect(() => {
+    if (isAutoBattle) {
+      setSelectedSkillId(null);
+    }
+  }, [isAutoBattle]);
 
   // 战斗胜利时发放奖励
   const rewardClaimedRef = useRef<string | null>(null);
@@ -315,7 +468,8 @@ export const CombatPanel: React.FC = () => {
             {battle.enemies.map((enemy) => {
               // 手动模式下，当前行动者是我方单位时，敌方存活单位可被选中
               const isPlayerTurn = !isAutoBattle && battle.allies.some(a => a.id === battle.currentActorId);
-              const canTarget = isPlayerTurn && enemy.isAlive;
+              // 只有选中了技能后才能选择目标
+              const canTarget = isPlayerTurn && enemy.isAlive && selectedSkillId !== null;
               return (
               <CombatantCard
                 key={enemy.id}
@@ -323,8 +477,9 @@ export const CombatPanel: React.FC = () => {
                 isCurrentActor={battle.currentActorId === enemy.id}
                 isTargetable={canTarget}
                 onSelect={canTarget ? () => {
-                  // 使用普通攻击对该目标发动攻击
-                  executeAction('basic_attack', enemy.id);
+                  // 使用选中的技能对该目标发动攻击
+                  executeAction(selectedSkillId!, enemy.id);
+                  setSelectedSkillId(null);
                 } : undefined}
               />
               );
@@ -349,6 +504,27 @@ export const CombatPanel: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {/* 技能栏 - 仅手动模式且轮到我方行动时显示 */}
+        {!isAutoBattle && battle.allies.some(a => a.id === battle.currentActorId) && (() => {
+          const playerCombatant = battle.allies.find(a => a.isPlayer);
+          if (!playerCombatant) return null;
+          return (
+            <SkillBar
+              skills={playerCombatant.skills}
+              currentMp={playerCombatant.mp}
+              selectedSkillId={selectedSkillId}
+              onSelectSkill={(skillId) => {
+                // 切换技能选择状态
+                setSelectedSkillId(selectedSkillId === skillId ? null : skillId);
+              }}
+              onBasicAttack={() => {
+                // 选择普通攻击
+                setSelectedSkillId(selectedSkillId === 'basic_attack' ? null : 'basic_attack');
+              }}
+            />
+          );
+        })()}
 
         {/* 战斗日志 */}
         <BattleLogPanel />

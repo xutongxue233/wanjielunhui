@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface PlayerState {
   player: Player | null;
   isCreatingCharacter: boolean;
+  isPlayerDead: boolean;  // 玩家是否死亡
 
   // 角色创建
   createCharacter: (name: string, gender: 'male' | 'female', origin: OriginType) => void;
@@ -26,6 +27,11 @@ interface PlayerState {
   // 修炼相关
   addCultivation: (amount: number) => void;
   attemptBreakthrough: () => { success: boolean; message: string };
+
+  // 寿元相关
+  consumeLifespan: (years: number) => { isDead: boolean; remaining: number };
+  checkLifespanWarning: () => { isWarning: boolean; percentage: number };
+  reincarnate: () => void;  // 转世重生
 
   // 属性相关
   modifyAttribute: <K extends keyof PlayerAttributes>(key: K, value: number) => void;
@@ -134,6 +140,7 @@ export const usePlayerStore = create<PlayerState>()(
     immer((set, get) => ({
       player: null,
       isCreatingCharacter: false,
+      isPlayerDead: false,
 
       createCharacter: (name, gender, origin) => {
         set((state) => {
@@ -185,7 +192,7 @@ export const usePlayerStore = create<PlayerState>()(
             // 属性提升：区分小阶段突破和大境界突破
             const isMajorBreakthrough = player.realm.stage === 'peak';
             if (isMajorBreakthrough) {
-              // 大境界突破：属性大幅提升
+              // 大境界突破：属性大幅提升，寿元大幅增加
               state.player.attributes.maxHp *= 1.8;
               state.player.attributes.hp = state.player.attributes.maxHp;
               state.player.attributes.maxMp *= 1.6;
@@ -193,8 +200,11 @@ export const usePlayerStore = create<PlayerState>()(
               state.player.attributes.attack *= 1.7;
               state.player.attributes.defense *= 1.5;
               state.player.attributes.speed = Math.floor(state.player.attributes.speed * 1.3);
+              // 大境界突破增加寿元上限
+              state.player.attributes.maxLifespan += 100;
+              state.player.attributes.lifespan += 50;
             } else {
-              // 小阶段突破：属性小幅提升
+              // 小阶段突破：属性小幅提升，寿元小幅增加
               state.player.attributes.maxHp *= 1.12;
               state.player.attributes.hp = state.player.attributes.maxHp;
               state.player.attributes.maxMp *= 1.10;
@@ -202,19 +212,87 @@ export const usePlayerStore = create<PlayerState>()(
               state.player.attributes.attack *= 1.10;
               state.player.attributes.defense *= 1.08;
               state.player.attributes.speed = Math.floor(state.player.attributes.speed * 1.05);
+              // 小阶段突破增加少量寿元
+              state.player.attributes.maxLifespan += 20;
+              state.player.attributes.lifespan += 10;
             }
           } else {
             // 突破失败，损失部分修为
             state.player.attributes.cultivation = Math.floor(cultivation * 0.8);
+            // 突破失败消耗寿元：大境界5年，小阶段1年
+            const isMajorBreakthrough = player.realm.stage === 'peak';
+            const lifespanCost = isMajorBreakthrough ? 5 : 1;
+            state.player.attributes.lifespan = Math.max(0, state.player.attributes.lifespan - lifespanCost);
+            // 检查是否寿元耗尽
+            if (state.player.attributes.lifespan <= 0) {
+              state.isPlayerDead = true;
+            }
           }
         });
+
+        // 计算寿元消耗量用于返回消息
+        const isMajorBreakthroughAttempt = player.realm.stage === 'peak';
+        const lifespanCostForMessage = isMajorBreakthroughAttempt ? 5 : 1;
+        const playerDied = !success && player.attributes.lifespan - lifespanCostForMessage <= 0;
 
         return {
           success,
           message: success
             ? `突破成功！你已进入${nextRealm.displayName}！`
-            : '突破失败，修为倒退。',
+            : playerDied
+              ? `突破失败，寿元耗尽，道消身陨...`
+              : `突破失败，修为倒退，损耗${lifespanCostForMessage}年寿元。`,
         };
+      },
+
+      // 消耗寿元
+      consumeLifespan: (years) => {
+        const { player } = get();
+        if (!player) {
+          return { isDead: true, remaining: 0 };
+        }
+
+        const newLifespan = Math.max(0, player.attributes.lifespan - years);
+        const isDead = newLifespan <= 0;
+
+        set((state) => {
+          if (!state.player) return;
+          state.player.attributes.lifespan = newLifespan;
+          if (isDead) {
+            state.isPlayerDead = true;
+          }
+        });
+
+        return { isDead, remaining: newLifespan };
+      },
+
+      // 检查寿元警告
+      checkLifespanWarning: () => {
+        const { player } = get();
+        if (!player) {
+          return { isWarning: false, percentage: 100 };
+        }
+
+        const percentage = (player.attributes.lifespan / player.attributes.maxLifespan) * 100;
+        const isWarning = percentage < 20;
+
+        return { isWarning, percentage };
+      },
+
+      // 转世重生
+      reincarnate: () => {
+        set((state) => {
+          if (!state.player) return;
+          // 重置角色到初始状态，但保留一些记忆
+          const origin = state.player.origin;
+          const newPlayer = createPlayer(state.player.name, state.player.gender, origin);
+          // 转世保留部分悟性加成
+          newPlayer.attributes.comprehension = Math.floor(state.player.attributes.comprehension * 0.1) + 10;
+          // 转世保留部分气运
+          newPlayer.attributes.luck = Math.floor(state.player.attributes.luck * 0.1) + 10;
+          state.player = newPlayer;
+          state.isPlayerDead = false;
+        });
       },
 
       modifyAttribute: (key, value) => {

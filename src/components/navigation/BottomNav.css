@@ -5,13 +5,15 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 64px;
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(180deg, rgba(15, 12, 8, 0.95) 0%, rgba(10, 8, 5, 0.98) 100%);
   border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  align-items: flex-start;
   padding: 0 var(--spacing-sm);
+  padding-top: 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 100;
   backdrop-filter: blur(10px);
 }
@@ -103,4 +105,60 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* 移动端适配 - 压缩底部导航高度 */
+@media (max-width: 768px) {
+  .bottom-nav {
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-top: 6px;
+  }
+
+  .bottom-nav-item {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    gap: 2px;
+  }
+
+  .bottom-nav-icon-wrap {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bottom-nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.625rem;
+  }
+
+  .bottom-nav-badge {
+    min-width: 14px;
+    height: 14px;
+    font-size: 0.55rem;
+    top: -2px;
+    right: -6px;
+  }
+}
+
+/* 极小屏幕进一步压缩 */
+@media (max-width: 390px) {
+  .bottom-nav {
+    height: calc(52px + env(safe-area-inset-bottom, 0px));
+    padding-top: 4px;
+  }
+
+  .bottom-nav-item {
+    padding: 2px var(--spacing-xs);
+  }
+
+  .bottom-nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.6rem;
+  }
 }

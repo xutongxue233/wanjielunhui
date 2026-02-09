@@ -105,6 +105,13 @@
   --water-blue: var(--element-water);
   --fire-red: var(--element-fire);
   --earth-yellow: var(--element-earth);
+
+  /* CombatPanel 兼容变量 */
+  --gold-border: var(--border-active);
+  --text-2: var(--text-secondary);
+  --text-3: var(--text-muted);
+  --font-cn: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+  --bg-primary: var(--ink-black);
 }
 
 /* ==================== 基础重置 ==================== */
@@ -117,6 +124,8 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* 支持 iOS 安全区域 */
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 body {
@@ -124,6 +133,8 @@ body {
   background: var(--ink-black);
   color: var(--text-primary);
   min-height: 100vh;
+  /* 考虑安全区域的最小高度 */
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
   line-height: 1.6;
   overflow-x: hidden;
 }

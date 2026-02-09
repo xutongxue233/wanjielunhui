@@ -1,11 +1,15 @@
 import { usePlayerStore } from '../stores/playerStore';
 import { useGameStore } from '../stores/gameStore';
+import { useAlchemyStore } from '../stores/alchemyStore';
+import { useDiscipleStore } from '../stores/discipleStore';
 import { saveApi, type SaveSlot, type SaveData } from './api';
 
 // 获取所有store的状态用于存档
 function getStoreStates() {
   const playerState = usePlayerStore.getState();
   const gameState = useGameStore.getState();
+  const alchemyState = useAlchemyStore.getState();
+  const discipleState = useDiscipleStore.getState();
 
   return {
     playerData: {
@@ -17,8 +21,20 @@ function getStoreStates() {
       storyHistory: gameState.storyHistory,
       settings: gameState.settings,
     },
-    alchemyData: {},
-    discipleData: {},
+    alchemyData: {
+      alchemyLevel: alchemyState.alchemyLevel,
+      alchemyExp: alchemyState.alchemyExp,
+      alchemyExpToNext: alchemyState.alchemyExpToNext,
+      currentFurnace: alchemyState.currentFurnace,
+      learnedRecipes: alchemyState.learnedRecipes,
+      refiningState: alchemyState.refiningState,
+      pillInventory: alchemyState.pillInventory,
+    },
+    discipleData: {
+      disciples: discipleState.disciples,
+      maxDisciples: discipleState.maxDisciples,
+      activeExpeditions: discipleState.activeExpeditions,
+    },
     roguelikeData: {
       roguelikeState: gameState.roguelikeState,
     },
@@ -53,6 +69,48 @@ function restoreStoreStates(saveData: SaveData) {
     }
     if (gameData.settings) {
       useGameStore.setState({ settings: gameData.settings as never });
+    }
+  }
+
+  // 恢复炼丹数据
+  const alchemyData = saveData.alchemyData as {
+    alchemyLevel?: number;
+    alchemyExp?: number;
+    alchemyExpToNext?: number;
+    currentFurnace?: unknown;
+    learnedRecipes?: string[];
+    refiningState?: unknown;
+    pillInventory?: unknown[];
+  };
+
+  if (alchemyData && Object.keys(alchemyData).length > 0) {
+    const alchemyUpdate: Record<string, unknown> = {};
+    if (alchemyData.alchemyLevel !== undefined) alchemyUpdate.alchemyLevel = alchemyData.alchemyLevel;
+    if (alchemyData.alchemyExp !== undefined) alchemyUpdate.alchemyExp = alchemyData.alchemyExp;
+    if (alchemyData.alchemyExpToNext !== undefined) alchemyUpdate.alchemyExpToNext = alchemyData.alchemyExpToNext;
+    if (alchemyData.currentFurnace) alchemyUpdate.currentFurnace = alchemyData.currentFurnace;
+    if (alchemyData.learnedRecipes) alchemyUpdate.learnedRecipes = alchemyData.learnedRecipes;
+    if (alchemyData.refiningState) alchemyUpdate.refiningState = alchemyData.refiningState;
+    if (alchemyData.pillInventory) alchemyUpdate.pillInventory = alchemyData.pillInventory;
+    if (Object.keys(alchemyUpdate).length > 0) {
+      useAlchemyStore.setState(alchemyUpdate as never);
+    }
+  }
+
+  // 恢复弟子数据
+  const discipleData = saveData.discipleData as {
+    disciples?: unknown[];
+    maxDisciples?: number;
+    activeExpeditions?: unknown[];
+  };
+
+  if (discipleData && Object.keys(discipleData).length > 0) {
+    const discipleUpdate: Record<string, unknown> = {};
+    if (discipleData.disciples) discipleUpdate.disciples = discipleData.disciples;
+    if (discipleData.maxDisciples !== undefined) discipleUpdate.maxDisciples = discipleData.maxDisciples;
+    if (discipleData.activeExpeditions) discipleUpdate.activeExpeditions = discipleData.activeExpeditions;
+    if (Object.keys(discipleUpdate).length > 0) {
+      useDiscipleStore.setState(discipleUpdate as never);
     }
   }
 
@@ -153,12 +211,16 @@ class SaveSyncService {
   getLocalSave() {
     const playerData = localStorage.getItem('wanjie-player-storage');
     const gameData = localStorage.getItem('wanjie-game-storage');
+    const alchemyData = localStorage.getItem('wanjie-alchemy-storage');
+    const discipleData = localStorage.getItem('wanjie-disciple-storage');
 
     if (!playerData && !gameData) return null;
 
     return {
       playerData: playerData ? JSON.parse(playerData) : null,
       gameData: gameData ? JSON.parse(gameData) : null,
+      alchemyData: alchemyData ? JSON.parse(alchemyData) : null,
+      discipleData: discipleData ? JSON.parse(discipleData) : null,
     };
   }
 
@@ -182,6 +244,8 @@ class SaveSyncService {
     try {
       const playerState = local.playerData?.state;
       const gameState = local.gameData?.state;
+      const alchemyState = local.alchemyData?.state;
+      const discipleState = local.discipleData?.state;
 
       await saveApi.save(slot, {
         name: playerState?.player?.name || '本地存档',
@@ -192,8 +256,20 @@ class SaveSyncService {
           storyHistory: gameState?.storyHistory,
           settings: gameState?.settings,
         },
-        alchemyData: {},
-        discipleData: {},
+        alchemyData: alchemyState ? {
+          alchemyLevel: alchemyState.alchemyLevel,
+          alchemyExp: alchemyState.alchemyExp,
+          alchemyExpToNext: alchemyState.alchemyExpToNext,
+          currentFurnace: alchemyState.currentFurnace,
+          learnedRecipes: alchemyState.learnedRecipes,
+          refiningState: alchemyState.refiningState,
+          pillInventory: alchemyState.pillInventory,
+        } : {},
+        discipleData: discipleState ? {
+          disciples: discipleState.disciples,
+          maxDisciples: discipleState.maxDisciples,
+          activeExpeditions: discipleState.activeExpeditions,
+        } : {},
         roguelikeData: {
           roguelikeState: gameState?.roguelikeState,
         },

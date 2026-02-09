@@ -235,6 +235,220 @@ export const PILL_RECIPES: Record<string, PillRecipe> = {
       { type: 'purify_root', value: 10 },
     ],
   },
+
+  // 中高级丹药配方
+  jindan_recovery_pill: {
+    id: 'jindan_recovery_pill',
+    name: '金丹恢复丹',
+    description: '金丹期修士专用的恢复丹药',
+    grade: 'medium',
+    element: 'wood',
+    materials: [
+      { itemId: 'blood_ginseng', quantity: 3 },
+      { itemId: 'golden_essence', quantity: 1 },
+      { itemId: 'spirit_grass', quantity: 5 },
+    ],
+    requiredLevel: 6,
+    requiredFurnaceGrade: 3,
+    baseDuration: 300,
+    baseSuccessRate: 0.6,
+    baseOutput: 3,
+    effects: [
+      { type: 'heal_hp', value: 2000 },
+    ],
+  },
+
+  yuanying_recovery_pill: {
+    id: 'yuanying_recovery_pill',
+    name: '元婴恢复丹',
+    description: '元婴期修士专用的恢复丹药',
+    grade: 'high',
+    element: 'wood',
+    materials: [
+      { itemId: 'thousand_year_ginseng', quantity: 1 },
+      { itemId: 'blood_ginseng', quantity: 5 },
+      { itemId: 'spirit_water', quantity: 3 },
+    ],
+    requiredLevel: 10,
+    requiredFurnaceGrade: 4,
+    baseDuration: 600,
+    baseSuccessRate: 0.4,
+    baseOutput: 2,
+    effects: [
+      { type: 'heal_hp', value: 5000 },
+    ],
+  },
+
+  huashen_recovery_pill: {
+    id: 'huashen_recovery_pill',
+    name: '化神恢复丹',
+    description: '化神期修士专用的恢复丹药，蕴含浑厚生命力',
+    grade: 'high',
+    element: 'wood',
+    materials: [
+      { itemId: 'thousand_year_ginseng', quantity: 2 },
+      { itemId: 'life_fruit', quantity: 1 },
+      { itemId: 'earth_essence', quantity: 3 },
+    ],
+    requiredLevel: 14,
+    requiredFurnaceGrade: 5,
+    baseDuration: 1200,
+    baseSuccessRate: 0.3,
+    baseOutput: 2,
+    effects: [
+      { type: 'heal_hp', value: 15000 },
+    ],
+  },
+
+  yuanying_breakthrough_pill: {
+    id: 'yuanying_breakthrough_pill',
+    name: '元婴丹',
+    description: '辅助元婴突破的珍贵丹药',
+    grade: 'high',
+    element: 'neutral',
+    materials: [
+      { itemId: 'golden_essence', quantity: 3 },
+      { itemId: 'dragon_blood', quantity: 1 },
+      { itemId: 'thousand_year_ginseng', quantity: 2 },
+    ],
+    requiredLevel: 12,
+    requiredFurnaceGrade: 5,
+    baseDuration: 2400,
+    baseSuccessRate: 0.25,
+    baseOutput: 1,
+    effects: [
+      { type: 'breakthrough_bonus', value: 0.3 },
+      { type: 'add_cultivation', value: 5000 },
+    ],
+  },
+
+  huashen_breakthrough_pill: {
+    id: 'huashen_breakthrough_pill',
+    name: '化神丹',
+    description: '辅助化神期突破的极品丹药',
+    grade: 'supreme',
+    element: 'fire',
+    materials: [
+      { itemId: 'phoenix_feather', quantity: 1 },
+      { itemId: 'golden_essence', quantity: 5 },
+      { itemId: 'dragon_blood', quantity: 2 },
+    ],
+    requiredLevel: 16,
+    requiredFurnaceGrade: 6,
+    baseDuration: 3600,
+    baseSuccessRate: 0.15,
+    baseOutput: 1,
+    effects: [
+      { type: 'breakthrough_bonus', value: 0.4 },
+      { type: 'add_cultivation', value: 20000 },
+    ],
+  },
+
+  heti_breakthrough_pill: {
+    id: 'heti_breakthrough_pill',
+    name: '合体丹',
+    description: '辅助合体期突破的仙品丹药',
+    grade: 'supreme',
+    element: 'neutral',
+    materials: [
+      { itemId: 'chaos_essence', quantity: 1 },
+      { itemId: 'dragon_blood', quantity: 3 },
+      { itemId: 'phoenix_feather', quantity: 2 },
+    ],
+    requiredLevel: 20,
+    requiredFurnaceGrade: 7,
+    baseDuration: 5400,
+    baseSuccessRate: 0.1,
+    baseOutput: 1,
+    effects: [
+      { type: 'breakthrough_bonus', value: 0.5 },
+      { type: 'add_cultivation', value: 80000 },
+    ],
+  },
+
+  medium_juyuan_pill: {
+    id: 'medium_juyuan_pill',
+    name: '中品聚元丹',
+    description: '蕴含浓郁灵气，大幅增加修为',
+    grade: 'medium',
+    element: 'neutral',
+    materials: [
+      { itemId: 'earth_essence', quantity: 2 },
+      { itemId: 'spirit_grass', quantity: 5 },
+      { itemId: 'century_ginseng', quantity: 1 },
+    ],
+    requiredLevel: 8,
+    requiredFurnaceGrade: 3,
+    baseDuration: 240,
+    baseSuccessRate: 0.55,
+    baseOutput: 2,
+    effects: [
+      { type: 'add_cultivation', value: 5000 },
+    ],
+  },
+
+  high_juyuan_pill: {
+    id: 'high_juyuan_pill',
+    name: '上品聚元丹',
+    description: '蕴含磅礴灵气，极大增加修为',
+    grade: 'high',
+    element: 'neutral',
+    materials: [
+      { itemId: 'golden_essence', quantity: 3 },
+      { itemId: 'thousand_year_ginseng', quantity: 1 },
+      { itemId: 'earth_essence', quantity: 5 },
+    ],
+    requiredLevel: 14,
+    requiredFurnaceGrade: 5,
+    baseDuration: 1200,
+    baseSuccessRate: 0.3,
+    baseOutput: 1,
+    effects: [
+      { type: 'add_cultivation', value: 50000 },
+    ],
+  },
+
+  defense_supreme_pill: {
+    id: 'defense_supreme_pill',
+    name: '金刚丹',
+    description: '大幅提升防御力的高级丹药',
+    grade: 'high',
+    element: 'earth',
+    materials: [
+      { itemId: 'earth_essence', quantity: 5 },
+      { itemId: 'golden_essence', quantity: 2 },
+      { itemId: 'tiger_bone', quantity: 3 },
+    ],
+    requiredLevel: 10,
+    requiredFurnaceGrade: 4,
+    baseDuration: 600,
+    baseSuccessRate: 0.4,
+    baseOutput: 2,
+    effects: [
+      { type: 'buff_defense', value: 100, duration: 600 },
+    ],
+  },
+
+  speed_supreme_pill: {
+    id: 'speed_supreme_pill',
+    name: '疾风丹',
+    description: '大幅提升速度的高级丹药',
+    grade: 'high',
+    element: 'wood',
+    materials: [
+      { itemId: 'century_ginseng', quantity: 2 },
+      { itemId: 'blue_lotus', quantity: 5 },
+      { itemId: 'beast_blood', quantity: 3 },
+    ],
+    requiredLevel: 10,
+    requiredFurnaceGrade: 4,
+    baseDuration: 600,
+    baseSuccessRate: 0.4,
+    baseOutput: 2,
+    effects: [
+      { type: 'buff_speed', value: 50, duration: 600 },
+    ],
+  },
 };
 
 // 材料数据

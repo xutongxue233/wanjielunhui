@@ -4,7 +4,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 64px;
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
 /* 顶部导航栏 */
@@ -63,6 +63,15 @@
 }
 
 .game-btn-back:hover {
+  color: var(--gold);
+}
+
+.game-btn-save {
+  color: var(--gold-light);
+  transition: all 0.2s ease;
+}
+
+.game-btn-save:hover {
   color: var(--gold);
 }
 
@@ -153,6 +162,10 @@
 }
 
 @media (max-width: 768px) {
+  .game-screen {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
   .game-main-wrapper {
     flex-direction: column;
   }
@@ -170,6 +183,35 @@
   }
 
   .game-user-badge {
+    display: flex;
+    gap: 0;
+    padding: 4px 10px;
+  }
+
+  /* 移动端只显示境界，隐藏角色名和分隔线 */
+  .game-user-name,
+  .game-user-divider {
     display: none;
+  }
+
+  .game-user-realm {
+    font-size: 0.75rem;
+  }
+
+  .game-content {
+    padding: 16px;
+    padding-bottom: 24px;
+  }
+}
+
+/* 极小屏幕 */
+@media (max-width: 390px) {
+  .game-screen {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .game-content {
+    padding: 12px;
+    padding-bottom: 20px;
   }
 }
