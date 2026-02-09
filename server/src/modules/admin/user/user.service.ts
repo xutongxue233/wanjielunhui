@@ -37,7 +37,12 @@ export class UserService {
         lastLoginAt: u.lastLoginAt,
         loginCount: u.loginCount,
         createdAt: u.createdAt,
-        player: u.player,
+        player: u.player ? {
+          name: u.player.name,
+          realm: u.player.realm,
+          realmStage: u.player.realmStage,
+          combatPower: Number(u.player.combatPower),
+        } : null,
       })),
       total,
       page,

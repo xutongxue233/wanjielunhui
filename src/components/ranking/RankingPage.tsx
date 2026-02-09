@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { rankingApiExtended, type RankingEntry } from '../../services/api';
+import { Tabs } from '../ui';
 import './RankingPage.css';
 
 type RankingTab = 'combat' | 'realm' | 'wealth' | 'pvp';
@@ -29,7 +30,7 @@ export function RankingPage() {
   const loadRankings = async () => {
     setLoading(true);
     try {
-      let rankingsData: { rankings: RankingEntry[]; total: number };
+      let rankingsData: { entries?: RankingEntry[]; rankings?: RankingEntry[]; total: number };
 
       switch (activeTab) {
         case 'combat':
@@ -45,10 +46,11 @@ export function RankingPage() {
           rankingsData = await rankingApiExtended.getPvp();
           break;
         default:
-          rankingsData = { rankings: [], total: 0 };
+          rankingsData = { entries: [], total: 0 };
       }
 
-      setRankings(rankingsData.rankings);
+      // 兼容后端返回 entries 或 rankings 字段
+      setRankings(rankingsData.entries || rankingsData.rankings || []);
 
       // 获取我的排名
       try {
@@ -86,17 +88,12 @@ export function RankingPage() {
 
   return (
     <div className="ranking-page">
-      <div className="ranking-tabs">
-        {RANKING_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            className={`ranking-tab ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        items={RANKING_TABS.map((tab) => ({ key: tab.id, label: tab.label }))}
+        activeKey={activeTab}
+        onChange={(key) => setActiveTab(key as RankingTab)}
+        className="ranking-tabs"
+      />
 
       <div className="ranking-content">
         {myRank && (

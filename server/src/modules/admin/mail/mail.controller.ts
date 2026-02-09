@@ -22,7 +22,11 @@ const broadcastMailSchema = z.object({
 
 export class AdminMailController {
   async broadcast(request: FastifyRequest, reply: FastifyReply) {
-    const input = broadcastMailSchema.parse(request.body);
+    const parsed = broadcastMailSchema.parse(request.body);
+    const input = {
+      ...parsed,
+      attachments: parsed.attachments ?? [],
+    };
     const result = await adminMailService.broadcastMail(input);
     return reply.send({ success: true, data: result });
   }

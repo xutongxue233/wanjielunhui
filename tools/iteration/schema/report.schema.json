@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IterationReport",
+  "description": "迭代报告定义",
+  "type": "object",
+  "required": ["iteration", "timestamp", "status"],
+  "properties": {
+    "iteration": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "迭代轮次"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "报告生成时间"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "failed", "aborted"],
+      "description": "迭代状态"
+    },
+    "phases_completed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["plan", "api_audit", "admin_audit", "devtools_test", "fix"]
+      },
+      "description": "已完成的阶段"
+    },
+    "issues": {
+      "type": "object",
+      "properties": {
+        "total": { "type": "integer" },
+        "p0": { "type": "integer" },
+        "p1": { "type": "integer" },
+        "p2": { "type": "integer" },
+        "fixed": { "type": "integer" }
+      }
+    },
+    "stop_conditions": {
+      "type": "object",
+      "properties": {
+        "p0_p1_cleared": { "type": "boolean" },
+        "no_console_errors": { "type": "boolean" },
+        "no_network_failures": { "type": "boolean" },
+        "admin_acceptance": { "type": "boolean" },
+        "multi_viewport": { "type": "boolean" }
+      }
+    },
+    "duration_ms": {
+      "type": "integer",
+      "description": "迭代耗时(毫秒)"
+    },
+    "report_dir": {
+      "type": "string",
+      "description": "报告目录路径"
+    }
+  }
+}

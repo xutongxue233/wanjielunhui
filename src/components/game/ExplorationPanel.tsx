@@ -115,7 +115,7 @@ export const ExplorationPanel: React.FC = () => {
       </div>
 
       {/* 标签页 */}
-      <div className="flex gap-2">
+      <div className="game-tabs">
         {[
           { id: 'realms', name: '秘境列表' },
           { id: 'run', name: '当前探索', disabled: !currentRun },
@@ -123,13 +123,7 @@ export const ExplorationPanel: React.FC = () => {
         ].map((tab) => (
           <button
             key={tab.id}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              activeTab === tab.id
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-500'
-                : tab.disabled
-                ? 'bg-gray-800/30 text-gray-600 border border-gray-700 cursor-not-allowed'
-                : 'bg-gray-700/30 text-gray-400 border border-gray-600 hover:border-gray-500'
-            }`}
+            className={`game-tab ${activeTab === tab.id ? 'active' : ''} ${tab.disabled ? 'disabled' : ''}`}
             onClick={() => !tab.disabled && setActiveTab(tab.id as typeof activeTab)}
             disabled={tab.disabled}
           >

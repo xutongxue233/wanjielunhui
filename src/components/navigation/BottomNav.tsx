@@ -37,7 +37,7 @@ export function BottomNav({ activeTab, onTabChange, unreadCount }: BottomNavProp
             >
               <path d={item.icon} />
             </svg>
-            {item.id === 'social' && unreadCount && unreadCount > 0 && (
+            {item.id === 'social' && unreadCount !== undefined && unreadCount > 0 && (
               <span className="bottom-nav-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
             )}
           </div>

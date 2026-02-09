@@ -1,0 +1,175 @@
+/* GameScreen - 使用Design System CSS变量 */
+
+.game-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 64px;
+}
+
+/* 顶部导航栏 */
+.game-header {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.game-header-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.game-title {
+  font-family: 'Ma Shan Zheng', serif;
+}
+
+.game-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.game-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 90, 43, 0.15) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.game-user-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.game-user-divider {
+  height: 16px;
+  width: 1px;
+  background: rgba(212, 175, 55, 0.4);
+}
+
+.game-user-realm {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gold-immortal);
+}
+
+.game-btn-back {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.game-btn-back:hover {
+  color: var(--gold);
+}
+
+.game-btn-logout {
+  color: var(--crimson-light);
+  transition: all 0.2s ease;
+}
+
+.game-btn-logout:hover {
+  color: var(--crimson);
+}
+
+/* 主内容区域 */
+.game-main-wrapper {
+  flex: 1;
+  display: flex;
+  max-width: 80rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 侧边栏 */
+.game-sidebar {
+  width: 280px;
+  min-width: 280px;
+  padding: 16px;
+  border-right: 1px solid var(--border-subtle);
+}
+
+/* 主内容 */
+.game-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-tabs-nav {
+  display: flex;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.game-tab-btn {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.game-tab-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.game-tab-soon {
+  margin-left: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.game-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* 页面容器 */
+.game-page-container {
+  flex: 1;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.game-page-container.social,
+.game-page-container.pvp,
+.game-page-container.ranking {
+  max-width: 56rem;
+}
+
+.game-page-container.market {
+  max-width: 64rem;
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .game-sidebar {
+    width: 240px;
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-main-wrapper {
+    flex-direction: column;
+  }
+
+  .game-sidebar {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .game-tabs-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .game-user-badge {
+    display: none;
+  }
+}

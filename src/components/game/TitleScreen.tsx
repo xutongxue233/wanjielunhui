@@ -4,16 +4,13 @@ import { Button } from '../ui';
 import { useGameStore } from '../../stores/gameStore';
 import { usePlayerStore } from '../../stores/playerStore';
 import { useAuthStore } from '../../stores/authStore';
+import { authApi } from '../../services/api';
+import './TitleScreen.css';
 
 const FloatingParticle: React.FC<{ delay: number; duration: number; x: number }> = ({ delay, duration, x }) => (
   <motion.div
-    className="absolute w-1 h-1 rounded-full"
-    style={{
-      left: `${x}%`,
-      bottom: '-5%',
-      background: 'radial-gradient(circle, rgba(201, 162, 39, 0.8) 0%, transparent 70%)',
-      boxShadow: '0 0 6px rgba(201, 162, 39, 0.6)',
-    }}
+    className="absolute w-1 h-1 rounded-full title-particle"
+    style={{ left: `${x}%`, bottom: '-5%' }}
     animate={{
       y: [0, -window.innerHeight * 1.2],
       opacity: [0, 1, 1, 0],
@@ -44,12 +41,8 @@ const MountainLayer: React.FC<{ opacity: number; yOffset: number; scale: number 
 
 const CloudLayer: React.FC<{ className?: string; style?: React.CSSProperties }> = ({ className, style }) => (
   <motion.div
-    className={`absolute pointer-events-none ${className}`}
-    style={{
-      background: 'radial-gradient(ellipse 80% 40% at center, rgba(201, 162, 39, 0.03) 0%, transparent 70%)',
-      filter: 'blur(30px)',
-      ...style,
-    }}
+    className={`absolute pointer-events-none title-cloud ${className}`}
+    style={style}
     animate={{
       x: ['-5%', '5%', '-5%'],
       opacity: [0.3, 0.6, 0.3],
@@ -126,16 +119,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
     >
       {/* 深层背景 - 星空效果 */}
       <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(ellipse 120% 80% at 50% 0%, rgba(45, 139, 111, 0.08) 0%, transparent 50%),
-              radial-gradient(ellipse 80% 60% at 20% 100%, rgba(109, 40, 217, 0.06) 0%, transparent 40%),
-              radial-gradient(ellipse 60% 80% at 90% 80%, rgba(201, 162, 39, 0.05) 0%, transparent 40%)
-            `,
-          }}
-        />
+        <div className="absolute inset-0 title-bg-gradient" />
       </div>
 
       {/* 远山层 */}
@@ -165,12 +149,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
       {/* 中心光晕 */}
       <motion.div
-        className="absolute top-1/3 left-1/2 w-[600px] h-[600px] rounded-full"
-        style={{
-          transform: 'translate(-50%, -50%)',
-          background: 'radial-gradient(circle, rgba(201, 162, 39, 0.12) 0%, rgba(201, 162, 39, 0.05) 30%, transparent 70%)',
-          filter: 'blur(60px)',
-        }}
+        className="absolute top-1/3 left-1/2 w-[600px] h-[600px] rounded-full title-center-glow"
         animate={{
           scale: [1, 1.1, 1],
           opacity: [0.6, 1, 0.6],
@@ -184,12 +163,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
       {/* 八卦阵 - 外圈 */}
       <motion.div
-        className="absolute top-1/2 left-1/2 w-[700px] h-[700px] rounded-full"
-        style={{
-          transform: 'translate(-50%, -50%)',
-          border: '1px solid rgba(201, 162, 39, 0.1)',
-          boxShadow: 'inset 0 0 100px rgba(201, 162, 39, 0.03)',
-        }}
+        className="absolute top-1/2 left-1/2 w-[700px] h-[700px] rounded-full title-bagua-outer"
         animate={{ rotate: 360 }}
         transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
       >
@@ -214,57 +188,25 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
               ease: 'easeInOut',
             }}
           >
-            <div
-              className="w-full h-full rounded-full"
-              style={{
-                background: 'var(--gold-immortal)',
-                boxShadow: '0 0 10px var(--gold-immortal), 0 0 20px rgba(201, 162, 39, 0.5)',
-              }}
-            />
+            <div className="w-full h-full rounded-full title-bagua-dot" />
           </motion.div>
         ))}
       </motion.div>
 
       {/* 八卦阵 - 内圈 */}
       <motion.div
-        className="absolute top-1/2 left-1/2 w-[400px] h-[400px] rounded-full opacity-10"
-        style={{
-          transform: 'translate(-50%, -50%)',
-          background: `conic-gradient(
-            from 0deg,
-            transparent 0deg 22.5deg,
-            var(--gold-immortal) 22.5deg 67.5deg,
-            transparent 67.5deg 112.5deg,
-            var(--gold-immortal) 112.5deg 157.5deg,
-            transparent 157.5deg 202.5deg,
-            var(--gold-immortal) 202.5deg 247.5deg,
-            transparent 247.5deg 292.5deg,
-            var(--gold-immortal) 292.5deg 337.5deg,
-            transparent 337.5deg 360deg
-          )`,
-        }}
+        className="absolute top-1/2 left-1/2 w-[400px] h-[400px] rounded-full opacity-10 title-bagua-inner"
         animate={{ rotate: -360 }}
         transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
       />
 
       {/* 太极核心 */}
       <motion.div
-        className="absolute top-1/2 left-1/2 w-32 h-32"
-        style={{ transform: 'translate(-50%, -50%)' }}
+        className="absolute top-1/2 left-1/2 w-32 h-32 title-taiji"
         animate={{ rotate: 360 }}
         transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
       >
-        <div
-          className="w-full h-full rounded-full opacity-20"
-          style={{
-            background: `
-              linear-gradient(90deg, var(--ink-black) 50%, var(--gold-immortal) 50%),
-              radial-gradient(circle at 25% 50%, var(--gold-immortal) 12%, transparent 12%),
-              radial-gradient(circle at 75% 50%, var(--ink-black) 12%, transparent 12%)
-            `,
-            backgroundBlendMode: 'normal',
-          }}
-        />
+        <div className="w-full h-full rounded-full opacity-20 title-taiji-inner" />
       </motion.div>
 
       {/* 主内容 */}
@@ -274,10 +216,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
             <>
               {/* 顶部装饰线 */}
               <motion.div
-                className="w-40 h-px mx-auto mb-5"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, var(--gold-immortal) 50%, transparent 100%)',
-                }}
+                className="w-40 h-px mx-auto mb-5 title-deco-line"
                 initial={{ scaleX: 0, opacity: 0 }}
                 animate={{ scaleX: 1, opacity: 0.6 }}
                 transition={{ duration: 1.2, delay: 0.3 }}
@@ -285,12 +224,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
               {/* 副标题 - 上 */}
               <motion.p
-                className="text-xs tracking-[0.4em] mb-3"
-                style={{
-                  color: 'var(--gold-immortal)',
-                  fontFamily: "'Noto Serif SC', serif",
-                  opacity: 0.7,
-                }}
+                className="text-xs tracking-[0.4em] mb-3 title-subtitle-top"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 0.7, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -300,16 +234,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
               {/* 主标题 */}
               <motion.h1
-                className="text-6xl md:text-7xl font-bold mb-3"
-                style={{
-                  fontFamily: "'Ma Shan Zheng', 'Noto Serif SC', serif",
-                  background: 'linear-gradient(180deg, var(--gold-light) 0%, var(--gold-immortal) 40%, #8b6914 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textShadow: '0 0 60px rgba(201, 162, 39, 0.3)',
-                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))',
-                }}
+                className="text-6xl md:text-7xl font-bold mb-3 title-main"
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
@@ -319,12 +244,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
               {/* 副标题 - 下 */}
               <motion.p
-                className="text-lg md:text-xl mb-2"
-                style={{
-                  color: 'var(--text-secondary)',
-                  fontFamily: "'ZCOOL XiaoWei', serif",
-                  letterSpacing: '0.15em',
-                }}
+                className="text-lg md:text-xl mb-2 title-subtitle-bottom"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
@@ -334,12 +254,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
               {/* 装饰诗句 */}
               <motion.p
-                className="text-xs"
-                style={{
-                  color: 'var(--text-muted)',
-                  fontFamily: "'Noto Serif SC', serif",
-                  fontStyle: 'italic',
-                }}
+                className="text-xs title-poem"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.5 }}
                 transition={{ duration: 1, delay: 0.8 }}
@@ -349,50 +264,22 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
               {/* 按钮组 */}
               <motion.div
-                style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}
+                className="title-buttons"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1 }}
               >
                 {/* 已登录状态 - 简洁显示 */}
                 {isAuthenticated && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '8px 16px',
-                      background: 'rgba(201, 162, 39, 0.08)',
-                      border: '1px solid rgba(201, 162, 39, 0.2)',
-                      borderRadius: '20px',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        background: 'var(--jade-essence)',
-                        boxShadow: '0 0 6px var(--jade-essence)',
-                      }}
-                    />
-                    <span style={{ fontSize: '0.8rem', color: 'var(--gold-light)' }}>
+                  <div className="title-user-badge">
+                    <span className="title-user-dot" />
+                    <span className="title-user-name">
                       {user?.username || '修仙者'}
                     </span>
-                    <span style={{ width: '1px', height: '12px', background: 'rgba(201, 162, 39, 0.3)' }} />
+                    <span className="title-user-divider" />
                     <button
                       onClick={logout}
-                      style={{
-                        fontSize: '0.75rem',
-                        color: 'var(--text-muted)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'color 0.2s',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(224, 104, 96, 0.9)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                      className="title-logout-btn"
                     >
                       退出
                     </button>
@@ -400,11 +287,10 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
                 )}
 
                 {/* 主按钮区 */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+                <div className="title-btn-group">
                   {/* 主游戏按钮 */}
                   <motion.button
-                    className="btn-xian btn-primary"
-                    style={{ fontSize: '1.1rem', padding: '16px 48px', minWidth: '200px' }}
+                    className="btn-xian btn-primary title-btn-primary"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={player ? handleContinue : handleNewGame}
@@ -413,11 +299,10 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
                   </motion.button>
 
                   {/* 辅助按钮行 */}
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div className="title-btn-row">
                     {player && (
                       <motion.button
-                        className="btn-xian"
-                        style={{ fontSize: '0.875rem', padding: '10px 24px' }}
+                        className="btn-xian title-btn-secondary"
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={handleNewGame}
@@ -429,20 +314,11 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
                     {!isAuthenticated && (
                       <>
                         {player && (
-                          <span style={{ width: '1px', height: '20px', background: 'rgba(201, 162, 39, 0.2)' }} />
+                          <span className="title-btn-divider" />
                         )}
                         <motion.button
-                          style={{
-                            fontSize: '0.875rem',
-                            padding: '10px 24px',
-                            background: 'transparent',
-                            border: '1px solid rgba(201, 162, 39, 0.4)',
-                            borderRadius: '6px',
-                            color: 'var(--gold-immortal)',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                          }}
-                          whileHover={{ scale: 1.03, borderColor: 'rgba(201, 162, 39, 0.7)' }}
+                          className="title-btn-login"
+                          whileHover={{ scale: 1.03 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={() => setShowLoginPrompt(true)}
                         >
@@ -454,7 +330,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
 
                   {/* 提示文字 */}
                   {!isAuthenticated && (
-                    <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', opacity: 0.6 }}>
+                    <p className="title-hint">
                       登录后可云端同步存档
                     </p>
                   )}
@@ -468,21 +344,10 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 1.2 }}
               >
-                <div
-                  className="flex items-center gap-3 text-xs"
-                  style={{ color: 'var(--text-muted)' }}
-                >
-                  <span style={{
-                    width: '30px',
-                    height: '1px',
-                    background: 'linear-gradient(90deg, transparent, var(--text-muted))'
-                  }} />
+                <div className="flex items-center gap-3 text-xs title-footer">
+                  <span className="title-version-line left" />
                   <span>版本 0.1.0</span>
-                  <span style={{
-                    width: '30px',
-                    height: '1px',
-                    background: 'linear-gradient(90deg, var(--text-muted), transparent)'
-                  }} />
+                  <span className="title-version-line right" />
                 </div>
               </motion.div>
             </>
@@ -500,26 +365,21 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="absolute inset-0"
-              style={{ background: 'rgba(10, 10, 15, 0.9)', backdropFilter: 'blur(8px)' }}
+              className="absolute inset-0 title-modal-overlay"
               onClick={() => setShowConfirm(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
             <motion.div
-              className="relative card-xian max-w-md w-full mx-4"
-              style={{
-                background: 'linear-gradient(145deg, rgba(26, 26, 40, 0.95) 0%, rgba(18, 18, 26, 0.98) 100%)',
-                boxShadow: '0 0 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(201, 162, 39, 0.1)',
-              }}
+              className="relative card-xian max-w-md w-full mx-4 title-modal-card"
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             >
               <h3 className="card-title">道心动摇</h3>
-              <p style={{ color: 'var(--text-secondary)' }} className="mb-6">
+              <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
                 重踏仙途将抹去前世因果,此决定不可逆转。是否确认?
               </p>
               <div className="flex gap-4">
@@ -583,39 +443,15 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? '/api/v1/auth/login' : '/api/v1/auth/register';
-      const body = isLogin
-        ? { account, password }
-        : { username, email, password };
-
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error?.message || '操作失败');
-      }
-
       if (isLogin) {
-        setAuth(data.data.user, data.data.accessToken, data.data.refreshToken);
+        const res = await authApi.login(account, password);
+        setAuth(res.user, res.accessToken, res.refreshToken);
       } else {
-        // 注册成功后自动登录
-        const loginRes = await fetch('/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ account: username, password }),
-        });
-        const loginData = await loginRes.json();
-        if (loginRes.ok) {
-          setAuth(loginData.data.user, loginData.data.accessToken, loginData.data.refreshToken);
-        }
+        await authApi.register(username, email, password);
+        const loginRes = await authApi.login(username, password);
+        setAuth(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
       }
 
-      // 登录成功，调用回调跳转到存档管理
       if (onLoginSuccess) {
         onLoginSuccess();
       } else {
@@ -636,19 +472,14 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="absolute inset-0"
-        style={{ background: 'rgba(10, 10, 15, 0.9)', backdropFilter: 'blur(8px)' }}
+        className="absolute inset-0 title-modal-overlay"
         onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       />
       <motion.div
-        className="relative card-xian max-w-md w-full mx-4"
-        style={{
-          background: 'linear-gradient(145deg, rgba(26, 26, 40, 0.95) 0%, rgba(18, 18, 26, 0.98) 100%)',
-          boxShadow: '0 0 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(201, 162, 39, 0.1)',
-        }}
+        className="relative card-xian max-w-md w-full mx-4 title-modal-card"
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -658,42 +489,22 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
         <h3 className="card-title">{isLogin ? '道友登录' : '加入仙途'}</h3>
 
         {/* 切换标签 */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        <div className="title-auth-tabs">
           <button
             onClick={() => setIsLogin(true)}
-            style={{
-              flex: 1,
-              padding: '8px',
-              background: isLogin ? 'rgba(201, 162, 39, 0.15)' : 'transparent',
-              border: `1px solid ${isLogin ? 'rgba(201, 162, 39, 0.4)' : 'rgba(255,255,255,0.1)'}`,
-              borderRadius: '4px',
-              color: isLogin ? 'var(--gold-immortal)' : 'var(--text-muted)',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
+            className={`title-auth-tab ${isLogin ? 'active' : 'inactive'}`}
           >
             登录
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            style={{
-              flex: 1,
-              padding: '8px',
-              background: !isLogin ? 'rgba(201, 162, 39, 0.15)' : 'transparent',
-              border: `1px solid ${!isLogin ? 'rgba(201, 162, 39, 0.4)' : 'rgba(255,255,255,0.1)'}`,
-              borderRadius: '4px',
-              color: !isLogin ? 'var(--gold-immortal)' : 'var(--text-muted)',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
+            className={`title-auth-tab ${!isLogin ? 'active' : 'inactive'}`}
           >
             注册
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <form onSubmit={handleSubmit} className="title-auth-form">
           {isLogin ? (
             <>
               <input
@@ -702,15 +513,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
                 value={account}
                 onChange={(e) => setAccount(e.target.value)}
                 required
-                style={{
-                  padding: '10px 14px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(201, 162, 39, 0.2)',
-                  borderRadius: '6px',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
+                className="title-auth-input"
               />
               <input
                 type="password"
@@ -718,15 +521,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{
-                  padding: '10px 14px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(201, 162, 39, 0.2)',
-                  borderRadius: '6px',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
+                className="title-auth-input"
               />
             </>
           ) : (
@@ -737,15 +532,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                style={{
-                  padding: '10px 14px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(201, 162, 39, 0.2)',
-                  borderRadius: '6px',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
+                className="title-auth-input"
               />
               <input
                 type="email"
@@ -753,15 +540,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                style={{
-                  padding: '10px 14px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(201, 162, 39, 0.2)',
-                  borderRadius: '6px',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
+                className="title-auth-input"
               />
               <input
                 type="password"
@@ -769,35 +548,18 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{
-                  padding: '10px 14px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(201, 162, 39, 0.2)',
-                  borderRadius: '6px',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                }}
+                className="title-auth-input"
               />
             </>
           )}
 
           {error && (
-            <div
-              style={{
-                padding: '8px 12px',
-                background: 'rgba(224, 104, 96, 0.1)',
-                border: '1px solid rgba(224, 104, 96, 0.3)',
-                borderRadius: '4px',
-                color: '#e06860',
-                fontSize: '0.8rem',
-              }}
-            >
+            <div className="title-auth-error">
               {error}
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+          <div className="title-auth-buttons">
             <Button
               type="button"
               variant="ghost"
@@ -819,14 +581,7 @@ const LoginModal: React.FC<{ onClose: () => void; onLoginSuccess?: () => void }>
           </div>
         </form>
 
-        <p
-          style={{
-            marginTop: '16px',
-            fontSize: '0.75rem',
-            color: 'var(--text-muted)',
-            textAlign: 'center',
-          }}
-        >
+        <p className="title-auth-hint">
           登录后可在不同设备间同步存档
         </p>
       </motion.div>

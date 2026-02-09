@@ -44,7 +44,7 @@ export class MarketService {
           sellerId,
           itemType: input.itemType,
           itemId: input.itemId,
-          itemData: input.itemData,
+          itemData: JSON.stringify(input.itemData),
           amount: input.amount,
           price: BigInt(input.price),
           currency: input.currency,
@@ -63,7 +63,7 @@ export class MarketService {
       sellerName: seller.name,
       itemType: listing.itemType,
       itemId: listing.itemId,
-      itemData: listing.itemData as Record<string, unknown>,
+      itemData: listing.itemData ? (JSON.parse(listing.itemData) as Record<string, unknown>) : {},
       amount: listing.amount,
       price: Number(listing.price),
       currency: listing.currency,
@@ -109,7 +109,7 @@ export class MarketService {
         sellerName: l.seller.name,
         itemType: l.itemType,
         itemId: l.itemId,
-        itemData: l.itemData as Record<string, unknown>,
+        itemData: l.itemData ? (JSON.parse(l.itemData) as Record<string, unknown>) : {},
         amount: l.amount,
         price: Number(l.price),
         currency: l.currency,
@@ -277,7 +277,7 @@ export class MarketService {
       sellerName: l.seller.name,
       itemType: l.itemType,
       itemId: l.itemId,
-      itemData: l.itemData as Record<string, unknown>,
+      itemData: l.itemData ? (JSON.parse(l.itemData) as Record<string, unknown>) : {},
       amount: l.amount,
       price: Number(l.price),
       currency: l.currency,
@@ -285,6 +285,126 @@ export class MarketService {
       expiresAt: l.expiresAt,
       createdAt: l.createdAt,
     }));
+  }
+
+  // 系统商店商品定义
+  private readonly SHOP_ITEMS = [
+    {
+      id: 'shop_1',
+      itemId: 'pill_qi_recovery',
+      itemName: '回气丹',
+      itemType: 'pill',
+      itemRarity: 'common',
+      itemIcon: 'pill_blue',
+      description: '恢复少量灵力',
+      price: 100,
+      currency: 'spiritStones',
+      stock: null as number | null,
+      category: '丹药',
+    },
+    {
+      id: 'shop_2',
+      itemId: 'pill_cultivation',
+      itemName: '聚灵丹',
+      itemType: 'pill',
+      itemRarity: 'uncommon',
+      itemIcon: 'pill_green',
+      description: '提升修炼速度',
+      price: 500,
+      currency: 'spiritStones',
+      stock: null as number | null,
+      category: '丹药',
+    },
+    {
+      id: 'shop_3',
+      itemId: 'material_herb_1',
+      itemName: '灵草',
+      itemType: 'material',
+      itemRarity: 'common',
+      itemIcon: 'herb_1',
+      description: '炼丹常用材料',
+      price: 50,
+      currency: 'spiritStones',
+      stock: null as number | null,
+      category: '材料',
+    },
+    {
+      id: 'shop_4',
+      itemId: 'exp_scroll',
+      itemName: '悟道符',
+      itemType: 'consumable',
+      itemRarity: 'rare',
+      itemIcon: 'scroll_1',
+      description: '获得大量修为',
+      price: 2000,
+      currency: 'spiritStones',
+      stock: 10 as number | null,
+      category: '推荐',
+    },
+  ];
+
+  async getShopItems(category?: string): Promise<typeof this.SHOP_ITEMS> {
+    if (category && category !== '推荐') {
+      return this.SHOP_ITEMS.filter((item) => item.category === category);
+    }
+    return this.SHOP_ITEMS;
+  }
+
+  async buyShopItem(
+    playerId: string,
+    itemId: string,
+    quantity: number = 1
+  ): Promise<void> {
+    const shopItem = this.SHOP_ITEMS.find((item) => item.itemId === itemId);
+
+    if (!shopItem) {
+      throw new NotFoundError(ErrorCodes.NOT_FOUND, '商品不存在');
+    }
+
+    if (shopItem.stock !== null && shopItem.stock < quantity) {
+      throw new BadRequestError(ErrorCodes.INVALID_INPUT, '库存不足');
+    }
+
+    const totalPrice = BigInt(shopItem.price * quantity);
+
+    const player = await prisma.player.findUnique({
+      where: { id: playerId },
+    });
+
+    if (!player) {
+      throw new NotFoundError(ErrorCodes.PLAYER_NOT_FOUND, '玩家不存在');
+    }
+
+    if (player.spiritStones < totalPrice) {
+      throw new BadRequestError(ErrorCodes.INSUFFICIENT_FUNDS, '灵石不足');
+    }
+
+    // 扣灵石并将物品添加到玩家背包
+    await prisma.$transaction([
+      prisma.player.update({
+        where: { id: playerId },
+        data: { spiritStones: { decrement: totalPrice } },
+      }),
+      // 使用 upsert 处理背包中已有同类物品的情况（叠加数量）
+      prisma.playerInventory.upsert({
+        where: {
+          playerId_itemId_itemType: {
+            playerId,
+            itemId: shopItem.itemId,
+            itemType: shopItem.itemType,
+          },
+        },
+        create: {
+          playerId,
+          itemId: shopItem.itemId,
+          itemType: shopItem.itemType,
+          quantity,
+        },
+        update: {
+          quantity: { increment: quantity },
+        },
+      }),
+    ]);
   }
 }
 

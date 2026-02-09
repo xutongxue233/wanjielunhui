@@ -58,6 +58,38 @@ export class PvpController {
       data: result,
     });
   }
+
+  async getBattle(request: FastifyRequest, reply: FastifyReply) {
+    const { playerId } = request.user;
+    const result = await pvpService.getBattleState(playerId);
+
+    return reply.send({
+      success: true,
+      data: result,
+    });
+  }
+
+  async performAction(request: FastifyRequest, reply: FastifyReply) {
+    const { playerId } = request.user;
+    const { action } = request.body as { action: 'attack' | 'skill' | 'defend' };
+
+    const result = await pvpService.performBattleAction(playerId, action);
+
+    return reply.send({
+      success: true,
+      data: result,
+    });
+  }
+
+  async surrender(request: FastifyRequest, reply: FastifyReply) {
+    const { playerId } = request.user;
+    await pvpService.surrender(playerId);
+
+    return reply.send({
+      success: true,
+      data: { message: '已投降' },
+    });
+  }
 }
 
 export const pvpController = new PvpController();

@@ -443,20 +443,23 @@ export function calculateSuccessRate(
 }
 
 // 计算丹药品质
+// baseChance越高，获得高品质丹药的概率越大
 export function calculatePillQuality(
   _recipe: PillRecipe,
   furnace: Furnace,
   alchemyLevel: number,
   luck: number
 ): Pill['quality'] {
-  const baseChance = 0.5 + furnace.qualityBonus + (alchemyLevel * 0.02) + (luck * 0.005);
+  const baseChance = Math.min(0.95, 0.5 + furnace.qualityBonus + (alchemyLevel * 0.02) + (luck * 0.005));
   const roll = Math.random();
 
-  if (roll > baseChance + 0.4) return 'transcendent';
-  if (roll > baseChance + 0.25) return 'perfect';
-  if (roll > baseChance + 0.1) return 'high';
-  if (roll > baseChance - 0.2) return 'medium';
-  return 'low';
+  // threshold越低，高品质区间越大
+  const threshold = 1 - baseChance;
+  if (roll < threshold * 0.3) return 'low';
+  if (roll < threshold * 0.6) return 'medium';
+  if (roll < threshold + (1 - threshold) * 0.4) return 'high';
+  if (roll < threshold + (1 - threshold) * 0.7) return 'perfect';
+  return 'transcendent';
 }
 
 // 品质倍率

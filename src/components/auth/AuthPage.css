@@ -1,3 +1,5 @@
+/* AuthPage - 使用Design System CSS变量 */
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -10,7 +12,7 @@
 .auth-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a1520 50%, #0f0a15 100%);
+  background: linear-gradient(135deg, var(--ink-black) 0%, var(--ink-dark) 50%, var(--ink-deep) 100%);
   z-index: 0;
 }
 
@@ -19,8 +21,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 80%, rgba(201, 168, 76, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(147, 112, 219, 0.06) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, var(--gold-subtle) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(109, 40, 217, 0.06) 0%, transparent 50%);
 }
 
 .auth-container {
@@ -28,201 +30,129 @@
   z-index: 1;
   width: 100%;
   max-width: 400px;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
 }
 
 .auth-title {
-  font-family: 'Noto Serif SC', serif;
+  font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
   font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #c9a84c 0%, #e8d5a3 50%, #c9a84c 100%);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin: 0;
   letter-spacing: 0.15em;
-  text-shadow: 0 0 40px rgba(201, 168, 76, 0.3);
+  text-shadow: 0 0 40px var(--gold-muted);
 }
 
 .auth-subtitle {
   font-family: 'Noto Serif SC', serif;
-  color: #8a8078;
-  margin-top: 0.5rem;
+  color: var(--text-muted);
+  margin-top: var(--spacing-sm);
   font-size: 1rem;
   letter-spacing: 0.1em;
 }
 
+/* 覆盖Card组件的默认样式 */
 .auth-card {
-  background: linear-gradient(145deg, rgba(20, 18, 25, 0.95), rgba(15, 13, 20, 0.98));
-  border: 1px solid rgba(201, 168, 76, 0.2);
-  border-radius: 12px;
-  padding: 2rem;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(201, 168, 76, 0.1);
+    inset 0 1px 0 var(--gold-subtle);
 }
 
 .auth-tabs {
   display: flex;
   gap: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 4px;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
 }
 
 .auth-tab {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: var(--spacing-sm) var(--spacing-md);
   background: transparent;
   border: none;
-  color: #6a6a6a;
+  color: var(--text-muted);
   font-family: 'Noto Serif SC', serif;
   font-size: 0.95rem;
   cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
 }
 
 .auth-tab:hover {
-  color: #a0a0a0;
+  color: var(--text-secondary);
 }
 
 .auth-tab.active {
-  background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.1));
-  color: #c9a84c;
+  background: linear-gradient(135deg, var(--gold-subtle), rgba(201, 162, 39, 0.1));
+  color: var(--gold);
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-}
-
-.auth-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.auth-label {
-  font-size: 0.85rem;
-  color: #a09890;
-  font-weight: 500;
-}
-
-.auth-input {
-  padding: 0.875rem 1rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(201, 168, 76, 0.15);
-  border-radius: 8px;
-  color: #e4dfd4;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.auth-input:focus {
-  outline: none;
-  border-color: rgba(201, 168, 76, 0.5);
-  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
-}
-
-.auth-input::placeholder {
-  color: #4a4a4a;
+  gap: var(--spacing-md);
 }
 
 .auth-error {
-  padding: 0.75rem 1rem;
-  background: rgba(191, 69, 69, 0.15);
-  border: 1px solid rgba(191, 69, 69, 0.3);
-  border-radius: 8px;
-  color: #e88;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(139, 41, 66, 0.15);
+  border: 1px solid rgba(139, 41, 66, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--crimson-light);
   font-size: 0.875rem;
   text-align: center;
 }
 
 .auth-submit {
-  margin-top: 0.5rem;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #c9a84c 0%, #a08030 100%);
-  border: none;
-  border-radius: 8px;
-  color: #0a0a0f;
-  font-family: 'Noto Serif SC', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-}
-
-.auth-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d4b860 0%, #b89040 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(201, 168, 76, 0.3);
-}
-
-.auth-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.auth-loading {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(10, 10, 15, 0.3);
-  border-top-color: #0a0a0f;
-  border-radius: 50%;
-  animation: auth-spin 0.8s linear infinite;
-}
-
-@keyframes auth-spin {
-  to { transform: rotate(360deg); }
+  margin-top: var(--spacing-sm);
 }
 
 .auth-footer {
-  margin-top: 1.5rem;
+  margin-top: var(--spacing-lg);
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
 .auth-footer-text {
-  color: #6a6a6a;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
 .auth-switch {
   background: none;
   border: none;
-  color: #c9a84c;
+  color: var(--gold);
   font-size: 0.9rem;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: color var(--transition-fast);
 }
 
 .auth-switch:hover {
-  color: #e8d5a3;
+  color: var(--gold-light);
 }
 
 .auth-tips {
-  margin-top: 1.5rem;
+  margin-top: var(--spacing-lg);
   text-align: center;
 }
 
 .auth-tips p {
-  color: #5a5a5a;
+  color: var(--text-muted);
   font-size: 0.85rem;
   margin: 0;
 }

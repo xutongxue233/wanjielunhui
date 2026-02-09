@@ -6,14 +6,9 @@ import { BadRequestError, ErrorCodes } from '../../shared/errors/index.js';
 import { prisma } from '../../lib/prisma.js';
 
 export class RankingController {
-  async getRankingList(
-    request: FastifyRequest<{
-      Params: { type: string };
-      Querystring: { page?: string; pageSize?: string };
-    }>,
-    reply: FastifyReply
-  ) {
-    const typeResult = rankingTypeSchema.safeParse(request.params.type.toUpperCase());
+  async getRankingList(request: FastifyRequest, reply: FastifyReply) {
+    const params = request.params as { type: string };
+    const typeResult = rankingTypeSchema.safeParse(params.type.toUpperCase().replace(/-/g, '_'));
     if (!typeResult.success) {
       throw new BadRequestError(ErrorCodes.VALIDATION_ERROR, '无效的排行榜类型');
     }
@@ -31,11 +26,9 @@ export class RankingController {
     });
   }
 
-  async getMyRank(
-    request: FastifyRequest<{ Params: { type: string } }>,
-    reply: FastifyReply
-  ) {
-    const typeResult = rankingTypeSchema.safeParse(request.params.type.toUpperCase());
+  async getMyRank(request: FastifyRequest, reply: FastifyReply) {
+    const params = request.params as { type: string };
+    const typeResult = rankingTypeSchema.safeParse(params.type.toUpperCase().replace(/-/g, '_'));
     if (!typeResult.success) {
       throw new BadRequestError(ErrorCodes.VALIDATION_ERROR, '无效的排行榜类型');
     }
@@ -58,14 +51,10 @@ export class RankingController {
     });
   }
 
-  async getAroundRanking(
-    request: FastifyRequest<{
-      Params: { type: string };
-      Querystring: { count?: string };
-    }>,
-    reply: FastifyReply
-  ) {
-    const typeResult = rankingTypeSchema.safeParse(request.params.type.toUpperCase());
+  async getAroundRanking(request: FastifyRequest, reply: FastifyReply) {
+    const params = request.params as { type: string };
+    const queryParams = request.query as { count?: string };
+    const typeResult = rankingTypeSchema.safeParse(params.type.toUpperCase().replace(/-/g, '_'));
     if (!typeResult.success) {
       throw new BadRequestError(ErrorCodes.VALIDATION_ERROR, '无效的排行榜类型');
     }
@@ -80,7 +69,7 @@ export class RankingController {
       throw new BadRequestError(ErrorCodes.PLAYER_NOT_FOUND, '玩家不存在');
     }
 
-    const count = request.query.count ? parseInt(request.query.count, 10) : 5;
+    const count = queryParams.count ? parseInt(queryParams.count, 10) : 5;
     const result = await rankingService.getAroundRanking(
       player.id,
       typeResult.data as RankingType,

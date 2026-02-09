@@ -1,0 +1,122 @@
+{
+  "testRun": {
+    "id": "devtools-20260205-094200",
+    "timestamp": "2026-02-05T09:42:00+08:00",
+    "viewport": { "width": 1920, "height": 1080 },
+    "status": "completed"
+  },
+  "summary": {
+    "testsRun": 12,
+    "passed": 11,
+    "failed": 1,
+    "issuesFound": 1,
+    "issuesFixed": 1
+  },
+  "testResults": [
+    {
+      "name": "frontend-character-creation",
+      "status": "passed",
+      "steps": [
+        { "action": "navigate", "url": "http://localhost:5173", "result": "success" },
+        { "action": "fill", "target": "道号输入框", "value": "测试道友", "result": "success" },
+        { "action": "click", "target": "性别选择-男", "result": "success" },
+        { "action": "click", "target": "下一步", "result": "success" },
+        { "action": "click", "target": "出身选择-山村孤儿", "result": "success" },
+        { "action": "click", "target": "下一步", "result": "success" },
+        { "action": "click", "target": "踏入仙途", "result": "success" }
+      ],
+      "screenshots": [
+        "01-character-creation.png",
+        "02-auth-page.png",
+        "03-origin-selection.png",
+        "04-confirm-info.png",
+        "05-game-main.png"
+      ]
+    },
+    {
+      "name": "frontend-game-modules",
+      "status": "passed",
+      "steps": [
+        { "action": "click", "target": "社交", "result": "success" },
+        { "action": "click", "target": "坊市", "result": "success" },
+        { "action": "click", "target": "论剑", "result": "success" },
+        { "action": "click", "target": "天榜", "result": "success" }
+      ],
+      "screenshots": [
+        "06-social-page.png",
+        "07-market-page.png",
+        "08-pvp-page.png",
+        "10-ranking-fixed.png"
+      ]
+    },
+    {
+      "name": "admin-dashboard",
+      "status": "passed",
+      "steps": [
+        { "action": "navigate", "url": "http://localhost:5173/admin", "result": "success" }
+      ],
+      "screenshots": ["11-admin-dashboard.png"],
+      "notes": "需要登录认证才能获取完整数据"
+    }
+  ],
+  "issuesDiscovered": [
+    {
+      "id": "DEVTOOLS-001",
+      "severity": "P0",
+      "type": "runtime-error",
+      "component": "RankingPage",
+      "error": "TypeError: Cannot read properties of undefined (reading 'length')",
+      "cause": "后端返回 entries 字段，前端期望 rankings 字段",
+      "status": "fixed",
+      "fix": "修改 RankingPage.tsx 兼容 entries 和 rankings 两种字段名"
+    }
+  ],
+  "networkErrors": [
+    {
+      "url": "/api/v1/pvp/stats",
+      "status": 401,
+      "reason": "未登录认证",
+      "severity": "expected"
+    },
+    {
+      "url": "/api/v1/pvp/history",
+      "status": 401,
+      "reason": "未登录认证",
+      "severity": "expected"
+    },
+    {
+      "url": "/api/v1/pvp/battle",
+      "status": 404,
+      "reason": "端点未实现",
+      "severity": "P1",
+      "relatedIssue": "API-017"
+    },
+    {
+      "url": "/api/v1/ranking/combat/me",
+      "status": 401,
+      "reason": "未登录认证",
+      "severity": "expected"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "type": "issue",
+      "message": "No label associated with a form field",
+      "severity": "P2",
+      "count": 2
+    },
+    {
+      "type": "issue",
+      "message": "A form field element should have an id or name attribute",
+      "severity": "P2",
+      "count": 2
+    }
+  ],
+  "fixes": [
+    {
+      "file": "src/components/ranking/RankingPage.tsx",
+      "description": "兼容后端返回 entries 或 rankings 字段",
+      "lines": "32-51"
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import type {
   Technique,
   Skill,
 } from '../types';
-import { createInitialRealm, getCultivationRequirement, getNextRealm } from '../data/realms';
+import { createInitialRealm, getCultivationRequirement, getNextRealm, REALM_CONFIGS } from '../data/realms';
 import { ORIGINS, generateSpiritualRoot, getSpiritualRootBonus } from '../data/origins';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -165,8 +165,8 @@ export const usePlayerStore = create<PlayerState>()(
           return { success: false, message: '已达最高境界' };
         }
 
-        // 计算突破成功率
-        const baseRate = 0.5;
+        // 计算突破成功率，从当前境界配置读取基础突破率
+        const baseRate = REALM_CONFIGS[player.realm.name].breakthroughBaseRate;
         const comprehensionBonus = player.attributes.comprehension * 0.005;
         const luckBonus = player.attributes.luck * 0.003;
         const successRate = Math.min(0.95, baseRate + comprehensionBonus + luckBonus);
@@ -182,13 +182,27 @@ export const usePlayerStore = create<PlayerState>()(
             state.player.attributes.cultivation = 0;
             state.player.attributes.maxCultivation = getCultivationRequirement(nextRealm);
 
-            // 属性提升
-            state.player.attributes.maxHp *= 1.5;
-            state.player.attributes.hp = state.player.attributes.maxHp;
-            state.player.attributes.maxMp *= 1.3;
-            state.player.attributes.mp = state.player.attributes.maxMp;
-            state.player.attributes.attack *= 1.4;
-            state.player.attributes.defense *= 1.3;
+            // 属性提升：区分小阶段突破和大境界突破
+            const isMajorBreakthrough = player.realm.stage === 'peak';
+            if (isMajorBreakthrough) {
+              // 大境界突破：属性大幅提升
+              state.player.attributes.maxHp *= 1.8;
+              state.player.attributes.hp = state.player.attributes.maxHp;
+              state.player.attributes.maxMp *= 1.6;
+              state.player.attributes.mp = state.player.attributes.maxMp;
+              state.player.attributes.attack *= 1.7;
+              state.player.attributes.defense *= 1.5;
+              state.player.attributes.speed = Math.floor(state.player.attributes.speed * 1.3);
+            } else {
+              // 小阶段突破：属性小幅提升
+              state.player.attributes.maxHp *= 1.12;
+              state.player.attributes.hp = state.player.attributes.maxHp;
+              state.player.attributes.maxMp *= 1.10;
+              state.player.attributes.mp = state.player.attributes.maxMp;
+              state.player.attributes.attack *= 1.10;
+              state.player.attributes.defense *= 1.08;
+              state.player.attributes.speed = Math.floor(state.player.attributes.speed * 1.05);
+            }
           } else {
             // 突破失败，损失部分修为
             state.player.attributes.cultivation = Math.floor(cultivation * 0.8);
@@ -233,6 +247,41 @@ export const usePlayerStore = create<PlayerState>()(
       equipItem: (equipment) => {
         set((state) => {
           if (!state.player) return;
+          // 如果该槽位已有装备，先移除旧装备属性
+          const oldEquipment = state.player.equipment[equipment.slot];
+          if (oldEquipment && oldEquipment.baseStats) {
+            const oldStats = oldEquipment.baseStats;
+            if (oldStats.attack) state.player.attributes.attack -= oldStats.attack;
+            if (oldStats.defense) state.player.attributes.defense -= oldStats.defense;
+            if (oldStats.hp) {
+              state.player.attributes.maxHp -= oldStats.hp;
+              state.player.attributes.hp = Math.min(state.player.attributes.hp, state.player.attributes.maxHp);
+            }
+            if (oldStats.mp) {
+              state.player.attributes.maxMp -= oldStats.mp;
+              state.player.attributes.mp = Math.min(state.player.attributes.mp, state.player.attributes.maxMp);
+            }
+            if (oldStats.speed) state.player.attributes.speed -= oldStats.speed;
+            if (oldStats.critRate) state.player.attributes.critRate -= oldStats.critRate;
+            if (oldStats.critDamage) state.player.attributes.critDamage -= oldStats.critDamage;
+          }
+          // 应用新装备属性
+          const newStats = equipment.baseStats;
+          if (newStats) {
+            if (newStats.attack) state.player.attributes.attack += newStats.attack;
+            if (newStats.defense) state.player.attributes.defense += newStats.defense;
+            if (newStats.hp) {
+              state.player.attributes.maxHp += newStats.hp;
+              state.player.attributes.hp = Math.min(state.player.attributes.hp + newStats.hp, state.player.attributes.maxHp);
+            }
+            if (newStats.mp) {
+              state.player.attributes.maxMp += newStats.mp;
+              state.player.attributes.mp = Math.min(state.player.attributes.mp + newStats.mp, state.player.attributes.maxMp);
+            }
+            if (newStats.speed) state.player.attributes.speed += newStats.speed;
+            if (newStats.critRate) state.player.attributes.critRate += newStats.critRate;
+            if (newStats.critDamage) state.player.attributes.critDamage += newStats.critDamage;
+          }
           state.player.equipment[equipment.slot] = equipment;
         });
       },
@@ -240,6 +289,24 @@ export const usePlayerStore = create<PlayerState>()(
       unequipItem: (slot) => {
         set((state) => {
           if (!state.player) return;
+          // 移除装备时减去属性加成
+          const oldEquipment = state.player.equipment[slot];
+          if (oldEquipment && oldEquipment.baseStats) {
+            const oldStats = oldEquipment.baseStats;
+            if (oldStats.attack) state.player.attributes.attack -= oldStats.attack;
+            if (oldStats.defense) state.player.attributes.defense -= oldStats.defense;
+            if (oldStats.hp) {
+              state.player.attributes.maxHp -= oldStats.hp;
+              state.player.attributes.hp = Math.min(state.player.attributes.hp, state.player.attributes.maxHp);
+            }
+            if (oldStats.mp) {
+              state.player.attributes.maxMp -= oldStats.mp;
+              state.player.attributes.mp = Math.min(state.player.attributes.mp, state.player.attributes.maxMp);
+            }
+            if (oldStats.speed) state.player.attributes.speed -= oldStats.speed;
+            if (oldStats.critRate) state.player.attributes.critRate -= oldStats.critRate;
+            if (oldStats.critDamage) state.player.attributes.critDamage -= oldStats.critDamage;
+          }
           state.player.equipment[slot] = null;
         });
       },

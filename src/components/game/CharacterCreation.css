@@ -1,0 +1,512 @@
+/* CharacterCreation - 使用Design System CSS变量 */
+
+.char-creation {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+  background: var(--ink-black);
+}
+
+/* 背景层 */
+.char-creation-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.char-creation-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140%;
+  height: 140%;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(45, 139, 111, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(201, 162, 39, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(109, 40, 217, 0.06) 0%, transparent 60%);
+}
+
+.char-creation-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+}
+
+.char-creation-ring.outer {
+  width: 700px;
+  height: 700px;
+  margin-left: -350px;
+  margin-top: -350px;
+  border: 1px solid rgba(201, 162, 39, 0.08);
+}
+
+.char-creation-ring.inner {
+  width: 500px;
+  height: 500px;
+  margin-left: -250px;
+  margin-top: -250px;
+  border: 1px dashed rgba(45, 139, 111, 0.1);
+}
+
+/* 主内容区 */
+.char-creation-content {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* 标题 */
+.char-creation-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.char-creation-title h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  letter-spacing: 0.1em;
+  font-family: 'Ma Shan Zheng', serif;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 40px rgba(201, 162, 39, 0.3);
+}
+
+.char-creation-title p {
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+  color: var(--text-muted);
+  font-family: 'ZCOOL XiaoWei', serif;
+}
+
+/* 步骤指示器 */
+.char-creation-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.char-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.char-step-circle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  transition: all var(--transition-normal);
+}
+
+.char-step-circle.active {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 0 30px rgba(201, 162, 39, 0.5), 0 0 60px rgba(201, 162, 39, 0.2);
+}
+
+.char-step-circle.past {
+  background: linear-gradient(135deg, rgba(45, 139, 111, 0.4) 0%, rgba(45, 139, 111, 0.2) 100%);
+  border: 2px solid var(--jade);
+  box-shadow: 0 0 20px rgba(45, 139, 111, 0.3);
+}
+
+.char-step-circle.future {
+  background: rgba(37, 37, 53, 0.8);
+  border: 2px solid rgba(201, 162, 39, 0.2);
+}
+
+.char-step-icon {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.char-step-icon.active { color: var(--ink-black); }
+.char-step-icon.past { color: var(--jade-light); }
+.char-step-icon.future { color: var(--text-muted); }
+
+.char-step-label {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  font-family: 'ZCOOL XiaoWei', serif;
+}
+
+.char-step-label.active { color: var(--gold); }
+.char-step-label.past { color: var(--jade); }
+.char-step-label.future { color: var(--text-muted); }
+
+/* 步骤连接线 */
+.char-step-line {
+  position: relative;
+  width: 60px;
+  height: 2px;
+  margin: 0 1rem;
+  margin-bottom: 28px;
+}
+
+.char-step-line-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  background: rgba(201, 162, 39, 0.15);
+}
+
+.char-step-line-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--jade), var(--gold));
+}
+
+/* 卡片容器 */
+.char-card {
+  border-radius: 1rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(26, 26, 40, 0.95) 0%, rgba(18, 18, 26, 0.98) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(201, 162, 39, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.char-card-header-line {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.char-card-body {
+  padding: 28px 32px 32px;
+}
+
+/* 卡片标题区 */
+.char-card-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.char-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(201, 162, 39, 0.05) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.char-card-icon span {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+}
+
+.char-card-title h3 {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.char-card-title p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* 表单标签 */
+.char-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+}
+
+/* 输入框 */
+.char-input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 1.1rem;
+  font-family: 'Noto Serif SC', serif;
+  color: var(--text-primary);
+  background: rgba(10, 10, 15, 0.8);
+  border: 2px solid rgba(201, 162, 39, 0.2);
+  border-radius: 12px;
+  outline: none;
+  letter-spacing: 0.15em;
+  transition: all var(--transition-normal);
+}
+
+.char-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(201, 162, 39, 0.2), inset 0 0 20px rgba(201, 162, 39, 0.05);
+}
+
+.char-input::placeholder {
+  color: var(--text-muted);
+}
+
+.char-input-counter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-family: 'ZCOOL XiaoWei', serif;
+  color: var(--text-muted);
+}
+
+.char-input-counter.has-value {
+  color: rgba(201, 162, 39, 0.7);
+}
+
+/* 选择按钮 */
+.char-select-btn {
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(10, 10, 15, 0.6);
+  border: 2px solid rgba(201, 162, 39, 0.15);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.char-select-btn.selected {
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(201, 162, 39, 0.05) 100%);
+  border-color: var(--gold);
+  box-shadow: 0 10px 40px rgba(201, 162, 39, 0.2), inset 0 0 30px rgba(201, 162, 39, 0.05);
+}
+
+.char-select-btn:hover {
+  border-color: rgba(201, 162, 39, 0.4);
+}
+
+.char-select-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(201, 162, 39, 0.1);
+  border: 2px solid rgba(201, 162, 39, 0.2);
+  transition: all var(--transition-normal);
+}
+
+.char-select-icon.selected {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border-color: var(--gold-light);
+}
+
+.char-select-icon span {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+.char-select-icon.selected span {
+  color: var(--ink-black);
+}
+
+.char-select-label {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.char-select-label.selected {
+  color: var(--gold);
+}
+
+.char-select-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: 'ZCOOL XiaoWei', serif;
+}
+
+/* 出身选择卡片 */
+.char-origin-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(10, 10, 15, 0.6);
+  border: 2px solid rgba(201, 162, 39, 0.15);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.char-origin-card.selected {
+  border-color: var(--gold);
+  box-shadow: 0 10px 40px rgba(201, 162, 39, 0.2);
+}
+
+.char-origin-card:hover {
+  border-color: rgba(201, 162, 39, 0.4);
+}
+
+.char-origin-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  transition: all var(--transition-normal);
+}
+
+.char-origin-name {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.char-origin-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* 确认按钮 */
+.char-submit-btn {
+  width: 100%;
+  padding: 18px 32px;
+  font-size: 1.1rem;
+  font-family: 'Ma Shan Zheng', serif;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.char-submit-btn.enabled {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: var(--ink-black);
+  border: 2px solid var(--gold-light);
+  box-shadow: 0 10px 40px rgba(201, 162, 39, 0.3);
+}
+
+.char-submit-btn.enabled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 50px rgba(201, 162, 39, 0.4);
+}
+
+.char-submit-btn.disabled {
+  background: rgba(201, 162, 39, 0.1);
+  color: var(--text-muted);
+  border: 2px solid rgba(201, 162, 39, 0.2);
+  cursor: not-allowed;
+}
+
+/* 返回按钮 */
+.char-back-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-family: 'ZCOOL XiaoWei', serif;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: color var(--transition-fast);
+}
+
+.char-back-btn:hover {
+  color: var(--gold);
+}
+
+/* 确认页面 */
+.char-confirm-section {
+  padding: 16px;
+  background: rgba(10, 10, 15, 0.5);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.char-confirm-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.char-confirm-value {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .char-creation {
+    padding: var(--spacing-md);
+  }
+
+  .char-creation-title h1 {
+    font-size: 2rem;
+  }
+
+  .char-creation-ring.outer,
+  .char-creation-ring.inner {
+    display: none;
+  }
+
+  .char-step-circle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .char-step-icon {
+    font-size: 1.2rem;
+  }
+
+  .char-step-line {
+    width: 40px;
+    margin: 0 0.5rem;
+  }
+
+  .char-card-body {
+    padding: 20px;
+  }
+
+  .char-select-btn {
+    padding: 16px;
+  }
+
+  .char-select-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .char-creation-steps {
+    transform: scale(0.85);
+  }
+
+  .char-creation-title p {
+    letter-spacing: 0.2em;
+  }
+}

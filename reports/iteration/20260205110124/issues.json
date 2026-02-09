@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-02-05T11:10:00.000Z",
+  "summary": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 2,
+    "total": 2,
+    "fixed": 0,
+    "verified": 0
+  },
+  "issues": [
+    {
+      "id": "UI-001",
+      "severity": "P2",
+      "category": "a11y",
+      "module": "admin",
+      "title": "表单字段缺少label关联",
+      "description": "后台登录和活动创建表单的input元素缺少关联的label标签",
+      "evidence": {
+        "console": "[issue] No label associated with a form field (count: 7)"
+      },
+      "status": "open"
+    },
+    {
+      "id": "UI-002",
+      "severity": "P2",
+      "category": "ui",
+      "module": "admin",
+      "title": "datetime-local输入React状态同步",
+      "description": "通过JavaScript直接设置datetime-local输入值不会触发React onChange事件,需要使用原生React事件",
+      "evidence": {
+        "steps": [
+          "打开活动管理",
+          "点击创建活动",
+          "通过JS设置日期",
+          "点击创建按钮",
+          "显示创建失败"
+        ]
+      },
+      "status": "open",
+      "note": "这是测试方法问题,不影响实际用户操作"
+    }
+  ]
+}

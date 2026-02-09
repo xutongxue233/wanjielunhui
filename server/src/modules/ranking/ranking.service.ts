@@ -34,19 +34,19 @@ export class RankingService {
         playerId_type_seasonId: {
           playerId,
           type,
-          seasonId: seasonId ?? null,
+          seasonId: seasonId ?? 0,
         },
       },
       update: {
         score,
-        snapshot,
+        snapshot: JSON.stringify(snapshot),
       },
       create: {
         playerId,
         type,
         score,
-        snapshot,
-        seasonId: seasonId ?? null,
+        snapshot: JSON.stringify(snapshot),
+        seasonId: seasonId ?? 0,
       },
     });
   }
@@ -81,7 +81,7 @@ export class RankingService {
       where: {
         playerId: { in: playerIds },
         type,
-        seasonId: seasonId ?? null,
+        seasonId: seasonId ?? 0,
       },
       include: {
         player: {
@@ -183,7 +183,7 @@ export class RankingService {
       where: {
         playerId: { in: playerIds },
         type,
-        seasonId: seasonId ?? null,
+        seasonId: seasonId ?? 0,
       },
       include: {
         player: {
@@ -282,7 +282,7 @@ export class RankingService {
     const rankings = await prisma.ranking.findMany({
       where: {
         type,
-        seasonId: seasonId ?? null,
+        seasonId: seasonId ?? 0,
       },
     });
 

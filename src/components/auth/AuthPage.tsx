@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../services/api';
+import { Button, Input, Card } from '../ui';
 import './AuthPage.css';
 
 type Mode = 'login' | 'register';
@@ -36,7 +37,6 @@ export function AuthPage() {
         }
 
         await authApi.register(username, email, password);
-        // 注册成功后自动登录
         const loginRes = await authApi.login(username, password);
         setAuth(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
       } else {
@@ -68,7 +68,7 @@ export function AuthPage() {
           <p className="auth-subtitle">踏入修仙之路</p>
         </div>
 
-        <div className="auth-card">
+        <Card padding="lg" className="auth-card">
           <div className="auth-tabs">
             <button
               className={`auth-tab ${mode === 'login' ? 'active' : ''}`}
@@ -85,75 +85,62 @@ export function AuthPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="auth-field">
-              <label className="auth-label">
-                {mode === 'login' ? '账号' : '用户名'}
-              </label>
-              <input
-                type="text"
-                className="auth-input"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder={mode === 'login' ? '用户名或邮箱' : '请输入用户名'}
-                required
-                autoComplete="username"
-              />
-            </div>
+            <Input
+              label={mode === 'login' ? '账号' : '用户名'}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={mode === 'login' ? '用户名或邮箱' : '请输入用户名'}
+              required
+              autoComplete="username"
+            />
 
             {mode === 'register' && (
-              <div className="auth-field">
-                <label className="auth-label">邮箱</label>
-                <input
-                  type="email"
-                  className="auth-input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="请输入邮箱"
-                  required
-                  autoComplete="email"
-                />
-              </div>
+              <Input
+                label="邮箱"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="请输入邮箱"
+                required
+                autoComplete="email"
+              />
             )}
 
-            <div className="auth-field">
-              <label className="auth-label">密码</label>
-              <input
-                type="password"
-                className="auth-input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="请输入密码"
-                required
-                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              />
-            </div>
+            <Input
+              label="密码"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="请输入密码"
+              required
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+            />
 
             {mode === 'register' && (
-              <div className="auth-field">
-                <label className="auth-label">确认密码</label>
-                <input
-                  type="password"
-                  className="auth-input"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="请再次输入密码"
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
+              <Input
+                label="确认密码"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="请再次输入密码"
+                required
+                autoComplete="new-password"
+              />
             )}
 
             {error && <div className="auth-error">{error}</div>}
 
-            <button type="submit" className="auth-submit" disabled={loading}>
-              {loading ? (
-                <span className="auth-loading" />
-              ) : mode === 'login' ? (
-                '进入仙途'
-              ) : (
-                '开启修仙之旅'
-              )}
-            </button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={loading}
+              className="auth-submit"
+            >
+              {mode === 'login' ? '进入仙途' : '开启修仙之旅'}
+            </Button>
           </form>
 
           <div className="auth-footer">
@@ -164,7 +151,7 @@ export function AuthPage() {
               {mode === 'login' ? '立即注册' : '去登录'}
             </button>
           </div>
-        </div>
+        </Card>
 
         <div className="auth-tips">
           <p>登录后可享受云存档，跨设备继续修仙</p>

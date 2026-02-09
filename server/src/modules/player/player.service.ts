@@ -92,27 +92,36 @@ export class PlayerService {
     };
   }
 
-  async syncData(userId: string, data: {
-    realm?: string;
-    realmStage?: string;
-    cultivation?: bigint;
-    combatPower?: bigint;
-    health?: number;
-    maxHealth?: number;
-    attack?: number;
-    defense?: number;
-    speed?: number;
-    spiritStones?: bigint;
-    destinyPoints?: number;
-    reincarnations?: number;
-  }): Promise<void> {
+  async syncData(userId: string, data: Record<string, unknown>): Promise<void> {
     await prisma.player.update({
       where: { userId },
       data: {
-        ...data,
+        ...(data.health !== undefined ? { health: Number(data.health) } : {}),
+        ...(data.maxHealth !== undefined ? { maxHealth: Number(data.maxHealth) } : {}),
+        ...(data.attack !== undefined ? { attack: Number(data.attack) } : {}),
+        ...(data.defense !== undefined ? { defense: Number(data.defense) } : {}),
+        ...(data.speed !== undefined ? { speed: Number(data.speed) } : {}),
         lastActiveAt: new Date(),
       },
     });
+  }
+
+  async searchPlayers(keyword: string, limit = 20): Promise<{ id: string; name: string; realm: string }[]> {
+    const players = await prisma.player.findMany({
+      where: {
+        name: {
+          contains: keyword,
+        },
+      },
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        realm: true,
+      },
+    });
+
+    return players;
   }
 }
 

@@ -1,11 +1,33 @@
 import { useState, useEffect } from 'react';
 import { marketApi, type MarketListing, type ShopItem, type MyTrade } from '../../services/api';
+import { message, Tabs } from '../ui';
 import './MarketPage.css';
 
 type MarketTab = 'player' | 'shop' | 'myTrades';
 
 const ITEM_TYPES = ['全部', '丹药', '法宝', '材料', '功法', '其他'];
 const SHOP_CATEGORIES = ['推荐', '丹药', '法宝', '材料', '限时'];
+
+// 图标映射: 将后端图标标识符映射到展示内容
+const ICON_MAP: Record<string, string> = {
+  pill_blue: '💊',
+  pill_green: '💚',
+  pill_red: '❤️',
+  pill_gold: '🌟',
+  herb_1: '🌿',
+  herb_2: '🍀',
+  scroll_1: '📜',
+  scroll_2: '📋',
+  weapon_1: '⚔️',
+  weapon_2: '🗡️',
+  armor_1: '🛡️',
+  material_1: '💎',
+  default: '📦',
+};
+
+const getItemIcon = (iconId: string): string => {
+  return ICON_MAP[iconId] || ICON_MAP.default;
+};
 
 export function MarketPage() {
   const [activeTab, setActiveTab] = useState<MarketTab>('player');
@@ -37,6 +59,7 @@ export function MarketPage() {
       setListings(data.listings);
     } catch (err) {
       console.error('加载市场列表失败:', err);
+      message.error('加载市场列表失败');
     } finally {
       setLoading(false);
     }
@@ -49,6 +72,7 @@ export function MarketPage() {
       setShopItems(data);
     } catch (err) {
       console.error('加载商店失败:', err);
+      message.error('加载商店失败');
     } finally {
       setLoading(false);
     }
@@ -64,6 +88,7 @@ export function MarketPage() {
       setMyTrades([...listings, ...trades]);
     } catch (err) {
       console.error('加载我的交易失败:', err);
+      message.error('加载我的交易失败');
     } finally {
       setLoading(false);
     }
@@ -75,17 +100,17 @@ export function MarketPage() {
       loadPlayerListings();
     } catch (err) {
       console.error('购买失败:', err);
-      alert('购买失败');
+      message.error('购买失败');
     }
   };
 
   const handleShopBuy = async (itemId: string) => {
     try {
       await marketApi.shopBuy(itemId);
-      alert('购买成功');
+      message.success('购买成功');
     } catch (err) {
       console.error('购买失败:', err);
-      alert('购买失败');
+      message.error('购买失败');
     }
   };
 
@@ -95,6 +120,7 @@ export function MarketPage() {
       loadMyTrades();
     } catch (err) {
       console.error('下架失败:', err);
+      message.error('下架失败');
     }
   };
 
@@ -134,7 +160,7 @@ export function MarketPage() {
           {listings.map((item) => (
             <div key={item.id} className="market-item">
               <div className="market-item-header">
-                <div className={`market-item-icon ${item.itemRarity}`}>{item.itemIcon}</div>
+                <div className={`market-item-icon ${item.itemRarity}`}>{getItemIcon(item.itemIcon)}</div>
                 <div className="market-item-info">
                   <div className="market-item-name">{item.itemName}</div>
                   <div className="market-item-type">{item.itemType}</div>
@@ -189,7 +215,7 @@ export function MarketPage() {
           {shopItems.map((item) => (
             <div key={item.id} className="market-item">
               <div className="market-item-header">
-                <div className={`market-item-icon ${item.itemRarity}`}>{item.itemIcon}</div>
+                <div className={`market-item-icon ${item.itemRarity}`}>{getItemIcon(item.itemIcon)}</div>
                 <div className="market-item-info">
                   <div className="market-item-name">{item.itemName}</div>
                   <div className="market-item-type">{item.itemType}</div>
@@ -203,7 +229,7 @@ export function MarketPage() {
                   </svg>
                   {item.price.toLocaleString()}
                 </div>
-                <button className="market-buy-btn" onClick={() => handleShopBuy(item.id)}>购买</button>
+                <button className="market-buy-btn" onClick={() => handleShopBuy(item.itemId)}>购买</button>
               </div>
             </div>
           ))}
@@ -249,26 +275,16 @@ export function MarketPage() {
 
   return (
     <div className="market-page">
-      <div className="market-tabs">
-        <button
-          className={`market-tab ${activeTab === 'player' ? 'active' : ''}`}
-          onClick={() => setActiveTab('player')}
-        >
-          玩家交易
-        </button>
-        <button
-          className={`market-tab ${activeTab === 'shop' ? 'active' : ''}`}
-          onClick={() => setActiveTab('shop')}
-        >
-          系统商店
-        </button>
-        <button
-          className={`market-tab ${activeTab === 'myTrades' ? 'active' : ''}`}
-          onClick={() => setActiveTab('myTrades')}
-        >
-          我的交易
-        </button>
-      </div>
+      <Tabs
+        items={[
+          { key: 'player', label: '玩家交易' },
+          { key: 'shop', label: '系统商店' },
+          { key: 'myTrades', label: '我的交易' },
+        ]}
+        activeKey={activeTab}
+        onChange={(key) => setActiveTab(key as MarketTab)}
+        className="market-tabs"
+      />
 
       <div className="market-content">
         {activeTab === 'player' && renderPlayerMarket()}

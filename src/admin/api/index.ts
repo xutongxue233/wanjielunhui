@@ -6,13 +6,19 @@ async function request<T>(
 ): Promise<T> {
   const token = localStorage.getItem('admin_token');
 
+  // 只有在有 body 的情况下才设置 Content-Type
+  const headers: Record<string, string> = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers as Record<string, string>,
+  };
+
+  if (options.body) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
+    headers,
   });
 
   const data = await response.json();

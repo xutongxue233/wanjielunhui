@@ -10,7 +10,7 @@ export interface AnnouncementInfo {
   priority: number;
   isActive: boolean;
   startAt: Date;
-  endAt?: Date;
+  endAt: Date | null;
   createdAt: Date;
 }
 
@@ -35,7 +35,7 @@ export class AnnouncementService {
       priority: announcement.priority,
       isActive: announcement.isActive,
       startAt: announcement.startAt,
-      endAt: announcement.endAt ?? undefined,
+      endAt: announcement.endAt,
       createdAt: announcement.createdAt,
     };
   }
@@ -59,7 +59,7 @@ export class AnnouncementService {
       priority: a.priority,
       isActive: a.isActive,
       startAt: a.startAt,
-      endAt: a.endAt ?? undefined,
+      endAt: a.endAt,
       createdAt: a.createdAt,
     }));
   }
@@ -83,7 +83,7 @@ export class AnnouncementService {
         priority: a.priority,
         isActive: a.isActive,
         startAt: a.startAt,
-        endAt: a.endAt ?? undefined,
+        endAt: a.endAt,
         createdAt: a.createdAt,
       })),
       total,
@@ -99,13 +99,13 @@ export class AnnouncementService {
     const announcement = await prisma.announcement.update({
       where: { id },
       data: {
-        title: input.title,
-        content: input.content,
-        type: input.type,
-        priority: input.priority,
-        isActive: input.isActive,
-        startAt: input.startAt,
-        endAt: input.endAt ?? null,
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.content !== undefined && { content: input.content }),
+        ...(input.type !== undefined && { type: input.type }),
+        ...(input.priority !== undefined && { priority: input.priority }),
+        ...(input.isActive !== undefined && { isActive: input.isActive }),
+        ...(input.startAt !== undefined && { startAt: input.startAt }),
+        ...(input.endAt !== undefined && { endAt: input.endAt }),
       },
     });
 
@@ -117,7 +117,7 @@ export class AnnouncementService {
       priority: announcement.priority,
       isActive: announcement.isActive,
       startAt: announcement.startAt,
-      endAt: announcement.endAt ?? undefined,
+      endAt: announcement.endAt,
       createdAt: announcement.createdAt,
     };
   }

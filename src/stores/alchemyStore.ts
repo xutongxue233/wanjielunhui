@@ -14,6 +14,7 @@ import {
   calculatePillQuality,
   QUALITY_MULTIPLIERS,
 } from '../data/alchemy';
+import { usePlayerStore } from './playerStore';
 
 interface AlchemyStore {
   // 炼丹状态
@@ -81,6 +82,21 @@ export const useAlchemyStore = create<AlchemyStore>()(
 
         if (alchemyLevel < recipe.requiredLevel) return false;
         if (currentFurnace.grade < recipe.requiredFurnaceGrade) return false;
+
+        // 检查背包中是否有足够的材料
+        const playerState = usePlayerStore.getState();
+        const inventory = playerState.player?.inventory || [];
+        for (const mat of recipe.materials) {
+          const owned = inventory.find(i => i.item.id === mat.itemId);
+          if (!owned || owned.quantity < mat.quantity) {
+            return false;
+          }
+        }
+
+        // 扣除材料
+        for (const mat of recipe.materials) {
+          playerState.removeItem(mat.itemId, mat.quantity);
+        }
 
         const duration = recipe.baseDuration * (1 - currentFurnace.speedBonus);
         const now = Date.now();

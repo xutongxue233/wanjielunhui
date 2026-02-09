@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { activityApi, type Activity, type CreateActivityInput } from '../api';
+import { message } from '../../components/ui';
 
 export function ActivitiesPage() {
   const [items, setItems] = useState<Activity[]>([]);
@@ -45,7 +46,7 @@ export function ActivitiesPage() {
       setForm({ name: '', description: '', type: 'login', config: {}, startAt: '', endAt: '' });
       load();
     } catch (err) {
-      alert('创建失败');
+      message.error('创建失败');
     } finally {
       setSaving(false);
     }
@@ -57,7 +58,7 @@ export function ActivitiesPage() {
       await activityApi.delete(id);
       load();
     } catch (err) {
-      alert('删除失败');
+      message.error('删除失败');
     }
   };
 

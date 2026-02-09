@@ -1,39 +1,46 @@
+/* MarketPage - 使用Design System CSS变量 */
+
 .market-page {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px;
-  gap: 16px;
+  padding: var(--spacing-md);
+  gap: var(--spacing-md);
 }
 
 .market-tabs {
   display: flex;
-  gap: 8px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--gold-border);
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .market-tab {
-  padding: 10px 20px;
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: 0.9rem;
-  font-family: var(--font-cn);
-  color: var(--text-3);
+  font-family: 'Noto Serif SC', serif;
+  color: var(--text-muted);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .market-tab:hover {
   color: var(--gold-light);
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(201, 162, 39, 0.05);
+}
+
+.market-tab:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.2);
 }
 
 .market-tab.active {
   color: var(--gold);
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--gold-border);
+  background: rgba(201, 162, 39, 0.1);
+  border-color: var(--border-active);
 }
 
 .market-content {
@@ -43,50 +50,56 @@
 
 .market-filters {
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
 }
 
 .market-filter-btn {
   padding: 6px 14px;
   font-size: 0.8rem;
-  font-family: var(--font-cn);
-  color: var(--text-3);
+  font-family: 'Noto Serif SC', serif;
+  color: var(--text-muted);
   background: transparent;
-  border: 1px solid var(--gold-border);
-  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .market-filter-btn:hover {
   color: var(--gold-light);
 }
 
+.market-filter-btn:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
 .market-filter-btn.active {
   color: var(--gold);
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(201, 162, 39, 0.15);
   border-color: var(--gold);
 }
 
 .market-search {
   flex: 1;
   min-width: 200px;
-  padding: 8px 14px;
+  padding: var(--spacing-sm) 14px;
   font-size: 0.85rem;
-  font-family: var(--font-cn);
+  font-family: 'Noto Serif SC', serif;
   color: var(--text-primary);
-  background: rgba(212, 175, 55, 0.05);
-  border: 1px solid var(--gold-border);
-  border-radius: 6px;
+  background: rgba(201, 162, 39, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   outline: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .market-search:focus {
   border-color: var(--gold);
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(201, 162, 39, 0.08);
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.1);
 }
 
 .market-search::placeholder {
@@ -97,35 +110,36 @@
 .market-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
+  gap: var(--spacing-sm);
 }
 
 .market-item {
-  padding: 16px;
-  background: rgba(212, 175, 55, 0.03);
-  border: 1px solid var(--gold-border);
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  padding: var(--spacing-md);
+  background: rgba(201, 162, 39, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
   cursor: pointer;
 }
 
 .market-item:hover {
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(201, 162, 39, 0.08);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-active);
 }
 
 .market-item-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
 }
 
 .market-item-icon {
   width: 44px;
   height: 44px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,14 +179,14 @@
 
 .market-item-type {
   font-size: 0.75rem;
-  color: var(--text-3);
+  color: var(--text-muted);
 }
 
 .market-item-desc {
   font-size: 0.8rem;
-  color: var(--text-2);
+  color: var(--text-secondary);
   line-height: 1.4;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-sm);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -207,13 +221,13 @@
 .market-buy-btn {
   padding: 6px 14px;
   font-size: 0.8rem;
-  font-family: var(--font-cn);
-  color: var(--bg-primary);
+  font-family: 'Noto Serif SC', serif;
+  color: var(--ink-black);
   background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .market-buy-btn:hover {
@@ -221,34 +235,50 @@
   transform: scale(1.02);
 }
 
+.market-buy-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3);
+}
+
+.market-buy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* 系统商店 */
 .shop-categories {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: var(--spacing-sm);
 }
 
 .shop-category {
-  padding: 8px 16px;
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: 0.85rem;
-  font-family: var(--font-cn);
-  color: var(--text-3);
+  font-family: 'Noto Serif SC', serif;
+  color: var(--text-muted);
   background: transparent;
-  border: 1px solid var(--gold-border);
-  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .shop-category:hover {
   color: var(--gold-light);
 }
 
+.shop-category:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
 .shop-category.active {
-  color: var(--bg-primary);
+  color: var(--ink-black);
   background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
   border-color: transparent;
 }
@@ -257,17 +287,17 @@
 .my-trades {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-sm);
 }
 
 .trade-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: rgba(212, 175, 55, 0.03);
-  border: 1px solid var(--gold-border);
-  border-radius: 10px;
+  gap: var(--spacing-sm);
+  padding: 14px var(--spacing-md);
+  background: rgba(201, 162, 39, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
 }
 
 .trade-item-info {
@@ -284,42 +314,47 @@
 .trade-item-details {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-sm);
   font-size: 0.8rem;
-  color: var(--text-3);
+  color: var(--text-muted);
 }
 
 .trade-status {
   padding: 4px 10px;
   font-size: 0.75rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .trade-status.selling {
-  background: rgba(212, 175, 55, 0.15);
+  background: rgba(201, 162, 39, 0.15);
   color: var(--gold);
 }
 
 .trade-status.sold {
-  background: rgba(103, 194, 165, 0.15);
-  color: var(--jade-essence);
+  background: rgba(45, 139, 111, 0.15);
+  color: var(--jade-light);
 }
 
 .trade-cancel-btn {
-  padding: 8px 14px;
+  padding: var(--spacing-sm) 14px;
   font-size: 0.8rem;
-  font-family: var(--font-cn);
-  color: var(--text-2);
+  font-family: 'Noto Serif SC', serif;
+  color: var(--text-secondary);
   background: transparent;
-  border: 1px solid var(--gold-border);
-  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .trade-cancel-btn:hover {
   color: var(--crimson-light);
   border-color: var(--crimson-light);
+}
+
+.trade-cancel-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 41, 66, 0.2);
 }
 
 /* 空状态 */
@@ -328,9 +363,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px;
+  padding: var(--spacing-2xl);
   color: var(--text-muted);
-  gap: 12px;
+  gap: var(--spacing-sm);
 }
 
 .market-empty-icon {

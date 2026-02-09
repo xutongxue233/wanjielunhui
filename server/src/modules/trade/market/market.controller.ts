@@ -79,6 +79,28 @@ export class MarketController {
       data: result,
     });
   }
+
+  async getShopItems(request: FastifyRequest, reply: FastifyReply) {
+    const { category } = request.query as { category?: string };
+    const result = await marketService.getShopItems(category);
+
+    return reply.send({
+      success: true,
+      data: result,
+    });
+  }
+
+  async buyShopItem(request: FastifyRequest, reply: FastifyReply) {
+    const { playerId } = request.user;
+    const { itemId, quantity } = request.body as { itemId: string; quantity?: number };
+
+    await marketService.buyShopItem(playerId, itemId, quantity ?? 1);
+
+    return reply.send({
+      success: true,
+      data: { message: '购买成功' },
+    });
+  }
 }
 
 export const marketController = new MarketController();

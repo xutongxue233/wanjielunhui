@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { pvpApi, type PvpStats, type PvpMatch, type PvpBattleState } from '../../services/api';
+import { Confirm, message } from '../ui';
 import './PvpPage.css';
 
 type PvpState = 'idle' | 'matching' | 'battle';
@@ -12,6 +13,7 @@ export function PvpPage() {
   const [battle, setBattle] = useState<PvpBattleState | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -114,14 +116,16 @@ export function PvpPage() {
   };
 
   const handleSurrender = async () => {
-    if (!confirm('确定要投降吗？')) return;
     try {
       await pvpApi.surrender();
       setPvpState('idle');
       setBattle(null);
+      setShowSurrenderConfirm(false);
       loadData();
     } catch (err) {
       console.error('投降失败:', err);
+      message.error('投降失败');
+      setShowSurrenderConfirm(false);
     }
   };
 
@@ -142,7 +146,7 @@ export function PvpPage() {
       <div className="pvp-history">
         <div className="pvp-history-title">最近对战</div>
         {history.length === 0 ? (
-          <div className="pvp-history-item" style={{ justifyContent: 'center', color: 'var(--text-muted)' }}>
+          <div className="pvp-history-item pvp-history-empty">
             暂无对战记录
           </div>
         ) : (
@@ -251,12 +255,21 @@ export function PvpPage() {
               防御
             </button>
             <button
-              className="pvp-action-btn defend"
-              onClick={handleSurrender}
-              style={{ flex: 0.5 }}
+              className="pvp-action-btn surrender"
+              onClick={() => setShowSurrenderConfirm(true)}
             >
               投降
             </button>
+            <Confirm
+              isOpen={showSurrenderConfirm}
+              onClose={() => setShowSurrenderConfirm(false)}
+              onConfirm={handleSurrender}
+              title="确认投降"
+              message="确定要投降吗？投降将判定为失败。"
+              confirmText="投降"
+              cancelText="取消"
+              danger
+            />
           </div>
         )}
       </div>

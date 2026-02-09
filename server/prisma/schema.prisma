@@ -532,3 +532,497 @@ model OperationLog {
   @@index([userId, createdAt])
   @@index([action, createdAt])
 }
+
+// ==================== 物品系统 ====================
+
+model ItemTemplate {
+  id          String     @id @default(uuid())
+  itemId      String     @unique // 物品唯一标识符
+
+  name        String
+  description String
+  type        ItemType
+  quality     ItemQuality
+
+  stackable   Boolean    @default(true)
+  maxStack    Int        @default(99)
+
+  // 消耗品效果 JSON: [{type, value, duration?}]
+  effects     String?
+
+  // 售价
+  sellPrice   Int        @default(0)
+  buyPrice    Int?
+
+  // 图标
+  iconId      String?
+
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([type, quality])
+  @@index([isActive])
+}
+
+enum ItemType {
+  CONSUMABLE    // 消耗品
+  MATERIAL      // 材料
+  EQUIPMENT     // 装备
+  QUEST         // 任务物品
+  CURRENCY      // 货币
+}
+
+enum ItemQuality {
+  COMMON        // 凡品
+  UNCOMMON      // 良品
+  RARE          // 精品
+  EPIC          // 极品
+  LEGENDARY     // 传说
+  MYTHIC        // 神话
+}
+
+// ==================== 装备系统 ====================
+
+model EquipmentTemplate {
+  id              String        @id @default(uuid())
+  equipmentId     String        @unique
+
+  name            String
+  description     String
+  slot            EquipmentSlot
+  quality         ItemQuality
+
+  // 基础属性 JSON: {attack?, defense?, maxHp?, maxMp?, speed?, critRate?, critDamage?}
+  baseStats       String
+
+  // 附加属性 JSON: [{attribute, value, isPercentage}]
+  bonusStats      String?
+
+  // 强化等级
+  maxEnhanceLevel Int           @default(10)
+
+  // 需求 JSON: [{type, value}]
+  requirements    String?
+
+  // 特殊效果描述
+  specialEffect   String?
+
+  sellPrice       Int           @default(0)
+  iconId          String?
+
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([slot, quality])
+}
+
+enum EquipmentSlot {
+  WEAPON
+  ARMOR
+  HELMET
+  BOOTS
+  ACCESSORY
+  TALISMAN
+}
+
+// ==================== 玩家背包 ====================
+
+model PlayerInventory {
+  id        String   @id @default(uuid())
+  playerId  String
+
+  itemId    String   // 对应 ItemTemplate.itemId 或 EquipmentTemplate.equipmentId
+  itemType  String   // item 或 equipment
+  quantity  Int      @default(1)
+
+  // 装备专用: 强化等级、附魔等
+  extraData String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([playerId, itemId, itemType])
+  @@index([playerId])
+}
+
+// ==================== 玩家装备栏 ====================
+
+model PlayerEquipment {
+  id          String        @id @default(uuid())
+  playerId    String        @unique
+
+  weapon      String?       // 装备实例ID
+  armor       String?
+  helmet      String?
+  boots       String?
+  accessory   String?
+  talisman    String?
+
+  updatedAt   DateTime      @updatedAt
+}
+
+// ==================== 剧情系统 ====================
+
+model StoryChapter {
+  id          String      @id @default(uuid())
+  chapterId   String      @unique // chapter_1, chapter_2...
+
+  name        String
+  description String?
+  order       Int         // 章节顺序
+
+  // 解锁条件 JSON: [{type, key, operator, value}]
+  unlockConditions String?
+
+  // 章节完成奖励 JSON: [{type, itemId?, value?}]
+  rewards     String?
+
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  nodes       StoryNode[]
+
+  @@index([order])
+}
+
+model StoryNode {
+  id          String       @id @default(uuid())
+  nodeId      String       @unique // chapter_1_node_1
+
+  chapterId   String
+  chapter     StoryChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  type        StoryNodeType
+  order       Int          // 节点顺序
+
+  // 说话者 (对话类型)
+  speaker     String?
+
+  // 内容文本
+  content     String
+
+  // 下一个节点ID (线性推进)
+  nextNodeId  String?
+
+  // 选项 JSON: [{text, nextNodeId, conditions?, effects?}]
+  choices     String?
+
+  // 条件 JSON: [{type, key, operator, value}]
+  conditions  String?
+
+  // 效果 JSON: [{type, target, value}]
+  effects     String?
+
+  // 战斗相关 (battle类型)
+  enemyIds    String?      // 敌人ID列表 JSON
+  battleRewards String?    // 战斗奖励 JSON
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([chapterId, order])
+}
+
+enum StoryNodeType {
+  NARRATION   // 旁白
+  DIALOGUE    // 对话
+  CHOICE      // 选择
+  BATTLE      // 战斗
+  REWARD      // 奖励
+}
+
+// ==================== 玩家剧情进度 ====================
+
+model PlayerStoryProgress {
+  id               String   @id @default(uuid())
+  playerId         String   @unique
+
+  currentChapterId String?
+  currentNodeId    String?
+
+  // 已完成章节 JSON: ["chapter_1", "chapter_2"]
+  completedChapters String  @default("[]")
+
+  // 剧情标记 JSON: {flag1: true, flag2: "value"}
+  flags            String   @default("{}")
+
+  updatedAt        DateTime @updatedAt
+}
+
+// ==================== 任务系统 ====================
+
+model QuestTemplate {
+  id          String      @id @default(uuid())
+  questId     String      @unique
+
+  name        String
+  description String
+  type        QuestType
+
+  // 任务目标 JSON: [{type, target, amount, description}]
+  objectives  String
+
+  // 奖励 JSON: [{type, itemId?, value?}]
+  rewards     String
+
+  // 解锁条件 JSON: [{type, value}]
+  unlockConditions String?
+
+  // 前置任务ID
+  prerequisiteQuestId String?
+
+  // 关联章节
+  chapterId   String?
+
+  // 是否可重复
+  repeatable  Boolean     @default(false)
+  repeatLimit Int?        // 重复次数限制
+
+  // 时间限制 (秒)
+  timeLimit   Int?
+
+  // 推荐境界
+  recommendedRealm String?
+
+  order       Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([type, isActive])
+  @@index([chapterId])
+}
+
+enum QuestType {
+  MAIN        // 主线任务
+  SIDE        // 支线任务
+  DAILY       // 日常任务
+  WEEKLY      // 周常任务
+  EVENT       // 活动任务
+  ACHIEVEMENT // 成就
+}
+
+// ==================== 玩家任务进度 ====================
+
+model PlayerQuest {
+  id          String      @id @default(uuid())
+  playerId    String
+  questId     String      // 对应 QuestTemplate.questId
+
+  status      QuestStatus @default(IN_PROGRESS)
+
+  // 目标进度 JSON: [{objectiveIndex, current, target}]
+  progress    String      @default("[]")
+
+  // 完成次数 (可重复任务)
+  completedCount Int      @default(0)
+
+  acceptedAt  DateTime    @default(now())
+  completedAt DateTime?
+
+  @@unique([playerId, questId])
+  @@index([playerId, status])
+}
+
+enum QuestStatus {
+  IN_PROGRESS
+  COMPLETED
+  CLAIMED     // 已领取奖励
+  FAILED
+}
+
+// ==================== 敌人模板 ====================
+
+model EnemyTemplate {
+  id          String      @id @default(uuid())
+  enemyId     String      @unique
+
+  name        String
+  description String?
+  type        EnemyType
+
+  // 基础属性
+  baseHp      Int
+  baseAttack  Int
+  baseDefense Int
+  baseSpeed   Int
+
+  // 属性倍率 (根据等级缩放)
+  hpMultiplier      Float   @default(1.0)
+  attackMultiplier  Float   @default(1.0)
+  defenseMultiplier Float   @default(1.0)
+
+  // 技能ID列表 JSON
+  skillIds    String?
+
+  // 掉落表 JSON: [{itemId, rate, minAmount, maxAmount}]
+  dropTable   String?
+
+  // 经验值
+  expReward   Int         @default(10)
+
+  // 元素属性
+  element     String?
+
+  iconId      String?
+
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([type])
+}
+
+enum EnemyType {
+  NORMAL      // 普通怪
+  ELITE       // 精英怪
+  BOSS        // BOSS
+  WORLD_BOSS  // 世界BOSS
+}
+
+// ==================== 副本系统 ====================
+
+model DungeonTemplate {
+  id          String   @id @default(uuid())
+  dungeonId   String   @unique
+
+  name        String
+  description String?
+  type        String   // story, daily, weekly, event
+
+  // 关联章节
+  chapterId   String?
+
+  // 层数/关卡配置 JSON: [{level, enemyIds, rewards}]
+  stages      String
+
+  // 入场条件 JSON
+  requirements String?
+
+  // 消耗 (体力等)
+  energyCost  Int      @default(10)
+
+  // 每日次数限制
+  dailyLimit  Int?
+
+  // 推荐战力
+  recommendedPower Int?
+
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type, isActive])
+}
+
+// ==================== 技能模板 ====================
+
+model SkillTemplate {
+  id          String    @id @default(uuid())
+  skillId     String    @unique
+
+  name        String
+  description String
+  type        SkillType
+
+  // 元素属性
+  element     String?
+
+  // 消耗
+  mpCost      Int       @default(0)
+  cooldown    Int       @default(0) // 回合数
+
+  // 伤害倍率
+  damageMultiplier Float @default(1.0)
+
+  // 效果 JSON: [{type, target, value, duration?}]
+  effects     String?
+
+  // 学习条件 JSON
+  requirements String?
+
+  iconId      String?
+
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([type, element])
+}
+
+enum SkillType {
+  ATTACK
+  DEFENSE
+  SUPPORT
+  PASSIVE
+}
+
+// ==================== 功法模板 ====================
+
+model TechniqueTemplate {
+  id          String   @id @default(uuid())
+  techniqueId String   @unique
+
+  name        String
+  description String
+  grade       String   // mortal, yellow, profound, earth, heaven, immortal
+
+  // 元素属性
+  element     String?
+
+  // 修炼速度加成 (百分比)
+  cultivationBonus Int @default(0)
+
+  // 附带技能ID列表 JSON
+  skillIds    String?
+
+  // 学习条件 JSON
+  requirements String?
+
+  maxLevel    Int      @default(10)
+
+  iconId      String?
+
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([grade])
+}
+
+// ==================== 玩家功法 ====================
+
+model PlayerTechnique {
+  id           String   @id @default(uuid())
+  playerId     String
+  techniqueId  String
+
+  level        Int      @default(1)
+  proficiency  Int      @default(0) // 熟练度
+  isActive     Boolean  @default(false)
+
+  learnedAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([playerId, techniqueId])
+  @@index([playerId])
+}
+
+// ==================== 玩家技能 ====================
+
+model PlayerSkill {
+  id        String   @id @default(uuid())
+  playerId  String
+  skillId   String
+
+  level     Int      @default(1)
+
+  learnedAt DateTime @default(now())
+
+  @@unique([playerId, skillId])
+  @@index([playerId])
+}

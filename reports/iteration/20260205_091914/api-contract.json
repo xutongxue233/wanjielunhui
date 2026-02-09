@@ -1,0 +1,1605 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-02-05T09:19:14.000Z",
+  "apiPrefix": "/api/v1",
+  "endpoints": [
+    {
+      "id": "auth-register",
+      "category": "auth",
+      "frontend": {
+        "path": "/auth/register",
+        "method": "POST",
+        "request": { "username": "string", "email": "string", "password": "string" },
+        "response": { "id": "string", "username": "string", "email": "string", "role": "string" }
+      },
+      "backend": {
+        "path": "/auth/register",
+        "method": "POST",
+        "request": { "username": "string", "email": "string", "password": "string" },
+        "response": { "id": "string", "username": "string", "email": "string", "role": "string", "createdAt": "string" }
+      },
+      "status": "mismatch",
+      "issues": ["响应字段: 后端返回 createdAt, 前端未定义"]
+    },
+    {
+      "id": "auth-login",
+      "category": "auth",
+      "frontend": {
+        "path": "/auth/login",
+        "method": "POST",
+        "request": { "account": "string", "password": "string" },
+        "response": { "accessToken": "string", "refreshToken": "string", "expiresIn": "number", "user": "object" }
+      },
+      "backend": {
+        "path": "/auth/login",
+        "method": "POST",
+        "request": { "account": "string", "password": "string" },
+        "response": "未在schema中定义完整响应结构"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "auth-logout",
+      "category": "auth",
+      "frontend": {
+        "path": "/auth/logout",
+        "method": "POST",
+        "request": { "refreshToken": "string" },
+        "response": "void"
+      },
+      "backend": {
+        "path": "/auth/logout",
+        "method": "POST",
+        "request": { "refreshToken": "string (optional)" },
+        "response": "void"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "auth-refresh",
+      "category": "auth",
+      "frontend": {
+        "path": "/auth/refresh",
+        "method": "POST",
+        "request": { "refreshToken": "string" },
+        "response": { "accessToken": "string", "refreshToken": "string" }
+      },
+      "backend": {
+        "path": "/auth/refresh",
+        "method": "POST",
+        "request": { "refreshToken": "string" },
+        "response": "未在schema中定义"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "auth-me",
+      "category": "auth",
+      "frontend": {
+        "path": "/auth/me",
+        "method": "GET",
+        "auth": true,
+        "response": { "id": "string", "username": "string", "email": "string", "role": "string" }
+      },
+      "backend": {
+        "path": "/auth/me",
+        "method": "GET",
+        "auth": true,
+        "response": "未在schema中定义"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "save-list",
+      "category": "save",
+      "frontend": {
+        "path": "/save/list",
+        "method": "GET",
+        "auth": true,
+        "response": "SaveSlot[]"
+      },
+      "backend": {
+        "path": "/save/list",
+        "method": "GET",
+        "auth": true,
+        "response": "SaveSlot[]"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "save-get",
+      "category": "save",
+      "frontend": {
+        "path": "/save/:slot",
+        "method": "GET",
+        "auth": true,
+        "response": "SaveData"
+      },
+      "backend": {
+        "path": "/save/:slot",
+        "method": "GET",
+        "auth": true,
+        "params": { "slot": "string, pattern: ^[1-3]$" }
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "save-save",
+      "category": "save",
+      "frontend": {
+        "path": "/save/:slot",
+        "method": "POST",
+        "auth": true,
+        "request": { "name": "string", "playerData": "object", "gameData": "object", "alchemyData": "object", "discipleData": "object", "roguelikeData": "object", "playTime?": "number", "checkpoint?": "string" }
+      },
+      "backend": {
+        "path": "/save/:slot",
+        "method": "POST",
+        "auth": true,
+        "request": { "name": "string", "playerData": "object", "gameData": "object", "alchemyData": "object", "discipleData": "object", "roguelikeData": "object", "playTime?": "integer", "checkpoint?": "string" }
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "save-delete",
+      "category": "save",
+      "frontend": {
+        "path": "/save/:slot",
+        "method": "DELETE",
+        "auth": true
+      },
+      "backend": {
+        "path": "/save/:slot",
+        "method": "DELETE",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "player-profile",
+      "category": "player",
+      "frontend": {
+        "path": "/player/profile",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/player/profile",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "player-update-profile",
+      "category": "player",
+      "frontend": {
+        "path": "/player/profile",
+        "method": "PUT",
+        "auth": true,
+        "request": { "name?": "string", "title?": "string" }
+      },
+      "backend": {
+        "path": "/player/profile",
+        "method": "PUT",
+        "auth": true,
+        "request": { "name?": "string", "title?": "string", "avatarId?": "integer" }
+      },
+      "status": "mismatch",
+      "issues": ["请求参数: 后端支持 avatarId, 前端未定义"]
+    },
+    {
+      "id": "player-search",
+      "category": "player",
+      "frontend": {
+        "path": "/player/search",
+        "method": "GET",
+        "query": { "keyword": "string" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /player/search 端点实现"]
+    },
+    {
+      "id": "ranking-combat-power",
+      "category": "ranking",
+      "frontend": {
+        "path": "/ranking/combat-power",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/ranking/:type",
+        "method": "GET",
+        "description": "使用动态路由 type=combat-power"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "ranking-realm",
+      "category": "ranking",
+      "frontend": {
+        "path": "/ranking/realm",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/ranking/:type",
+        "method": "GET",
+        "description": "使用动态路由 type=realm"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "ranking-reincarnation",
+      "category": "ranking",
+      "frontend": {
+        "path": "/ranking/reincarnation",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/ranking/:type",
+        "method": "GET",
+        "description": "使用动态路由 type=reincarnation"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "ranking-wealth",
+      "category": "ranking",
+      "frontend": {
+        "path": "/ranking/wealth",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/ranking/:type",
+        "method": "GET"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "ranking-pvp",
+      "category": "ranking",
+      "frontend": {
+        "path": "/ranking/pvp",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/ranking/:type",
+        "method": "GET"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "ranking-my-rank",
+      "category": "ranking",
+      "frontend": {
+        "path": "/ranking/:type/me",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/ranking/:type/me",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "friend-list",
+      "category": "friend",
+      "frontend": {
+        "path": "/friend/list",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/friend/list",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "friend-requests",
+      "category": "friend",
+      "frontend": {
+        "path": "/friend/requests",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/friend/requests",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "friend-add",
+      "category": "friend",
+      "frontend": {
+        "path": "/friend/request",
+        "method": "POST",
+        "auth": true,
+        "request": { "targetId": "string", "message?": "string" }
+      },
+      "backend": {
+        "path": "/friend/request",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "friend-accept",
+      "category": "friend",
+      "frontend": {
+        "path": "/friend/accept/:requestId",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/friend/accept/:id",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "friend-reject",
+      "category": "friend",
+      "frontend": {
+        "path": "/friend/reject/:requestId",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/friend/reject/:id",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "friend-remove",
+      "category": "friend",
+      "frontend": {
+        "path": "/friend/:friendId",
+        "method": "DELETE",
+        "auth": true
+      },
+      "backend": {
+        "path": "/friend/:id",
+        "method": "DELETE",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "sect-my",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/my",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /sect/my 端点, 需要根据玩家获取当前所属门派"]
+    },
+    {
+      "id": "sect-members",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/members",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /sect/members 端点, 前端期望获取当前门派成员列表"]
+    },
+    {
+      "id": "sect-list",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/list",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/sect/list",
+        "method": "GET"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "sect-create",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/create",
+        "method": "POST",
+        "auth": true,
+        "request": { "name": "string", "description?": "string" }
+      },
+      "backend": {
+        "path": "/sect/create",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "sect-join",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/join",
+        "method": "POST",
+        "auth": true,
+        "request": { "sectId": "string" }
+      },
+      "backend": {
+        "path": "/sect/:id/join",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["路由路径不匹配: 前端 POST /sect/join + body.sectId, 后端 POST /sect/:id/join"]
+    },
+    {
+      "id": "sect-leave",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/leave",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/sect/:id/leave",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["路由路径不匹配: 前端 POST /sect/leave, 后端需要 sectId 参数 /sect/:id/leave"]
+    },
+    {
+      "id": "sect-contribute",
+      "category": "sect",
+      "frontend": {
+        "path": "/sect/contribute",
+        "method": "POST",
+        "auth": true,
+        "request": { "amount": "number" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /sect/contribute 端点"]
+    },
+    {
+      "id": "mail-list",
+      "category": "mail",
+      "frontend": {
+        "path": "/mail/list",
+        "method": "GET",
+        "auth": true,
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/mail/list",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "mail-read",
+      "category": "mail",
+      "frontend": {
+        "path": "/mail/:mailId",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/mail/:id",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "mail-claim",
+      "category": "mail",
+      "frontend": {
+        "path": "/mail/:mailId/claim",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/mail/:id/claim",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "mail-delete",
+      "category": "mail",
+      "frontend": {
+        "path": "/mail/:mailId",
+        "method": "DELETE",
+        "auth": true
+      },
+      "backend": {
+        "path": "/mail/:id",
+        "method": "DELETE",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "mail-send",
+      "category": "mail",
+      "frontend": {
+        "path": "/mail/send",
+        "method": "POST",
+        "auth": true,
+        "request": { "toPlayerId": "string", "title": "string", "content": "string" }
+      },
+      "backend": {
+        "path": "/mail/send",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "chat-messages",
+      "category": "chat",
+      "frontend": {
+        "path": "/chat/messages",
+        "method": "GET",
+        "query": { "channel": "string", "before?": "string", "limit": "number" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /chat/messages 端点, 聊天消息通过 WebSocket 获取?"]
+    },
+    {
+      "id": "chat-send",
+      "category": "chat",
+      "frontend": {
+        "path": "/chat/send",
+        "method": "POST",
+        "auth": true,
+        "request": { "channel": "string", "content": "string" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /chat/send 端点, 聊天发送通过 WebSocket?"]
+    },
+    {
+      "id": "market-listings",
+      "category": "market",
+      "frontend": {
+        "path": "/market/listings",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number", "type?": "string", "search?": "string" }
+      },
+      "backend": {
+        "path": "/market/listings",
+        "method": "GET"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "market-buy",
+      "category": "market",
+      "frontend": {
+        "path": "/market/buy",
+        "method": "POST",
+        "auth": true,
+        "request": { "listingId": "string", "quantity": "number" }
+      },
+      "backend": {
+        "path": "/market/buy/:id",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["路由路径不匹配: 前端 POST /market/buy + body.listingId, 后端 POST /market/buy/:id"]
+    },
+    {
+      "id": "market-sell",
+      "category": "market",
+      "frontend": {
+        "path": "/market/sell",
+        "method": "POST",
+        "auth": true,
+        "request": { "itemId": "string", "price": "number", "quantity": "number" }
+      },
+      "backend": {
+        "path": "/market/list",
+        "method": "POST",
+        "auth": true,
+        "description": "后端端点名为 /market/list 用于上架"
+      },
+      "status": "mismatch",
+      "issues": ["端点名称不一致: 前端 /market/sell, 后端 /market/list"]
+    },
+    {
+      "id": "market-cancel",
+      "category": "market",
+      "frontend": {
+        "path": "/market/cancel",
+        "method": "POST",
+        "auth": true,
+        "request": { "listingId": "string" }
+      },
+      "backend": {
+        "path": "/market/cancel/:id",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["路由路径不匹配: 前端 POST /market/cancel + body.listingId, 后端 POST /market/cancel/:id"]
+    },
+    {
+      "id": "market-my-listings",
+      "category": "market",
+      "frontend": {
+        "path": "/market/my-listings",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/market/my-listings",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "market-my-trades",
+      "category": "market",
+      "frontend": {
+        "path": "/market/my-trades",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/market/history",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["端点名称不一致: 前端 /market/my-trades, 后端 /market/history"]
+    },
+    {
+      "id": "market-shop",
+      "category": "market",
+      "frontend": {
+        "path": "/market/shop",
+        "method": "GET",
+        "query": { "category?": "string" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /market/shop 系统商店端点"]
+    },
+    {
+      "id": "market-shop-buy",
+      "category": "market",
+      "frontend": {
+        "path": "/market/shop/buy",
+        "method": "POST",
+        "auth": true,
+        "request": { "itemId": "string", "quantity": "number" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /market/shop/buy 系统商店购买端点"]
+    },
+    {
+      "id": "pvp-stats",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/stats",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": {
+        "path": "/pvp/stats",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "pvp-history",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/history",
+        "method": "GET",
+        "auth": true,
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/pvp/history",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "pvp-rankings",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/rankings",
+        "method": "GET",
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /pvp/rankings 端点, 应使用 /ranking/pvp"]
+    },
+    {
+      "id": "pvp-join-queue",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/queue/join",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/pvp/match",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["端点路径不匹配: 前端 /pvp/queue/join, 后端 /pvp/match"]
+    },
+    {
+      "id": "pvp-leave-queue",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/queue/leave",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/pvp/match",
+        "method": "DELETE",
+        "auth": true
+      },
+      "status": "mismatch",
+      "issues": ["端点路径和方法不匹配: 前端 POST /pvp/queue/leave, 后端 DELETE /pvp/match"]
+    },
+    {
+      "id": "pvp-get-battle",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/battle",
+        "method": "GET",
+        "auth": true
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /pvp/battle 获取当前战斗状态端点"]
+    },
+    {
+      "id": "pvp-action",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/battle/action",
+        "method": "POST",
+        "auth": true,
+        "request": { "action": "attack|skill|defend" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /pvp/battle/action 战斗行动端点, 应通过 WebSocket 处理?"]
+    },
+    {
+      "id": "pvp-surrender",
+      "category": "pvp",
+      "frontend": {
+        "path": "/pvp/battle/surrender",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /pvp/battle/surrender 投降端点"]
+    },
+    {
+      "id": "announcements-list",
+      "category": "ops",
+      "frontend": {
+        "path": "/ops/announcements",
+        "method": "GET"
+      },
+      "backend": {
+        "path": "/ops/announcements",
+        "method": "GET"
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-dashboard-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/dashboard/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/dashboard/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-dashboard-system",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/dashboard/system",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/dashboard/system",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-users-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/users",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"],
+        "query": { "page": "number", "pageSize": "number", "search?": "string" }
+      },
+      "backend": {
+        "path": "/admin/users",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-users-ban",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/users/:id/ban",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/users/:id/ban",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-users-unban",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/users/:id/unban",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/users/:id/unban",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-announcements-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/announcements",
+        "method": "GET",
+        "auth": true,
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/admin/announcements",
+        "method": "GET",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-announcements-create",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/announcements",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/admin/announcements",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-announcements-update",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/announcements/:id",
+        "method": "PUT",
+        "auth": true
+      },
+      "backend": {
+        "path": "/admin/announcements/:id",
+        "method": "PUT",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-announcements-delete",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/announcements/:id",
+        "method": "DELETE",
+        "auth": true
+      },
+      "backend": {
+        "path": "/admin/announcements/:id",
+        "method": "DELETE",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-activities-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/activities",
+        "method": "GET",
+        "auth": true,
+        "query": { "page": "number", "pageSize": "number" }
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端 /admin/activities GET 端点缺失, 只有 POST 创建"]
+    },
+    {
+      "id": "admin-activities-create",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/activities",
+        "method": "POST",
+        "auth": true
+      },
+      "backend": {
+        "path": "/admin/activities",
+        "method": "POST",
+        "auth": true
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-activities-update",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/activities/:id",
+        "method": "PUT",
+        "auth": true
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /admin/activities/:id PUT 更新端点"]
+    },
+    {
+      "id": "admin-activities-delete",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/activities/:id",
+        "method": "DELETE",
+        "auth": true
+      },
+      "backend": null,
+      "status": "missing_backend",
+      "issues": ["后端缺少 /admin/activities/:id DELETE 删除端点"]
+    },
+    {
+      "id": "admin-saves-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/saves",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"],
+        "query": { "page": "number", "pageSize": "number", "search?": "string" }
+      },
+      "backend": {
+        "path": "/admin/saves",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-saves-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/saves/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/saves/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-saves-detail",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/saves/:id",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/saves/:id",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-saves-delete",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/saves/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN"]
+      },
+      "backend": {
+        "path": "/admin/saves/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-ranking-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/ranking/:type",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/ranking/:type",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-ranking-sync",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/ranking/sync",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/ranking/sync",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-ranking-rebuild",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/ranking/:type/rebuild",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/ranking/:type/rebuild",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-friends-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/friends",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/friends",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-friends-delete",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/friends/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/friends/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-friends-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/friends/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/friends/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-sects-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/sects",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/sects",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-sects-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/sects/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/sects/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-sects-members",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/sects/:sectId/members",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/sects/:id/members",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-sects-disband",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/sects/:sectId",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/sects/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-sects-kick-member",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/sects/:sectId/members/:playerId",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/sects/:id/members/:playerId",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-chat-list",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/chat",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"],
+        "query": { "channel": "string", "page": "number", "pageSize": "number" }
+      },
+      "backend": {
+        "path": "/admin/chat",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-chat-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/chat/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/chat/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-chat-delete",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/chat/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/chat/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-chat-clear-channel",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/chat/channel/:channel",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/chat/channel/:channel",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-market-listings",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/market/listings",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/market/listings",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-market-trades",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/market/trades",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/market/trades",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-market-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/market/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/market/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-market-cancel-listing",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/market/listings/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/market/listings/:id",
+        "method": "DELETE",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-pvp-matches",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/pvp/matches",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/pvp/matches",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-pvp-seasons",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/pvp/seasons",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/pvp/seasons",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-pvp-create-season",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/pvp/seasons",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/pvp/seasons",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-pvp-activate-season",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/pvp/seasons/:id/activate",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/pvp/seasons/:id/activate",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-pvp-end-season",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/pvp/seasons/:id/end",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/pvp/seasons/:id/end",
+        "method": "POST",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    },
+    {
+      "id": "admin-pvp-stats",
+      "category": "admin",
+      "frontend": {
+        "path": "/admin/pvp/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "backend": {
+        "path": "/admin/pvp/stats",
+        "method": "GET",
+        "auth": true,
+        "role": ["ADMIN", "GM"]
+      },
+      "status": "match",
+      "issues": []
+    }
+  ],
+  "summary": {
+    "total": 91,
+    "match": 66,
+    "mismatch": 11,
+    "missing_backend": 14,
+    "missing_frontend": 0
+  }
+}

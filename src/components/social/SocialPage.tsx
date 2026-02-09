@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { friendApi, sectApi, type Friend, type FriendRequest, type Sect, type SectMember } from '../../services/api';
+import { useAuthStore } from '../../stores/authStore';
+import { Confirm, message, Tabs } from '../ui';
 import './SocialPage.css';
 
 type SocialTab = 'friends' | 'sect' | 'requests';
@@ -11,25 +13,31 @@ export function SocialPage() {
   const [sect, setSect] = useState<Sect | null>(null);
   const [sectMembers, setSectMembers] = useState<SectMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [removeFriendId, setRemoveFriendId] = useState<string | null>(null);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (isAuthenticated) {
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const loadData = async () => {
     setLoading(true);
     try {
       const [friendsData, requestsData, sectData] = await Promise.all([
-        friendApi.list().catch(() => []),
-        friendApi.requests().catch(() => []),
+        friendApi.list().catch(() => [] as Friend[]),
+        friendApi.requests().catch(() => [] as FriendRequest[]),
         sectApi.getMySect().catch(() => null),
       ]);
-      setFriends(friendsData);
-      setRequests(requestsData);
+      setFriends(friendsData || []);
+      setRequests(requestsData || []);
       setSect(sectData);
 
       if (sectData) {
-        const members = await sectApi.getMembers().catch(() => []);
+        const members = await sectApi.getMembers(sectData.id).catch(() => []);
         setSectMembers(members);
       }
     } catch (err) {
@@ -47,6 +55,7 @@ export function SocialPage() {
       setFriends(updatedFriends);
     } catch (err) {
       console.error('接受好友请求失败:', err);
+      message.error('接受好友请求失败');
     }
   };
 
@@ -56,16 +65,19 @@ export function SocialPage() {
       setRequests((prev) => prev.filter((r) => r.id !== requestId));
     } catch (err) {
       console.error('拒绝好友请求失败:', err);
+      message.error('拒绝好友请求失败');
     }
   };
 
   const handleRemoveFriend = async (friendId: string) => {
-    if (!confirm('确定要删除该好友吗？')) return;
     try {
       await friendApi.remove(friendId);
       setFriends((prev) => prev.filter((f) => f.friendId !== friendId));
+      setRemoveFriendId(null);
     } catch (err) {
       console.error('删除好友失败:', err);
+      message.error('删除好友失败');
+      setRemoveFriendId(null);
     }
   };
 
@@ -101,7 +113,7 @@ export function SocialPage() {
             </div>
             <div className="friend-actions">
               <button className="friend-action-btn primary">私聊</button>
-              <button className="friend-action-btn secondary" onClick={() => handleRemoveFriend(friend.friendId)}>
+              <button className="friend-action-btn secondary" onClick={() => setRemoveFriendId(friend.friendId)}>
                 删除
               </button>
             </div>
@@ -202,38 +214,38 @@ export function SocialPage() {
 
   return (
     <div className="social-page">
-      <div className="social-tabs">
-        <button
-          className={`social-tab ${activeTab === 'friends' ? 'active' : ''}`}
-          onClick={() => setActiveTab('friends')}
-        >
-          好友列表
-        </button>
-        <button
-          className={`social-tab ${activeTab === 'sect' ? 'active' : ''}`}
-          onClick={() => setActiveTab('sect')}
-        >
-          宗门
-        </button>
-        <button
-          className={`social-tab ${activeTab === 'requests' ? 'active' : ''}`}
-          onClick={() => setActiveTab('requests')}
-        >
-          好友请求
-          {requests.length > 0 && (
-            <span style={{
-              marginLeft: '6px',
-              padding: '2px 6px',
-              background: 'var(--crimson)',
-              borderRadius: '8px',
-              fontSize: '0.7rem',
-              color: 'white'
-            }}>
-              {requests.length}
-            </span>
-          )}
-        </button>
-      </div>
+      <Confirm
+        isOpen={removeFriendId !== null}
+        onClose={() => setRemoveFriendId(null)}
+        onConfirm={() => removeFriendId && handleRemoveFriend(removeFriendId)}
+        title="删除好友"
+        message="确定要删除该好友吗？此操作不可恢复。"
+        confirmText="删除"
+        cancelText="取消"
+        danger
+      />
+      <Tabs
+        items={[
+          { key: 'friends', label: '好友列表' },
+          { key: 'sect', label: '宗门' },
+          {
+            key: 'requests',
+            label: (
+              <>
+                好友请求
+                {requests.length > 0 && (
+                  <span className="social-tab-badge">
+                    {requests.length}
+                  </span>
+                )}
+              </>
+            ),
+          },
+        ]}
+        activeKey={activeTab}
+        onChange={(key) => setActiveTab(key as SocialTab)}
+        className="social-tabs"
+      />
 
       <div className="social-content">
         {activeTab === 'friends' && renderFriendsList()}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, Button, ProgressBar } from '../ui';
+import { Card, Button, ProgressBar, message } from '../ui';
 import { useAlchemyStore } from '../../stores/alchemyStore';
 import { usePlayerStore } from '../../stores/playerStore';
 import { PILL_RECIPES, calculateSuccessRate } from '../../data/alchemy';
@@ -35,6 +35,11 @@ export const AlchemyPanel: React.FC = () => {
   const startRefining = useAlchemyStore((state) => state.startRefining);
   const completeRefining = useAlchemyStore((state) => state.completeRefining);
   const cancelRefining = useAlchemyStore((state) => state.cancelRefining);
+  const usePill = useAlchemyStore((state) => state.usePill);
+
+  const healPlayer = usePlayerStore((state) => state.healPlayer);
+  const restoreMp = usePlayerStore((state) => state.restoreMp);
+  const addCultivation = usePlayerStore((state) => state.addCultivation);
 
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [refiningProgress, setRefiningProgress] = useState(0);
@@ -82,6 +87,29 @@ export const AlchemyPanel: React.FC = () => {
       setResultMessage('无法开始炼制，请检查条件');
       setTimeout(() => setResultMessage(null), 2000);
     }
+  };
+
+  const handleUsePill = (pillId: string) => {
+    const pill = usePill(pillId);
+    if (!pill) return;
+
+    const effectTexts: string[] = [];
+    for (const effect of pill.effects) {
+      if (effect.type === 'heal_hp') {
+        healPlayer(effect.value);
+        effectTexts.push(`恢复${effect.value}气血`);
+      } else if (effect.type === 'heal_mp') {
+        restoreMp(effect.value);
+        effectTexts.push(`恢复${effect.value}法力`);
+      } else if (effect.type === 'add_cultivation') {
+        addCultivation(effect.value);
+        effectTexts.push(`增加${effect.value}修为`);
+      } else if (effect.type === 'breakthrough_bonus') {
+        effectTexts.push(`突破率+${(effect.value * 100).toFixed(0)}%`);
+      }
+    }
+
+    message.success(`使用${QUALITY_NAMES[pill.quality]}${pill.name}: ${effectTexts.join(', ')}`);
   };
 
   const recipe = selectedRecipe ? PILL_RECIPES[selectedRecipe] : null;
@@ -250,6 +278,9 @@ export const AlchemyPanel: React.FC = () => {
                   <span className={`font-medium ${QUALITY_COLORS[pill.quality]}`}>
                     {QUALITY_NAMES[pill.quality]} {pill.name}
                   </span>
+                  <Button size="sm" onClick={() => handleUsePill(pill.id)}>
+                    使用
+                  </Button>
                 </div>
                 <div className="text-xs text-gray-400 mt-1">
                   {pill.effects.map((e, i) => (

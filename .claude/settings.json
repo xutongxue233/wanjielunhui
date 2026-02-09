@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node tools/iteration/check-stop-condition.cjs",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(pnpm:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd:*)"
+    ]
+  },
+  "iteration": {
+    "maxRounds": 10,
+    "maxFixesPerRound": 5,
+    "viewports": [
+      { "width": 1920, "height": 1080, "name": "desktop-large" },
+      { "width": 1366, "height": 768, "name": "desktop-small" },
+      { "width": 390, "height": 844, "name": "mobile" }
+    ],
+    "urls": {
+      "frontend": "http://localhost:5173",
+      "backend": "http://localhost:3000",
+      "admin": "http://localhost:5173/admin"
+    },
+    "whitelist": {
+      "console": [
+        "Download the React DevTools",
+        "[HMR]",
+        "[vite]",
+        "Warning: ReactDOM.render is no longer supported"
+      ],
+      "network": [
+        "favicon.ico",
+        ".map",
+        "hot-update"
+      ]
+    }
+  }
+}

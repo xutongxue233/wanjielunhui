@@ -18,6 +18,7 @@ import { MarketPage } from '../market/MarketPage';
 import { PvpPage } from '../pvp/PvpPage';
 import { RankingPage } from '../ranking/RankingPage';
 import { friendApi, mailApi } from '../../services/api';
+import './GameScreen.css';
 
 type TabType = 'cultivation' | 'story' | 'combat' | 'alchemy' | 'disciples' | 'exploration';
 
@@ -42,11 +43,12 @@ export const GameScreen: React.FC = () => {
 
   const fetchUnreadCount = useCallback(async () => {
     try {
-      const [friendRequests, mailData] = await Promise.all([
+      const [friendRequestsData, mailData] = await Promise.all([
         friendApi.requests().catch(() => []),
         mailApi.list(1, 1).catch(() => ({ mails: [], total: 0, unreadCount: 0 })),
       ]);
-      const totalUnread = friendRequests.length + (mailData.unreadCount || 0);
+      const requestCount = friendRequestsData?.length || 0;
+      const totalUnread = requestCount + (mailData.unreadCount || 0);
       setUnreadCount(totalUnread);
     } catch (err) {
       console.error('获取未读数量失败:', err);
@@ -88,48 +90,29 @@ export const GameScreen: React.FC = () => {
     switch (activeNavTab) {
       case 'game':
         return (
-          <div className="flex-1 flex max-w-7xl mx-auto w-full">
-            <aside
-              style={{
-                width: '280px',
-                minWidth: '280px',
-                padding: '16px',
-                borderRight: '1px solid var(--border-subtle)',
-              }}
-            >
+          <div className="game-main-wrapper">
+            <aside className="game-sidebar">
               <PlayerStatus />
             </aside>
 
-            <main className="flex-1 flex flex-col">
-              <nav
-                className="flex px-4"
-                style={{ borderBottom: '1px solid var(--border-subtle)' }}
-              >
+            <main className="game-main">
+              <nav className="game-tabs-nav">
                 {TABS.map((tab) => (
                   <button
                     key={tab.id}
-                    className={`tab-xian ${activeTab === tab.id ? 'active' : ''}`}
+                    className={`tab-xian ${activeTab === tab.id ? 'active' : ''} ${!tab.available ? 'disabled' : ''}`}
                     onClick={() => tab.available && setActiveTab(tab.id)}
                     disabled={!tab.available}
-                    style={{
-                      opacity: tab.available ? 1 : 0.4,
-                      cursor: tab.available ? 'pointer' : 'not-allowed',
-                    }}
                   >
                     {tab.name}
                     {!tab.available && (
-                      <span
-                        className="ml-1 text-xs"
-                        style={{ color: 'var(--text-muted)' }}
-                      >
-                        (soon)
-                      </span>
+                      <span className="game-tab-soon">(soon)</span>
                     )}
                   </button>
                 ))}
               </nav>
 
-              <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+              <div className="game-content">
                 {renderGameTabContent()}
               </div>
             </main>
@@ -137,25 +120,25 @@ export const GameScreen: React.FC = () => {
         );
       case 'social':
         return (
-          <div className="flex-1 max-w-4xl mx-auto w-full">
+          <div className="game-page-container social">
             <SocialPage />
           </div>
         );
       case 'market':
         return (
-          <div className="flex-1 max-w-5xl mx-auto w-full">
+          <div className="game-page-container market">
             <MarketPage />
           </div>
         );
       case 'pvp':
         return (
-          <div className="flex-1 max-w-4xl mx-auto w-full">
+          <div className="game-page-container pvp">
             <PvpPage />
           </div>
         );
       case 'ranking':
         return (
-          <div className="flex-1 max-w-4xl mx-auto w-full">
+          <div className="game-page-container ranking">
             <RankingPage />
           </div>
         );
@@ -165,52 +148,23 @@ export const GameScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ paddingBottom: '64px' }}>
-      <header
-        className="glass-effect px-4 py-3"
-        style={{ borderBottom: '1px solid var(--border-subtle)' }}
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1
-            className="text-xl font-bold text-gradient-gold"
-            style={{ fontFamily: "'Ma Shan Zheng', serif" }}
-          >
+    <div className="game-screen">
+      <header className="game-header glass-effect px-4 py-3">
+        <div className="game-header-inner">
+          <h1 className="game-title text-xl font-bold text-gradient-gold">
             万界轮回
           </h1>
-          <div className="flex items-center gap-5">
-            <div
-              className="flex items-center gap-5 px-4 py-1.5 rounded-full"
-              style={{
-                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 90, 43, 0.15) 100%)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-              }}
-            >
-              <span
-                className="font-medium"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {player.name}
-              </span>
-              <span
-                className="h-4 w-px"
-                style={{ background: 'rgba(212, 175, 55, 0.4)' }}
-              />
-              <span
-                className="text-sm font-medium"
-                style={{ color: 'var(--gold-immortal)' }}
-              >
-                {player.realm.displayName}
-              </span>
+          <div className="game-user-info">
+            <div className="game-user-badge">
+              <span className="game-user-name">{player.name}</span>
+              <span className="game-user-divider" />
+              <span className="game-user-realm">{player.realm.displayName}</span>
             </div>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setPhase('title')}
-              className="hover:text-gold-primary"
-              style={{
-                color: 'var(--text-muted)',
-                transition: 'color 0.2s ease',
-              }}
+              className="game-btn-back"
             >
               返回
             </Button>
@@ -222,10 +176,7 @@ export const GameScreen: React.FC = () => {
                   logout();
                   setPhase('title');
                 }}
-                style={{
-                  color: 'var(--crimson-light, #e06860)',
-                  transition: 'all 0.2s ease',
-                }}
+                className="game-btn-logout"
               >
                 退出登录
               </Button>

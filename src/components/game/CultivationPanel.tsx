@@ -4,6 +4,7 @@ import { Card, Button } from '../ui';
 import { usePlayerStore } from '../../stores/playerStore';
 import { useGameLoop, formatNumber } from '../../core/game-loop';
 import { getRealmColor, getNextRealm, REALM_CONFIGS } from '../../data/realms';
+import './CultivationPanel.css';
 
 export const CultivationPanel: React.FC = () => {
   const player = usePlayerStore((state) => state.player);
@@ -31,26 +32,19 @@ export const CultivationPanel: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+    <div className="cultivation-grid">
       {/* 修炼进度 */}
       <Card title="修炼进度">
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0' }}>
+        <div className="flex flex-col items-center py-6">
           {/* 修炼圆环 */}
-          <div style={{ position: 'relative', width: '160px', height: '160px', marginBottom: '24px' }}>
+          <div className="cultivation-ring-container">
             {/* 外层发光效果 */}
             <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '50%',
-                background: `radial-gradient(circle, ${realmColor}20 0%, transparent 70%)`,
-              }}
+              className="cultivation-ring-glow"
+              style={{ '--ring-color': realmColor } as React.CSSProperties}
             />
             {/* SVG圆环 */}
-            <svg
-              style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)', position: 'relative', zIndex: 10 }}
-              viewBox="0 0 100 100"
-            >
+            <svg className="cultivation-ring-svg" viewBox="0 0 100 100">
               <circle
                 cx="50"
                 cy="50"
@@ -68,7 +62,7 @@ export const CultivationPanel: React.FC = () => {
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={`${progress * 2.83} 283`}
-                style={{ transition: 'stroke-dasharray 0.5s ease' }}
+                className="cultivation-ring-progress"
               />
               <circle
                 cx="50"
@@ -79,29 +73,15 @@ export const CultivationPanel: React.FC = () => {
                 strokeWidth="12"
                 strokeLinecap="round"
                 strokeDasharray={`${progress * 2.83} 283`}
-                style={{ opacity: 0.3, transition: 'stroke-dasharray 0.5s ease' }}
+                className="cultivation-ring-glow-circle"
               />
             </svg>
 
             {/* 中心内容 */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 20,
-              }}
-            >
+            <div className="cultivation-ring-center">
               <motion.div
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  color: realmColor,
-                  fontFamily: "'Ma Shan Zheng', serif",
-                }}
+                className="cultivation-realm-name"
+                style={{ color: realmColor }}
                 animate={{ scale: [1, 1.02, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
@@ -111,19 +91,13 @@ export const CultivationPanel: React.FC = () => {
           </div>
 
           {/* 修为数值 */}
-          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <div style={{ fontSize: '18px', fontWeight: '500', color: 'var(--text-primary)' }}>
+          <div className="cultivation-values">
+            <div className="cultivation-current">
               {formatNumber(attributes.cultivation)}
-              <span style={{ color: 'var(--text-muted)' }}> / </span>
+              <span className="cultivation-separator"> / </span>
               {formatNumber(attributes.maxCultivation)}
             </div>
-            <div
-              style={{
-                fontSize: '14px',
-                marginTop: '4px',
-                color: canBreakthrough ? 'var(--jade-light)' : 'var(--text-muted)',
-              }}
-            >
+            <div className={`cultivation-hint ${canBreakthrough ? 'cultivation-hint-ready' : 'cultivation-hint-waiting'}`}>
               {canBreakthrough ? '修为圆满，可尝试突破' : `还需 ${formatNumber(attributes.maxCultivation - attributes.cultivation)}`}
             </div>
           </div>
@@ -135,16 +109,7 @@ export const CultivationPanel: React.FC = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  textAlign: 'center',
-                  marginBottom: '16px',
-                  background: breakthroughResult.success ? 'rgba(45, 139, 111, 0.15)' : 'rgba(139, 41, 66, 0.15)',
-                  border: breakthroughResult.success ? '1px solid var(--jade-essence)' : '1px solid var(--crimson-blood)',
-                  color: breakthroughResult.success ? 'var(--jade-light)' : 'var(--crimson-light)',
-                }}
+                className={`cultivation-result ${breakthroughResult.success ? 'cultivation-result-success' : 'cultivation-result-fail'}`}
               >
                 {breakthroughResult.message}
               </motion.div>
@@ -154,7 +119,7 @@ export const CultivationPanel: React.FC = () => {
           {/* 突破按钮 */}
           <Button
             variant={canBreakthrough ? 'primary' : 'secondary'}
-            style={{ width: '100%', maxWidth: '240px' }}
+            className="w-full max-w-60"
             disabled={!canBreakthrough || !nextRealm}
             onClick={handleBreakthrough}
           >
@@ -167,69 +132,62 @@ export const CultivationPanel: React.FC = () => {
       <Card title="修炼信息">
         <div>
           {/* 修炼速度 */}
-          <div style={{ padding: '16px', borderRadius: '8px', background: 'var(--ink-medium)', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>修炼速度</span>
-              <span style={{ fontSize: '18px', fontWeight: '500', color: 'var(--gold-immortal)' }}>
+          <div className="cultivation-info-block">
+            <div className="cultivation-info-row">
+              <span className="cultivation-info-label">修炼速度</span>
+              <span className="cultivation-speed-value">
                 {cultivationSpeed.toFixed(2)}
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>/秒</span>
+                <span className="cultivation-speed-unit">/秒</span>
               </span>
             </div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            <div className="cultivation-info-hint">
               受灵根资质、功法、丹药等影响
             </div>
           </div>
 
           {/* 下一境界 */}
           {nextRealm && (
-            <div style={{ padding: '16px', borderRadius: '8px', background: 'var(--ink-medium)', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>下一境界</span>
+            <div className="cultivation-info-block">
+              <div className="cultivation-info-row">
+                <span className="cultivation-info-label">下一境界</span>
                 <span
-                  style={{
-                    fontWeight: '500',
-                    color: getRealmColor(nextRealm.name),
-                    fontFamily: "'Ma Shan Zheng', serif",
-                  }}
+                  className="cultivation-realm-title"
+                  style={{ color: getRealmColor(nextRealm.name) }}
                 >
                   {nextRealm.displayName}
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+              <div className="cultivation-info-hint">
                 {REALM_CONFIGS[nextRealm.name].description}
               </div>
             </div>
           )}
 
           {/* 突破概率 */}
-          <div style={{ padding: '16px', borderRadius: '8px', background: 'var(--ink-medium)', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>突破成功率</span>
-              <span style={{ color: 'var(--jade-light)' }}>
-                {Math.min(95, Math.floor(50 + attributes.comprehension * 0.5 + attributes.luck * 0.3))}%
+          <div className="cultivation-info-block">
+            <div className="cultivation-info-row">
+              <span className="cultivation-info-label">突破成功率</span>
+              <span className="cultivation-info-value cultivation-info-jade">
+                {Math.min(95, Math.floor((REALM_CONFIGS[player.realm.name].breakthroughBaseRate + attributes.comprehension * 0.005 + attributes.luck * 0.003) * 100))}%
               </span>
             </div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            <div className="cultivation-info-hint">
               悟性和气运越高，突破成功率越高
             </div>
           </div>
 
           {/* 分隔线 */}
-          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold-immortal) 50%, var(--border-subtle) 80%, transparent 100%)', margin: '16px 0' }} />
+          <div className="cultivation-divider" />
 
           {/* 当前境界描述 */}
           <div>
             <div
-              style={{
-                fontSize: '14px',
-                marginBottom: '8px',
-                color: realmColor,
-                fontFamily: "'Ma Shan Zheng', serif",
-              }}
+              className="cultivation-realm-title"
+              style={{ color: realmColor }}
             >
               {realm.displayName}
             </div>
-            <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
+            <p className="cultivation-realm-desc">
               {REALM_CONFIGS[realm.name].description}
             </p>
           </div>

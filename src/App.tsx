@@ -7,6 +7,7 @@ import { TitleScreen, CharacterCreation, GameScreen } from './components/game';
 import { SaveManager } from './components/save/SaveManager';
 import { useGameLoop } from './core/game-loop';
 import { saveSyncService } from './services/saveSync';
+import { MessageContainer } from './components/ui';
 
 function App() {
   const phase = useGameStore((state) => state.phase);
@@ -114,6 +115,7 @@ function App() {
       <AnimatePresence mode="wait">
         {renderPhase()}
       </AnimatePresence>
+      <MessageContainer />
     </div>
   );
 }

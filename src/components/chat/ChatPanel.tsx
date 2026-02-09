@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { chatApi, type ChatMessage as ApiChatMessage } from '../../services/api';
+import { message } from '../ui';
 import './ChatPanel.css';
 
 type ChatChannel = 'world' | 'realm' | 'sect' | 'private';
@@ -54,6 +55,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
       setMessages(data.map(transformMessage));
     } catch (err) {
       console.error('获取消息失败:', err);
+      message.error('获取消息失败');
     }
   }, [activeChannel]);
 
@@ -87,6 +89,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
       setInputValue('');
     } catch (err) {
       console.error('发送消息失败:', err);
+      message.error('发送消息失败');
     } finally {
       setSending(false);
     }
@@ -157,6 +160,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         <div className="chat-input-area">
           <div className="chat-input-wrapper">
             <input
+              id="chat-message-input"
+              name="chat-message"
               type="text"
               className="chat-input"
               placeholder="输入消息..."
@@ -181,7 +186,7 @@ export function ChatToggleButton({ onClick, unreadCount }: { onClick: () => void
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>
-      {unreadCount && unreadCount > 0 && (
+      {unreadCount !== undefined && unreadCount > 0 && (
         <span className="chat-unread">{unreadCount > 99 ? '99+' : unreadCount}</span>
       )}
     </button>

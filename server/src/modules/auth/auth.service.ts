@@ -178,8 +178,15 @@ export class AuthService {
       throw new ForbiddenError(ErrorCodes.AUTH_USER_BANNED, '账号已被封禁');
     }
 
+    // 获取玩家ID
+    const player = await prisma.player.findUnique({
+      where: { userId: storedToken.user.id },
+      select: { id: true },
+    });
+
     const tokenPayload: TokenPayload = {
       userId: storedToken.user.id,
+      playerId: player?.id ?? '',
       email: storedToken.user.email,
       role: storedToken.user.role,
     };

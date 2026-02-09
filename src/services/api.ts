@@ -201,24 +201,30 @@ export interface FriendRequest {
 }
 
 export const friendApi = {
-  list: () => request<Friend[]>('/friend/list'),
+  list: async () => {
+    const result = await request<{ friends: Friend[]; total: number }>('/friend/list');
+    return result.friends || [];
+  },
 
-  requests: () => request<FriendRequest[]>('/friend/requests'),
+  requests: async () => {
+    const result = await request<{ requests: FriendRequest[]; total: number }>('/friend/requests');
+    return result.requests || [];
+  },
 
   add: (friendId: string, message?: string) =>
-    request<void>('/friend/add', { method: 'POST', body: JSON.stringify({ friendId, message }) }),
+    request<void>('/friend/request', { method: 'POST', body: JSON.stringify({ targetId: friendId, message }) }),
 
   accept: (requestId: string) =>
-    request<void>('/friend/accept', { method: 'POST', body: JSON.stringify({ requestId }) }),
+    request<void>(`/friend/accept/${requestId}`, { method: 'POST' }),
 
   reject: (requestId: string) =>
-    request<void>('/friend/reject', { method: 'POST', body: JSON.stringify({ requestId }) }),
+    request<void>(`/friend/reject/${requestId}`, { method: 'POST' }),
 
   remove: (friendId: string) =>
-    request<void>('/friend/remove', { method: 'POST', body: JSON.stringify({ friendId }) }),
+    request<void>(`/friend/${friendId}`, { method: 'DELETE' }),
 
   search: (keyword: string) =>
-    request<{ id: string; name: string; realm: string }[]>(`/friend/search?keyword=${encodeURIComponent(keyword)}`),
+    request<{ id: string; name: string; realm: string }[]>(`/player/search?keyword=${encodeURIComponent(keyword)}`),
 };
 
 // 宗门API
@@ -248,7 +254,7 @@ export interface SectMember {
 export const sectApi = {
   getMySect: () => request<Sect | null>('/sect/my'),
 
-  getMembers: () => request<SectMember[]>('/sect/members'),
+  getMembers: (sectId: string) => request<SectMember[]>(`/sect/${sectId}/members`),
 
   list: (page = 1, pageSize = 20) =>
     request<{ sects: Sect[]; total: number }>(`/sect/list?page=${page}&pageSize=${pageSize}`),
@@ -257,12 +263,12 @@ export const sectApi = {
     request<Sect>('/sect/create', { method: 'POST', body: JSON.stringify({ name, description }) }),
 
   join: (sectId: string) =>
-    request<void>('/sect/join', { method: 'POST', body: JSON.stringify({ sectId }) }),
+    request<void>(`/sect/${sectId}/join`, { method: 'POST' }),
 
-  leave: () => request<void>('/sect/leave', { method: 'POST' }),
+  leave: (sectId: string) => request<void>(`/sect/${sectId}/leave`, { method: 'POST' }),
 
-  contribute: (amount: number) =>
-    request<void>('/sect/contribute', { method: 'POST', body: JSON.stringify({ amount }) }),
+  contribute: (sectId: string, amount: number) =>
+    request<void>(`/sect/${sectId}/contribute`, { method: 'POST', body: JSON.stringify({ amount }) }),
 };
 
 // 邮件API
@@ -369,17 +375,17 @@ export const marketApi = {
   },
 
   buy: (listingId: string, quantity = 1) =>
-    request<void>('/market/buy', { method: 'POST', body: JSON.stringify({ listingId, quantity }) }),
+    request<void>(`/market/buy/${listingId}`, { method: 'POST', body: JSON.stringify({ quantity }) }),
 
   sell: (itemId: string, price: number, quantity = 1) =>
-    request<MarketListing>('/market/sell', { method: 'POST', body: JSON.stringify({ itemId, price, quantity }) }),
+    request<MarketListing>('/market/list', { method: 'POST', body: JSON.stringify({ itemId, price, quantity }) }),
 
   cancel: (listingId: string) =>
-    request<void>('/market/cancel', { method: 'POST', body: JSON.stringify({ listingId }) }),
+    request<void>(`/market/cancel/${listingId}`, { method: 'POST' }),
 
   myListings: () => request<MyTrade[]>('/market/my-listings'),
 
-  myTrades: () => request<MyTrade[]>('/market/my-trades'),
+  myTrades: () => request<MyTrade[]>('/market/history'),
 
   shop: (category?: string) => {
     let url = '/market/shop';
@@ -435,11 +441,11 @@ export const pvpApi = {
     request<{ matches: PvpMatch[]; total: number }>(`/pvp/history?page=${page}&pageSize=${pageSize}`),
 
   rankings: (page = 1, pageSize = 50) =>
-    request<{ rankings: RankingEntry[]; total: number }>(`/pvp/rankings?page=${page}&pageSize=${pageSize}`),
+    request<{ rankings: RankingEntry[]; total: number }>(`/ranking/pvp?page=${page}&pageSize=${pageSize}`),
 
-  joinQueue: () => request<{ status: string; estimatedWait?: number }>('/pvp/queue/join', { method: 'POST' }),
+  joinQueue: () => request<{ status: string; estimatedWait?: number }>('/pvp/match', { method: 'POST' }),
 
-  leaveQueue: () => request<void>('/pvp/queue/leave', { method: 'POST' }),
+  leaveQueue: () => request<void>('/pvp/match', { method: 'DELETE' }),
 
   getBattle: () => request<PvpBattleState | null>('/pvp/battle'),
 
@@ -460,9 +466,18 @@ export const rankingApiExtended = {
 
   getPvp: (page = 1, pageSize = 50) =>
     request<{ rankings: RankingEntry[]; total: number }>(
-      `/ranking/pvp?page=${page}&pageSize=${pageSize}`
+      `/ranking/pvp-rating?page=${page}&pageSize=${pageSize}`
     ),
 
-  getMyRank: (type: string) =>
-    request<{ rank: number; score: number }>(`/ranking/my?type=${type}`),
+  getMyRank: (type: string) => {
+    // 映射前端类型到后端类型
+    const typeMap: Record<string, string> = {
+      combat: 'combat-power',
+      realm: 'realm',
+      wealth: 'wealth',
+      pvp: 'pvp-rating',
+    };
+    const backendType = typeMap[type] || type;
+    return request<{ rank: number; score: number }>(`/ranking/${backendType}/me`);
+  },
 };

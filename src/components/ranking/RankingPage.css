@@ -1,39 +1,46 @@
+/* RankingPage - 使用Design System CSS变量 */
+
 .ranking-page {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px;
-  gap: 16px;
+  padding: var(--spacing-md);
+  gap: var(--spacing-md);
 }
 
 .ranking-tabs {
   display: flex;
-  gap: 8px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--gold-border);
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .ranking-tab {
   padding: 10px 20px;
   font-size: 0.9rem;
-  font-family: var(--font-cn);
-  color: var(--text-3);
+  font-family: 'Noto Serif SC', serif;
+  color: var(--text-muted);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 .ranking-tab:hover {
   color: var(--gold-light);
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(201, 162, 39, 0.05);
+}
+
+.ranking-tab:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.2);
 }
 
 .ranking-tab.active {
   color: var(--gold);
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--gold-border);
+  background: rgba(201, 162, 39, 0.1);
+  border-color: var(--border-active);
 }
 
 .ranking-content {
@@ -44,22 +51,22 @@
 .ranking-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .ranking-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
-  background: rgba(212, 175, 55, 0.03);
-  border: 1px solid var(--gold-border);
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  padding: 14px var(--spacing-md);
+  background: rgba(201, 162, 39, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
 }
 
 .ranking-item:hover {
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(201, 162, 39, 0.08);
   transform: translateX(4px);
 }
 
@@ -86,39 +93,39 @@
   justify-content: center;
   font-size: 1rem;
   font-weight: 700;
-  border-radius: 50%;
-  background: rgba(212, 175, 55, 0.1);
-  color: var(--text-3);
+  border-radius: var(--radius-full);
+  background: rgba(201, 162, 39, 0.1);
+  color: var(--text-muted);
 }
 
 .ranking-item.top-1 .ranking-position {
   background: linear-gradient(135deg, #ffd700 0%, #ffb000 100%);
-  color: var(--bg-primary);
+  color: var(--ink-black);
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
 }
 
 .ranking-item.top-2 .ranking-position {
   background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
-  color: var(--bg-primary);
+  color: var(--ink-black);
 }
 
 .ranking-item.top-3 .ranking-position {
   background: linear-gradient(135deg, #cd7f32 0%, #b06420 100%);
-  color: var(--bg-primary);
+  color: var(--ink-black);
 }
 
 .ranking-avatar {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold-dark) 100%);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: var(--bg-primary);
+  color: var(--ink-black);
   font-weight: 600;
-  border: 2px solid var(--gold-border);
+  border: 2px solid var(--border-subtle);
 }
 
 .ranking-item.top-1 .ranking-avatar {
@@ -134,7 +141,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--gold);
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .ranking-details {
@@ -142,13 +149,13 @@
   align-items: center;
   gap: 10px;
   font-size: 0.8rem;
-  color: var(--text-3);
+  color: var(--text-muted);
 }
 
 .ranking-realm {
   padding: 2px 8px;
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 4px;
+  background: rgba(201, 162, 39, 0.1);
+  border-radius: var(--radius-sm);
   color: var(--gold-light);
 }
 
@@ -176,14 +183,14 @@
 
 /* 我的排名 */
 .my-ranking {
-  padding: 16px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 90, 43, 0.08) 100%);
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(139, 90, 43, 0.08) 100%);
   border: 1px solid var(--gold);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .my-ranking-label {
@@ -214,7 +221,7 @@
 
 .my-ranking-score-label {
   font-size: 0.75rem;
-  color: var(--text-3);
+  color: var(--text-muted);
 }
 
 /* 空状态 */
@@ -223,9 +230,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px;
+  padding: var(--spacing-2xl);
   color: var(--text-muted);
-  gap: 12px;
+  gap: var(--spacing-sm);
 }
 
 .ranking-empty-icon {

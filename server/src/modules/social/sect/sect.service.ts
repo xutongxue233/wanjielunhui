@@ -536,6 +536,96 @@ export class SectService {
       }),
     ]);
   }
+
+  async getMySect(playerId: string): Promise<SectInfo | null> {
+    const member = await prisma.sectMember.findUnique({
+      where: { playerId },
+      include: {
+        sect: true,
+      },
+    });
+
+    if (!member) {
+      return null;
+    }
+
+    const sect = member.sect;
+    return {
+      id: sect.id,
+      name: sect.name,
+      description: sect.description ?? undefined,
+      notice: sect.notice ?? undefined,
+      iconId: sect.iconId,
+      level: sect.level,
+      experience: Number(sect.experience),
+      fund: Number(sect.fund),
+      joinType: sect.joinType,
+      minRealmToJoin: sect.minRealmToJoin ?? undefined,
+      memberCount: sect.memberCount,
+      maxMembers: sect.maxMembers,
+      totalPower: Number(sect.totalPower),
+      founderId: sect.founderId,
+      founderName: undefined,
+      createdAt: sect.createdAt,
+    };
+  }
+
+  async getSectMembers(sectId: string): Promise<SectMemberInfo[]> {
+    const members = await prisma.sectMember.findMany({
+      where: { sectId },
+      include: { player: true },
+      orderBy: [{ role: 'asc' }, { contribution: 'desc' }],
+    });
+
+    return Promise.all(
+      members.map(async (m) => ({
+        id: m.id,
+        playerId: m.player.id,
+        playerName: m.player.name,
+        playerRealm: m.player.realm,
+        playerRealmStage: m.player.realmStage,
+        avatarId: m.player.avatarId,
+        combatPower: Number(m.player.combatPower),
+        role: m.role,
+        contribution: Number(m.contribution),
+        isOnline: await this.isPlayerOnline(m.player.id),
+        joinedAt: m.joinedAt,
+      }))
+    );
+  }
+
+  async contribute(playerId: string, sectId: string, amount: number): Promise<void> {
+    const member = await prisma.sectMember.findUnique({
+      where: { playerId },
+      include: { player: true },
+    });
+
+    if (!member || member.sectId !== sectId) {
+      throw new NotFoundError(ErrorCodes.NOT_FOUND, '未加入该门派');
+    }
+
+    if (member.player.spiritStones < BigInt(amount)) {
+      throw new BadRequestError(ErrorCodes.INSUFFICIENT_FUNDS, '灵石不足');
+    }
+
+    await prisma.$transaction([
+      prisma.player.update({
+        where: { id: playerId },
+        data: { spiritStones: { decrement: BigInt(amount) } },
+      }),
+      prisma.sectMember.update({
+        where: { playerId },
+        data: { contribution: { increment: BigInt(amount) } },
+      }),
+      prisma.sect.update({
+        where: { id: sectId },
+        data: {
+          fund: { increment: BigInt(amount) },
+          experience: { increment: BigInt(Math.floor(amount / 10)) },
+        },
+      }),
+    ]);
+  }
 }
 
 export const sectService = new SectService();

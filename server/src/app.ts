@@ -9,6 +9,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import config from './config/index.js';
 import errorHandler from './plugins/errorHandler.js';
 import authMiddleware from './shared/middleware/auth.middleware.js';
+import { requireRole } from './shared/middleware/auth.middleware.js';
 import { authRoutes } from './modules/auth/index.js';
 import { playerRoutes } from './modules/player/index.js';
 import { saveRoutes } from './modules/save/index.js';
@@ -16,6 +17,7 @@ import { rankingRoutes } from './modules/ranking/index.js';
 import { friendRoutes } from './modules/social/friend/index.js';
 import { mailRoutes } from './modules/social/mail/index.js';
 import { sectRoutes } from './modules/social/sect/index.js';
+import { chatRoutes } from './modules/social/chat/index.js';
 import { marketRoutes } from './modules/trade/market/index.js';
 import { pvpRoutes } from './modules/pvp/index.js';
 import { announcementRoutes, adminAnnouncementRoutes } from './modules/admin/announcement/index.js';
@@ -118,22 +120,32 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(friendRoutes, { prefix: `${config.server.apiPrefix}/friend` });
   await app.register(mailRoutes, { prefix: `${config.server.apiPrefix}/mail` });
   await app.register(sectRoutes, { prefix: `${config.server.apiPrefix}/sect` });
+  await app.register(chatRoutes, { prefix: `${config.server.apiPrefix}/chat` });
   await app.register(marketRoutes, { prefix: `${config.server.apiPrefix}/market` });
   await app.register(pvpRoutes, { prefix: `${config.server.apiPrefix}/pvp` });
   await app.register(announcementRoutes, { prefix: `${config.server.apiPrefix}/ops` });
   await app.register(activityRoutes, { prefix: `${config.server.apiPrefix}/ops` });
-  await app.register(adminAnnouncementRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminActivityRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminDashboardRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminUserRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminSaveRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminMailRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminRankingRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminFriendRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminSectRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminChatRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminMarketRoutes, { prefix: `${config.server.apiPrefix}/admin` });
-  await app.register(adminPvpRoutes, { prefix: `${config.server.apiPrefix}/admin` });
+  // Admin路由 - 统一添加ADMIN权限守卫
+  await app.register(
+    async function adminRoutes(adminApp) {
+      const adminGuard = requireRole('ADMIN');
+      adminApp.addHook('preHandler', adminGuard);
+
+      await adminApp.register(adminAnnouncementRoutes);
+      await adminApp.register(adminActivityRoutes);
+      await adminApp.register(adminDashboardRoutes);
+      await adminApp.register(adminUserRoutes);
+      await adminApp.register(adminSaveRoutes);
+      await adminApp.register(adminMailRoutes);
+      await adminApp.register(adminRankingRoutes);
+      await adminApp.register(adminFriendRoutes);
+      await adminApp.register(adminSectRoutes);
+      await adminApp.register(adminChatRoutes);
+      await adminApp.register(adminMarketRoutes);
+      await adminApp.register(adminPvpRoutes);
+    },
+    { prefix: `${config.server.apiPrefix}/admin` }
+  );
 
   app.get('/health', async () => {
     return {

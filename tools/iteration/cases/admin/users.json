@@ -1,0 +1,66 @@
+{
+  "name": "admin-users-crud",
+  "description": "后台用户管理CRUD操作",
+  "start_url": "http://localhost:5173/admin",
+  "auth": {
+    "required": true,
+    "username": "admin",
+    "password": "admin123"
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "text": "仪表盘",
+      "timeout": 10000
+    },
+    {
+      "action": "snapshot",
+      "description": "获取侧边栏元素"
+    },
+    {
+      "action": "click",
+      "target_text": "用户管理"
+    },
+    {
+      "action": "wait",
+      "text": "用户列表",
+      "timeout": 5000
+    },
+    {
+      "action": "screenshot",
+      "name": "users-list"
+    },
+    {
+      "action": "network_check",
+      "pattern": "/admin/users",
+      "expected_status": 200
+    },
+    {
+      "action": "console_check",
+      "allow_warnings": true,
+      "allow_errors": false
+    }
+  ],
+  "assertions": [
+    {
+      "type": "element_exists",
+      "selector": "table"
+    },
+    {
+      "type": "no_console_errors"
+    },
+    {
+      "type": "api_success",
+      "pattern": "/admin/users"
+    }
+  ],
+  "viewports": [
+    { "name": "desktop", "width": 1920, "height": 1080 },
+    { "name": "laptop", "width": 1366, "height": 768 },
+    { "name": "mobile", "width": 390, "height": 844, "isMobile": true }
+  ],
+  "persistence_test": {
+    "enabled": false,
+    "description": "用户管理主要是读取操作，封禁/解封需要单独测试"
+  }
+}

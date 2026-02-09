@@ -1,0 +1,26 @@
+{
+  "latest": "20260205151822",
+  "status": "completed",
+  "round": 1,
+  "maxRounds": 10,
+  "startedAt": "2026-02-05T15:18:22Z",
+  "completedAt": "2026-02-05T15:28:00Z",
+  "iterations": [
+    {
+      "id": "20260205151822",
+      "status": "completed",
+      "round": 1,
+      "issues_found": 1,
+      "issues_fixed": 1,
+      "issues_verified": 1,
+      "stop_conditions": {
+        "p0_p1_cleared": true,
+        "no_console_errors": true,
+        "no_network_failures": true,
+        "admin_crud_passed": true,
+        "persistence_verified": true,
+        "multi_viewport": true
+      }
+    }
+  ]
+}

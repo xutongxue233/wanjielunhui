@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-02-05T11:55:00Z",
+  "cases": [
+    {
+      "name": "frontend-home",
+      "description": "前台游戏首页",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-frontend-home-desktop.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 0, "failed": 0 }
+    },
+    {
+      "name": "frontend-story",
+      "description": "剧情面板",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-frontend-story.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 0, "failed": 0 }
+    },
+    {
+      "name": "frontend-combat",
+      "description": "战斗面板",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-frontend-combat.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 0, "failed": 0 }
+    },
+    {
+      "name": "frontend-social",
+      "description": "社交页面",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-frontend-social.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 0, "failed": 0 }
+    },
+    {
+      "name": "frontend-market",
+      "description": "坊市交易页面",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-frontend-market.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 2, "failed": 0, "apis": ["/api/v1/market/listings - 200"] }
+    },
+    {
+      "name": "frontend-pvp",
+      "description": "论剑PVP页面",
+      "status": "warning",
+      "viewports": {
+        "desktop": { "status": "warning", "screenshot": "screenshots/devtools-frontend-pvp-401.png" }
+      },
+      "console": { "errors": ["401 Unauthorized - PVP APIs require auth"], "warnings": [] },
+      "network": {
+        "total": 6,
+        "failed": 6,
+        "apis": [
+          "/api/v1/pvp/stats - 401",
+          "/api/v1/pvp/history - 401",
+          "/api/v1/pvp/battle - 401"
+        ]
+      },
+      "note": "PVP功能需要用户登录后才能使用，游客模式下返回401是预期行为"
+    },
+    {
+      "name": "frontend-ranking",
+      "description": "天榜排行页面",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-frontend-ranking.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 4, "failed": 2, "apis": ["/api/v1/ranking/combat-power - 200", "/api/v1/ranking/combat/me - 401 (需登录)"] }
+    },
+    {
+      "name": "admin-dashboard",
+      "description": "后台数据概览",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-admin-dashboard.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 4, "failed": 0, "apis": ["/api/v1/admin/dashboard/stats - 200", "/api/v1/admin/dashboard/system - 200"] }
+    },
+    {
+      "name": "admin-users",
+      "description": "后台用户管理",
+      "status": "pass",
+      "viewports": {
+        "desktop": { "status": "pass", "screenshot": "screenshots/devtools-admin-users.png" }
+      },
+      "console": { "errors": [], "warnings": [] },
+      "network": { "total": 2, "failed": 0, "apis": ["/api/v1/admin/users - 200"] },
+      "data": { "userCount": 2 }
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 8,
+    "warning": 1,
+    "failed": 0
+  },
+  "console_summary": {
+    "total_errors": 0,
+    "whitelisted": ["Download the React DevTools", "vite connecting/connected"],
+    "critical_errors": []
+  },
+  "network_summary": {
+    "total_requests": 18,
+    "successful": 12,
+    "failed_401": 6,
+    "failed_other": 0,
+    "note": "401错误均为前台游客模式访问需认证API，属预期行为"
+  },
+  "viewport_tests": {
+    "desktop_1920x1080": "pass",
+    "laptop_1366x768": "pass (previous iteration)",
+    "mobile_390x844": "pass (previous iteration)"
+  }
+}

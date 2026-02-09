@@ -1,0 +1,85 @@
+[
+  {
+    "id": "ISSUE-001",
+    "severity": "P0",
+    "area": "infra",
+    "title": "Chrome DevTools MCP 浏览器实例冲突",
+    "evidence": {
+      "console": [],
+      "network": {},
+      "screenshot": null,
+      "steps": ["尝试连接 Chrome DevTools MCP", "报错: The browser is already running"]
+    },
+    "status": "verified",
+    "note": "已解决 - 重启MCP服务后正常连接"
+  },
+  {
+    "id": "ISSUE-002",
+    "severity": "P1",
+    "area": "api",
+    "title": "后端服务器意外停止导致登录失败",
+    "evidence": {
+      "console": ["Failed to load resource: the server responded with a status of 500"],
+      "network": {"url": "http://localhost:5173/api/v1/auth/login", "status": 500},
+      "screenshot": "screenshots/admin-dashboard-401.png",
+      "steps": ["访问后台登录页面", "输入管理员账号密码", "点击登录", "返回500错误和空响应"]
+    },
+    "status": "verified",
+    "fix_files": [],
+    "note": "已解决 - 重启后端服务器后登录正常"
+  },
+  {
+    "id": "ISSUE-003",
+    "severity": "P0",
+    "area": "frontend",
+    "title": "社交页面崩溃 - friends.map is not a function",
+    "evidence": {
+      "console": ["Uncaught TypeError: friends.map is not a function"],
+      "network": {"url": "http://localhost:5173/api/v1/friend/list", "status": 200},
+      "screenshot": "screenshots/devtools-logged-in-social-error.png",
+      "steps": ["使用账号登录", "点击社交页面", "页面白屏崩溃"]
+    },
+    "status": "verified",
+    "fix_files": ["src/services/api.ts"],
+    "fix_description": "修复friendApi.list()和requests()的响应格式解析，从{friends:[],total:0}中正确提取数组",
+    "retest_result": {
+      "status": "pass",
+      "timestamp": "2026-02-05T12:02:00Z",
+      "evidence": {
+        "screenshot": "screenshots/devtools-social-fixed.png",
+        "console": [],
+        "network": ["/api/v1/friend/list - 200", "/api/v1/sect/my - 200"]
+      }
+    }
+  },
+  {
+    "id": "ISSUE-004",
+    "severity": "P2",
+    "area": "api",
+    "title": "PVP stats API 返回404",
+    "evidence": {
+      "console": ["Failed to load resource: the server responded with a status of 404"],
+      "network": {"url": "http://localhost:5173/api/v1/pvp/stats", "status": 404},
+      "screenshot": "screenshots/devtools-logged-in-pvp.png",
+      "steps": ["使用管理员账号登录", "访问论剑页面", "API返回404"]
+    },
+    "status": "expected_behavior",
+    "root_cause": "管理员账号没有关联的Player记录，playerId为空字符串。pvpService.getPlayerPvpStats()查询空ID时返回NotFoundError",
+    "note": "预期行为 - 管理员账号专用于后台管理，不需要游戏角色。普通玩家账号创建角色后可正常使用PVP功能"
+  },
+  {
+    "id": "ISSUE-005",
+    "severity": "P2",
+    "area": "api",
+    "title": "排行榜个人数据API返回400",
+    "evidence": {
+      "console": ["Failed to load resource: the server responded with a status of 400"],
+      "network": {"url": "http://localhost:5173/api/v1/ranking/combat/me", "status": 400},
+      "screenshot": "screenshots/devtools-logged-in-ranking.png",
+      "steps": ["使用管理员账号登录", "访问天榜页面", "API返回400 Bad Request"]
+    },
+    "status": "expected_behavior",
+    "root_cause": "管理员账号没有关联的Player记录。rankingController.getMyRank()通过userId查询Player时返回null，触发BadRequestError",
+    "note": "预期行为 - 管理员账号没有游戏角色，无法查询个人排名。普通玩家账号创建角色后可正常使用"
+  }
+]

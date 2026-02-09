@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { saveSyncService } from '../../services/saveSync';
 import { type SaveSlot } from '../../services/api';
+import { Button, Card, Spinner, Modal, Confirm, message } from '../ui';
 import './SaveManager.css';
 
 interface SaveManagerProps {
@@ -15,6 +16,7 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [hasLocalSave, setHasLocalSave] = useState(false);
   const [showUploadConfirm, setShowUploadConfirm] = useState(false);
+  const [deleteSlot, setDeleteSlot] = useState<number | null>(null);
 
   useEffect(() => {
     loadSaves();
@@ -46,12 +48,11 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
   };
 
   const handleDelete = async (slot: number) => {
-    if (!confirm('确定要删除这个存档吗？此操作不可恢复。')) return;
-
     setActionLoading(slot);
     try {
       await saveSyncService.deleteCloudSave(slot);
       await loadSaves();
+      setDeleteSlot(null);
     } finally {
       setActionLoading(null);
     }
@@ -63,7 +64,7 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
     );
 
     if (!emptySlot) {
-      alert('没有空闲的存档槽位，请先删除一个存档');
+      message.warning('没有空闲的存档槽位，请先删除一个存档');
       return;
     }
 
@@ -100,17 +101,27 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
 
   if (loading) {
     return (
-      <div className="save-manager">
+      <Card padding="lg" className="save-manager">
         <div className="save-manager-loading">
-          <div className="save-spinner" />
+          <Spinner size="lg" />
           <p>加载存档中...</p>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="save-manager">
+    <Card padding="lg" className="save-manager">
+      <Confirm
+        isOpen={deleteSlot !== null}
+        onClose={() => setDeleteSlot(null)}
+        onConfirm={() => deleteSlot !== null && handleDelete(deleteSlot)}
+        title="删除存档"
+        message="确定要删除这个存档吗？此操作不可恢复。"
+        confirmText="删除"
+        cancelText="取消"
+        danger
+      />
       <div className="save-manager-header">
         <h2>存档管理</h2>
         {onClose && (
@@ -127,30 +138,39 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
             <p>检测到本地存档</p>
             <span>是否上传到云端？上传后可跨设备游玩</span>
           </div>
-          <button
-            className="save-upload-btn"
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => setShowUploadConfirm(true)}
             disabled={actionLoading !== null}
           >
             上传
-          </button>
+          </Button>
         </div>
       )}
 
-      {showUploadConfirm && (
-        <div className="save-confirm-overlay" onClick={() => setShowUploadConfirm(false)}>
-          <div className="save-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>上传本地存档</h3>
-            <p>确定要将本地存档上传到云端吗？上传后本地存档将被清除。</p>
-            <div className="save-confirm-actions">
-              <button onClick={() => setShowUploadConfirm(false)}>取消</button>
-              <button className="primary" onClick={handleUploadLocal} disabled={actionLoading !== null}>
-                {actionLoading === 0 ? '上传中...' : '确认上传'}
-              </button>
-            </div>
-          </div>
+      <Modal
+        isOpen={showUploadConfirm}
+        onClose={() => setShowUploadConfirm(false)}
+        title="上传本地存档"
+        size="sm"
+      >
+        <p className="save-confirm-text">
+          确定要将本地存档上传到云端吗？上传后本地存档将被清除。
+        </p>
+        <div className="save-confirm-actions">
+          <Button variant="ghost" onClick={() => setShowUploadConfirm(false)}>
+            取消
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleUploadLocal}
+            loading={actionLoading === 0}
+          >
+            确认上传
+          </Button>
         </div>
-      )}
+      </Modal>
 
       <div className="save-slots">
         {[1, 2, 3].map((slot) => {
@@ -174,28 +194,29 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
                     <p className="save-slot-playtime">游戏时长: {formatPlayTime(save.playTime)}</p>
                   </div>
                   <div className="save-slot-actions">
-                    <button
-                      className="save-btn load"
+                    <Button
+                      variant="primary"
                       onClick={() => handleLoad(slot)}
-                      disabled={isLoading}
+                      loading={isLoading}
+                      className="save-btn-load"
                     >
-                      {isLoading ? '加载中...' : '继续修仙'}
-                    </button>
-                    <button
-                      className="save-btn delete"
-                      onClick={() => handleDelete(slot)}
+                      继续修仙
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => setDeleteSlot(slot)}
                       disabled={isLoading}
                     >
                       删除
-                    </button>
+                    </Button>
                   </div>
                 </>
               ) : (
                 <div className="save-slot-empty">
                   <p>空存档</p>
-                  <button className="save-btn new" onClick={onNewGame}>
+                  <Button variant="secondary" onClick={onNewGame}>
                     开始新游戏
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -204,10 +225,10 @@ export function SaveManager({ onLoad, onNewGame, onClose }: SaveManagerProps) {
       </div>
 
       <div className="save-manager-footer">
-        <button className="save-new-game-btn" onClick={onNewGame}>
+        <Button variant="ghost" size="lg" onClick={onNewGame}>
           开始新游戏
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

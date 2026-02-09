@@ -1,0 +1,66 @@
+[
+  {
+    "id": "ISSUE-001",
+    "title": "系统商店商品图标显示为文字标识符",
+    "description": "系统商店的商品图标显示为后端返回的文字标识符（如 pill_blue）而不是实际的图标",
+    "severity": "P2",
+    "category": "UI",
+    "status": "fixed",
+    "fix_files_changed": [
+      "src/components/market/MarketPage.tsx"
+    ],
+    "fix_description": "添加图标映射函数 getItemIcon，将后端返回的图标标识符映射为实际的展示图标",
+    "retest_result": {
+      "status": "pass",
+      "timestamp": "2026-02-05T00:00:00Z"
+    }
+  },
+  {
+    "id": "ISSUE-002",
+    "title": "系统商店购买传参错误",
+    "description": "系统商店购买商品时传入 item.id 而不是 item.itemId，导致后端无法找到商品",
+    "severity": "P1",
+    "category": "功能",
+    "status": "fixed",
+    "fix_files_changed": [
+      "src/components/market/MarketPage.tsx"
+    ],
+    "fix_description": "将 handleShopBuy(item.id) 改为 handleShopBuy(item.itemId)",
+    "retest_result": {
+      "status": "pass",
+      "timestamp": "2026-02-05T00:00:00Z"
+    }
+  },
+  {
+    "id": "ISSUE-003",
+    "title": "玩家市场商品图标显示为文字标识符",
+    "description": "玩家交易市场的商品图标显示为后端返回的文字标识符而不是实际的图标",
+    "severity": "P2",
+    "category": "UI",
+    "status": "fixed",
+    "fix_files_changed": [
+      "src/components/market/MarketPage.tsx"
+    ],
+    "fix_description": "将玩家市场的商品图标也使用 getItemIcon 函数进行映射",
+    "retest_result": {
+      "status": "pass",
+      "timestamp": "2026-02-05T00:00:00Z"
+    }
+  },
+  {
+    "id": "ISSUE-004",
+    "title": "MessageManager.subscribe 返回类型错误导致构建失败",
+    "description": "MessageManager.subscribe 返回的 cleanup 函数返回 boolean，与 React useEffect 要求的 void 不兼容",
+    "severity": "P0",
+    "category": "构建",
+    "status": "fixed",
+    "fix_files_changed": [
+      "src/components/ui/index.tsx"
+    ],
+    "fix_description": "将 return () => this.listeners.delete(listener) 改为 return () => { this.listeners.delete(listener); }",
+    "retest_result": {
+      "status": "pass",
+      "timestamp": "2026-02-05T00:00:00Z"
+    }
+  }
+]

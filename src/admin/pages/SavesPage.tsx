@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { saveApi, type GameSave, type GameSaveDetail, type SaveStats } from '../api';
+import { message } from '../../components/ui';
 
 function formatPlayTime(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
@@ -54,7 +55,7 @@ export function SavesPage() {
       await saveApi.delete(id);
       load();
     } catch (err) {
-      alert('删除失败');
+      message.error('删除失败');
     }
   };
 
@@ -64,7 +65,7 @@ export function SavesPage() {
       setSelectedSave(detail);
       setShowDetail(true);
     } catch (err) {
-      alert('获取详情失败');
+      message.error('获取详情失败');
     }
   };
 

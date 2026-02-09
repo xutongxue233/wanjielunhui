@@ -1,0 +1,174 @@
+/* CultivationPanel - 使用Design System CSS变量 */
+
+.cultivation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+  .cultivation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 修炼圆环容器 */
+.cultivation-ring-container {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.cultivation-ring-glow {
+  position: absolute;
+  inset: -20px;
+  border-radius: var(--radius-full);
+  filter: blur(20px);
+  opacity: 0.5;
+}
+
+.cultivation-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.cultivation-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cultivation-realm-name {
+  font-family: "Ma Shan Zheng", "Noto Serif SC", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 0 0 20px currentColor;
+}
+
+/* 修为数值 */
+.cultivation-values {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.cultivation-current {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cultivation-separator {
+  color: var(--text-muted);
+  margin: 0 var(--spacing-xs);
+}
+
+.cultivation-hint {
+  font-size: 0.875rem;
+  margin-top: var(--spacing-xs);
+}
+
+.cultivation-hint-ready {
+  color: var(--jade-light);
+}
+
+.cultivation-hint-waiting {
+  color: var(--text-muted);
+}
+
+/* 突破结果 */
+.cultivation-result {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.cultivation-result-success {
+  background: rgba(45, 139, 111, 0.15);
+  border: 1px solid rgba(45, 139, 111, 0.3);
+  color: var(--jade-light);
+}
+
+.cultivation-result-fail {
+  background: rgba(139, 41, 66, 0.15);
+  border: 1px solid rgba(139, 41, 66, 0.3);
+  color: var(--crimson-light);
+}
+
+/* 修炼信息块 */
+.cultivation-info-block {
+  margin-bottom: var(--spacing-md);
+}
+
+.cultivation-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cultivation-info-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.cultivation-speed-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.cultivation-speed-unit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.cultivation-info-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+.cultivation-realm-title {
+  font-family: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cultivation-realm-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+  line-height: 1.6;
+}
+
+.cultivation-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+  margin: var(--spacing-md) 0;
+}
+
+/* 圆环进度样式 */
+.cultivation-ring-progress {
+  transition: stroke-dasharray 0.5s ease;
+}
+
+.cultivation-ring-glow-circle {
+  opacity: 0.3;
+  transition: stroke-dasharray 0.5s ease;
+}
+
+/* 信息值颜色 */
+.cultivation-info-value {
+  font-weight: 600;
+}
+
+.cultivation-info-jade {
+  color: var(--jade-light);
+}

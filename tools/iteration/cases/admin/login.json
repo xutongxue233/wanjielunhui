@@ -1,0 +1,61 @@
+{
+  "name": "admin-login",
+  "description": "后台管理登录流程",
+  "start_url": "http://localhost:5173/admin",
+  "auth": {
+    "required": false
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "text": "登录",
+      "timeout": 5000
+    },
+    {
+      "action": "snapshot",
+      "description": "获取登录页面元素"
+    },
+    {
+      "action": "fill",
+      "target_type": "input",
+      "target_placeholder": "用户名",
+      "value": "admin"
+    },
+    {
+      "action": "fill",
+      "target_type": "input",
+      "target_placeholder": "密码",
+      "value": "admin123"
+    },
+    {
+      "action": "click",
+      "target_text": "登录"
+    },
+    {
+      "action": "wait",
+      "text": "仪表盘",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "admin-dashboard"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "text_exists",
+      "text": "仪表盘"
+    },
+    {
+      "type": "no_console_errors"
+    },
+    {
+      "type": "api_success",
+      "pattern": "/auth/login"
+    }
+  ],
+  "viewports": [
+    { "name": "desktop", "width": 1920, "height": 1080 },
+    { "name": "laptop", "width": 1366, "height": 768 }
+  ]
+}

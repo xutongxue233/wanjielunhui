@@ -13,6 +13,23 @@ export async function playerRoutes(fastify: FastifyInstance) {
     handler: playerController.getProfile.bind(playerController),
   });
 
+  fastify.get<{ Querystring: { keyword: string } }>('/search', {
+    schema: {
+      description: '搜索玩家',
+      tags: ['玩家'],
+      security: [{ bearerAuth: [] }],
+      querystring: {
+        type: 'object',
+        required: ['keyword'],
+        properties: {
+          keyword: { type: 'string', minLength: 1 },
+        },
+      },
+    },
+    preHandler: authenticate,
+    handler: playerController.search.bind(playerController),
+  });
+
   fastify.get('/:id', {
     schema: {
       description: '获取其他玩家的公开信息',

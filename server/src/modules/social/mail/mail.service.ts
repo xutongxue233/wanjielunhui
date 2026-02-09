@@ -40,7 +40,7 @@ export class MailService {
         type,
         title,
         content,
-        attachments: attachments ? attachments : undefined,
+        attachments: attachments ? JSON.stringify(attachments) : null,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });
@@ -52,7 +52,7 @@ export class MailService {
       type: mail.type,
       title: mail.title,
       content: mail.content,
-      attachments: mail.attachments as MailAttachment[] | undefined,
+      attachments: mail.attachments ? (JSON.parse(mail.attachments) as MailAttachment[]) : undefined,
       isRead: mail.isRead,
       isClaimed: mail.isClaimed,
       expiresAt: mail.expiresAt ?? undefined,
@@ -97,7 +97,7 @@ export class MailService {
         type: mail.type,
         title: mail.title,
         content: mail.content,
-        attachments: mail.attachments as MailAttachment[] | undefined,
+        attachments: mail.attachments ? (JSON.parse(mail.attachments) as MailAttachment[]) : undefined,
         isRead: mail.isRead,
         isClaimed: mail.isClaimed,
         expiresAt: mail.expiresAt ?? undefined,
@@ -143,7 +143,7 @@ export class MailService {
       type: mail.type,
       title: mail.title,
       content: mail.content,
-      attachments: mail.attachments as MailAttachment[] | undefined,
+      attachments: mail.attachments ? (JSON.parse(mail.attachments) as MailAttachment[]) : undefined,
       isRead: true,
       isClaimed: mail.isClaimed,
       expiresAt: mail.expiresAt ?? undefined,
@@ -187,7 +187,7 @@ export class MailService {
       throw new BadRequestError(ErrorCodes.INVALID_INPUT, '附件已领取');
     }
 
-    const attachments = mail.attachments as MailAttachment[] | null;
+    const attachments = mail.attachments ? (JSON.parse(mail.attachments) as MailAttachment[]) : null;
 
     if (!attachments || attachments.length === 0) {
       throw new BadRequestError(ErrorCodes.INVALID_INPUT, '邮件没有附件');
@@ -231,7 +231,7 @@ export class MailService {
         type: 'SYSTEM',
         title,
         content,
-        attachments: attachments ? attachments : undefined,
+        attachments: attachments ? JSON.stringify(attachments) : null,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });
@@ -241,7 +241,7 @@ export class MailService {
       type: mail.type,
       title: mail.title,
       content: mail.content,
-      attachments: mail.attachments as MailAttachment[] | undefined,
+      attachments: mail.attachments ? (JSON.parse(mail.attachments) as MailAttachment[]) : undefined,
       isRead: mail.isRead,
       isClaimed: mail.isClaimed,
       expiresAt: mail.expiresAt ?? undefined,

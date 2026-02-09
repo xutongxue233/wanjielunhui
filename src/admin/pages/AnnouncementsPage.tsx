@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { announcementApi, type Announcement, type CreateAnnouncementInput } from '../api';
+import { message } from '../../components/ui';
 
 export function AnnouncementsPage() {
   const [items, setItems] = useState<Announcement[]>([]);
@@ -20,7 +21,7 @@ export function AnnouncementsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定删除此公告?')) return;
-    try { await announcementApi.delete(id); load(); } catch { alert('删除失败'); }
+    try { await announcementApi.delete(id); load(); } catch { message.error('删除失败'); }
   };
 
   const columns = [
@@ -96,7 +97,7 @@ function AnnouncementModal({ item, onClose, onSave }: { item: Announcement | nul
       if (item) await announcementApi.update(item.id, form);
       else await announcementApi.create(form);
       onSave();
-    } catch { alert('保存失败'); } finally { setSaving(false); }
+    } catch { message.error('保存失败'); } finally { setSaving(false); }
   };
 
   return (

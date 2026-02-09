@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../components/DataTable';
 import { userApi, type User } from '../api';
+import { message } from '../../components/ui';
 
 export function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -38,7 +39,7 @@ export function UsersPage() {
       await userApi.ban(id);
       load();
     } catch (err) {
-      alert('操作失败');
+      message.error('操作失败');
     }
   };
 
@@ -48,7 +49,7 @@ export function UsersPage() {
       await userApi.unban(id);
       load();
     } catch (err) {
-      alert('操作失败');
+      message.error('操作失败');
     }
   };
 

@@ -60,6 +60,24 @@ export async function marketRoutes(fastify: FastifyInstance) {
     preHandler: authenticate,
     handler: marketController.getMyListings.bind(marketController),
   });
+
+  fastify.get('/shop', {
+    schema: {
+      description: '获取系统商店商品',
+      tags: ['交易市场'],
+    },
+    handler: marketController.getShopItems.bind(marketController),
+  });
+
+  fastify.post('/shop/buy', {
+    schema: {
+      description: '购买系统商店商品',
+      tags: ['交易市场'],
+      security: [{ bearerAuth: [] }],
+    },
+    preHandler: authenticate,
+    handler: marketController.buyShopItem.bind(marketController),
+  });
 }
 
 export default marketRoutes;

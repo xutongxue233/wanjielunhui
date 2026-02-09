@@ -1,0 +1,462 @@
+// 任务模板种子数据
+
+export const questTemplatesData = [
+  // ==================== 主线任务 - 第一章 ====================
+  {
+    questId: 'main_ch1_1',
+    name: '踏入仙途',
+    description: '你获得了一本神秘的功法，开始了修仙之旅。完成第一章剧情。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'complete_chapter', target: 'chapter_1', amount: 1, description: '完成第一章剧情' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'xiaohuandan', value: 10 },
+      { type: 'item', itemId: 'lingshi', value: 200 },
+      { type: 'exp', value: 100 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: 'chapter_1',
+    repeatable: false,
+    recommendedRealm: 'lianqi',
+    order: 1,
+  },
+  {
+    questId: 'main_ch1_2',
+    name: '初次修炼',
+    description: '按照功法修炼，突破到炼气中期。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'reach_realm', target: 'lianqi_middle', amount: 1, description: '达到炼气中期' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'juyuandan', value: 5 },
+      { type: 'item', itemId: 'lingshi', value: 100 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: 'main_ch1_1',
+    chapterId: 'chapter_1',
+    repeatable: false,
+    recommendedRealm: 'lianqi',
+    order: 2,
+  },
+  {
+    questId: 'main_ch1_3',
+    name: '首战告捷',
+    description: '击败你遇到的第一个敌人。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'kill_enemy', target: 'ling_lang_lv1', amount: 1, description: '击败灵狼' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'tiejian', value: 1 },
+      { type: 'item', itemId: 'pijiia', value: 1 },
+      { type: 'exp', value: 50 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: 'main_ch1_2',
+    chapterId: 'chapter_1',
+    repeatable: false,
+    recommendedRealm: 'lianqi',
+    order: 3,
+  },
+
+  // ==================== 主线任务 - 第二章 ====================
+  {
+    questId: 'main_ch2_1',
+    name: '拜入仙门',
+    description: '前往青云宗参加入门考核，成为外门弟子。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'complete_chapter', target: 'chapter_2', amount: 1, description: '完成第二章剧情' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'qingyun_pao', value: 1 },
+      { type: 'item', itemId: 'lingshi', value: 500 },
+      { type: 'technique', itemId: 'qingyun_jue', value: 1 },
+    ]),
+    unlockConditions: JSON.stringify([
+      { type: 'realm', value: 'lianqi_late' },
+    ]),
+    prerequisiteQuestId: 'main_ch1_3',
+    chapterId: 'chapter_2',
+    repeatable: false,
+    recommendedRealm: 'lianqi',
+    order: 10,
+  },
+  {
+    questId: 'main_ch2_2',
+    name: '结交好友',
+    description: '在前往青云宗的路上结识新朋友。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'set_flag', target: 'liu_friend', amount: 1, description: '与刘青成为朋友' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'xiaohuandan', value: 5 },
+      { type: 'attribute', itemId: 'luck', value: 3 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: 'main_ch2_1',
+    chapterId: 'chapter_2',
+    repeatable: false,
+    recommendedRealm: 'lianqi',
+    order: 11,
+  },
+
+  // ==================== 主线任务 - 第三章 ====================
+  {
+    questId: 'main_ch3_1',
+    name: '外门历练',
+    description: '作为外门弟子，完成宗门交给的历练任务。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'complete_chapter', target: 'chapter_3', amount: 1, description: '完成第三章剧情' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'qingfengjian', value: 1 },
+      { type: 'item', itemId: 'lingshi', value: 800 },
+      { type: 'exp', value: 500 },
+    ]),
+    unlockConditions: JSON.stringify([
+      { type: 'realm', value: 'zhuji_early' },
+    ]),
+    prerequisiteQuestId: 'main_ch2_2',
+    chapterId: 'chapter_3',
+    repeatable: false,
+    recommendedRealm: 'zhuji',
+    order: 20,
+  },
+
+  // ==================== 主线任务 - 第四章 ====================
+  {
+    questId: 'main_ch4_1',
+    name: '魔影初现',
+    description: '调查宗门中接连发生的诡异事件。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'complete_chapter', target: 'chapter_4', amount: 1, description: '完成第四章剧情' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'zhujiwan', value: 3 },
+      { type: 'item', itemId: 'lingshi', value: 1000 },
+      { type: 'skill', itemId: 'po_mo_jian', value: 1 },
+    ]),
+    unlockConditions: JSON.stringify([
+      { type: 'realm', value: 'zhuji_late' },
+    ]),
+    prerequisiteQuestId: 'main_ch3_1',
+    chapterId: 'chapter_4',
+    repeatable: false,
+    recommendedRealm: 'zhuji',
+    order: 30,
+  },
+
+  // ==================== 主线任务 - 第五章 ====================
+  {
+    questId: 'main_ch5_1',
+    name: '金丹之路',
+    description: '寻找结丹所需的天材地宝。',
+    type: 'MAIN',
+    objectives: JSON.stringify([
+      { type: 'complete_chapter', target: 'chapter_5', amount: 1, description: '完成第五章剧情' },
+      { type: 'collect_item', target: 'jindanyaoyin', amount: 1, description: '获得金丹药引' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'jindanluyao', value: 1 },
+      { type: 'item', itemId: 'hanbing_jian', value: 1 },
+      { type: 'attribute', itemId: 'luck', value: 10 },
+    ]),
+    unlockConditions: JSON.stringify([
+      { type: 'realm', value: 'zhuji_peak' },
+    ]),
+    prerequisiteQuestId: 'main_ch4_1',
+    chapterId: 'chapter_5',
+    repeatable: false,
+    recommendedRealm: 'zhuji',
+    order: 40,
+  },
+
+  // ==================== 日常任务 ====================
+  {
+    questId: 'daily_cultivation',
+    name: '每日修炼',
+    description: '每日坚持修炼，积累修为。',
+    type: 'DAILY',
+    objectives: JSON.stringify([
+      { type: 'gain_cultivation', target: null, amount: 100, description: '获得100点修为' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'juyuandan', value: 2 },
+      { type: 'item', itemId: 'lingshi', value: 50 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 1,
+    recommendedRealm: 'lianqi',
+    order: 100,
+  },
+  {
+    questId: 'daily_monster',
+    name: '斩妖除魔',
+    description: '击败野外的妖兽。',
+    type: 'DAILY',
+    objectives: JSON.stringify([
+      { type: 'kill_enemy_count', target: null, amount: 10, description: '击败10只妖兽' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'xiaohuandan', value: 5 },
+      { type: 'item', itemId: 'lingshi', value: 80 },
+      { type: 'exp', value: 100 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 1,
+    recommendedRealm: 'lianqi',
+    order: 101,
+  },
+  {
+    questId: 'daily_dungeon',
+    name: '副本挑战',
+    description: '完成一次副本挑战。',
+    type: 'DAILY',
+    objectives: JSON.stringify([
+      { type: 'complete_dungeon', target: null, amount: 1, description: '完成1次副本' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'yangshengdan', value: 3 },
+      { type: 'item', itemId: 'lingshi', value: 100 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 3,
+    recommendedRealm: 'lianqi',
+    order: 102,
+  },
+
+  // ==================== 周常任务 ====================
+  {
+    questId: 'weekly_breakthrough',
+    name: '境界突破',
+    description: '成功突破一个小境界。',
+    type: 'WEEKLY',
+    objectives: JSON.stringify([
+      { type: 'breakthrough', target: null, amount: 1, description: '成功突破1次' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'pojiaodan', value: 1 },
+      { type: 'item', itemId: 'lingshi', value: 500 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 1,
+    recommendedRealm: 'lianqi',
+    order: 200,
+  },
+  {
+    questId: 'weekly_pvp',
+    name: '论道切磋',
+    description: '与其他修士进行PVP对战。',
+    type: 'WEEKLY',
+    objectives: JSON.stringify([
+      { type: 'pvp_match', target: null, amount: 5, description: '进行5场PVP对战' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'liliwan', value: 5 },
+      { type: 'item', itemId: 'tiepidan', value: 5 },
+      { type: 'item', itemId: 'lingshi', value: 300 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 1,
+    recommendedRealm: 'zhuji',
+    order: 201,
+  },
+  {
+    questId: 'weekly_boss',
+    name: '讨伐强敌',
+    description: '击败一个BOSS级敌人。',
+    type: 'WEEKLY',
+    objectives: JSON.stringify([
+      { type: 'kill_boss', target: null, amount: 1, description: '击败1个BOSS' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'dahuandan', value: 5 },
+      { type: 'item', itemId: 'zhongpinlingshi', value: 10 },
+      { type: 'exp', value: 500 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 1,
+    recommendedRealm: 'zhuji',
+    order: 202,
+  },
+
+  // ==================== 支线任务 ====================
+  {
+    questId: 'side_collect_herbs',
+    name: '采集灵草',
+    description: '为宗门药园采集灵草。',
+    type: 'SIDE',
+    objectives: JSON.stringify([
+      { type: 'collect_item', target: 'lingcao', amount: 20, description: '采集20株灵草' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'bainianlingshen', value: 2 },
+      { type: 'item', itemId: 'lingshi', value: 100 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 10,
+    recommendedRealm: 'lianqi',
+    order: 300,
+  },
+  {
+    questId: 'side_collect_ore',
+    name: '采矿任务',
+    description: '采集炼器所需的矿石。',
+    type: 'SIDE',
+    objectives: JSON.stringify([
+      { type: 'collect_item', target: 'xuantie', amount: 10, description: '采集10块玄铁' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'hanbing', value: 2 },
+      { type: 'item', itemId: 'lingshi', value: 80 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 10,
+    recommendedRealm: 'lianqi',
+    order: 301,
+  },
+  {
+    questId: 'side_hunt_wolf',
+    name: '猎杀灵狼',
+    description: '灵狼为患，清理山中灵狼。',
+    type: 'SIDE',
+    objectives: JSON.stringify([
+      { type: 'kill_enemy', target: 'ling_lang', amount: 20, description: '猎杀20只灵狼' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'langya', value: 10 },
+      { type: 'item', itemId: 'lingshi', value: 150 },
+      { type: 'exp', value: 200 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: true,
+    repeatLimit: 5,
+    recommendedRealm: 'lianqi',
+    order: 302,
+  },
+
+  // ==================== 成就 ====================
+  {
+    questId: 'achievement_first_kill',
+    name: '初战告捷',
+    description: '击败你的第一个敌人。',
+    type: 'ACHIEVEMENT',
+    objectives: JSON.stringify([
+      { type: 'kill_enemy_count', target: null, amount: 1, description: '击败1个敌人' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'lingshi', value: 50 },
+      { type: 'title', itemId: 'chuzhan', value: 1 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: false,
+    order: 400,
+  },
+  {
+    questId: 'achievement_100_kills',
+    name: '百战老兵',
+    description: '累计击败100个敌人。',
+    type: 'ACHIEVEMENT',
+    objectives: JSON.stringify([
+      { type: 'kill_enemy_count', target: null, amount: 100, description: '击败100个敌人' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'lingshi', value: 500 },
+      { type: 'title', itemId: 'baizhan', value: 1 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: false,
+    order: 401,
+  },
+  {
+    questId: 'achievement_zhuji',
+    name: '筑基成功',
+    description: '突破到筑基期。',
+    type: 'ACHIEVEMENT',
+    objectives: JSON.stringify([
+      { type: 'reach_realm', target: 'zhuji', amount: 1, description: '达到筑基期' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'zhongpinlingshi', value: 10 },
+      { type: 'title', itemId: 'zhujixiushi', value: 1 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: false,
+    order: 410,
+  },
+  {
+    questId: 'achievement_jindan',
+    name: '金丹大成',
+    description: '突破到金丹期。',
+    type: 'ACHIEVEMENT',
+    objectives: JSON.stringify([
+      { type: 'reach_realm', target: 'jindan', amount: 1, description: '达到金丹期' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'shangpinlingshi', value: 5 },
+      { type: 'title', itemId: 'jindanzhenren', value: 1 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: false,
+    order: 411,
+  },
+  {
+    questId: 'achievement_yuanying',
+    name: '元婴出窍',
+    description: '突破到元婴期。',
+    type: 'ACHIEVEMENT',
+    objectives: JSON.stringify([
+      { type: 'reach_realm', target: 'yuanying', amount: 1, description: '达到元婴期' },
+    ]),
+    rewards: JSON.stringify([
+      { type: 'item', itemId: 'shangpinlingshi', value: 20 },
+      { type: 'title', itemId: 'yuanyinglaizu', value: 1 },
+    ]),
+    unlockConditions: null,
+    prerequisiteQuestId: null,
+    chapterId: null,
+    repeatable: false,
+    order: 412,
+  },
+];

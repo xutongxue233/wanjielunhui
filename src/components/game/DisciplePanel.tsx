@@ -22,10 +22,10 @@ const STATUS_NAMES = {
 };
 
 const STATUS_COLORS = {
-  idle: 'text-green-400',
-  training: 'text-blue-400',
-  expedition: 'text-amber-400',
-  injured: 'text-red-400',
+  idle: 'status-idle',
+  training: 'status-training',
+  expedition: 'status-expedition',
+  injured: 'status-injured',
 };
 
 // 弟子卡片
@@ -39,11 +39,7 @@ const DiscipleCard: React.FC<{
 
   return (
     <motion.div
-      className={`p-3 rounded-lg border cursor-pointer transition-all ${
-        selected
-          ? 'bg-amber-500/20 border-amber-500'
-          : 'bg-gray-700/30 border-gray-600 hover:border-gray-500'
-      }`}
+      className={`selectable-card ${selected ? 'selected' : ''}`}
       onClick={onClick}
       whileHover={{ scale: 1.01 }}
     >
@@ -164,7 +160,7 @@ export const DisciplePanel: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* 标签页 */}
-      <div className="flex gap-2">
+      <div className="game-tabs">
         {[
           { id: 'list', name: `弟子 (${disciples.length}/${maxDisciples})` },
           { id: 'recruit', name: '招收' },
@@ -172,11 +168,7 @@ export const DisciplePanel: React.FC = () => {
         ].map((tab) => (
           <button
             key={tab.id}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              activeTab === tab.id
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-500'
-                : 'bg-gray-700/30 text-gray-400 border border-gray-600 hover:border-gray-500'
-            }`}
+            className={`game-tab ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
           >
             {tab.name}
@@ -254,12 +246,12 @@ export const DisciplePanel: React.FC = () => {
                 return (
                   <div
                     key={exp.id}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                    className={`selectable-card ${
                       selectedExpedition === exp.id
-                        ? 'bg-amber-500/20 border-amber-500'
+                        ? 'selected'
                         : isActive
-                        ? 'bg-blue-500/10 border-blue-500/50'
-                        : 'bg-gray-700/30 border-gray-600 hover:border-gray-500'
+                        ? 'active-expedition'
+                        : ''
                     }`}
                     onClick={() => !isActive && setSelectedExpedition(exp.id)}
                   >
@@ -298,10 +290,8 @@ export const DisciplePanel: React.FC = () => {
                     eligibleDisciples.map((disciple) => (
                     <div
                       key={disciple.id}
-                      className={`p-2 rounded-lg border cursor-pointer transition-all ${
-                        selectedForExpedition.includes(disciple.id)
-                          ? 'bg-amber-500/20 border-amber-500'
-                          : 'bg-gray-700/30 border-gray-600 hover:border-gray-500'
+                      className={`selectable-card ${
+                        selectedForExpedition.includes(disciple.id) ? 'selected' : ''
                       }`}
                       onClick={() => handleToggleExpeditionSelect(disciple.id)}
                     >

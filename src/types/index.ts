@@ -224,6 +224,7 @@ export interface StoryNode {
   nextNodeId?: string;
   conditions?: StoryCondition[];
   effects?: StoryEffect[];
+  battleId?: string;  // 战斗节点关联的副本ID
 }
 
 export interface StoryChoice {

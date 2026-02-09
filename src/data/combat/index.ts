@@ -340,3 +340,8 @@ export function selectTargetAI(enemies: Combatant[]): Combatant {
   alive.sort((a, b) => (a.hp / a.maxHp) - (b.hp / b.maxHp));
   return alive[0];
 }
+
+// 导出子模块
+export * from './enemies';
+export * from './dungeons';
+export * from './storyDungeons';

@@ -1,0 +1,439 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-02-05T09:19:14.000Z",
+  "updatedAt": "2026-02-05T10:30:00.000Z",
+  "summary": {
+    "p0": 0,
+    "p1": 22,
+    "p2": 3,
+    "total": 25,
+    "fixed": 22,
+    "remaining": 3
+  },
+  "issues": [
+    {
+      "id": "API-001",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "player",
+      "title": "后端缺少 /player/search 端点",
+      "description": "前端好友添加功能依赖 /player/search 接口搜索玩家, 后端未实现",
+      "frontend": "src/services/api.ts:221",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/player/player.service.ts",
+        "server/src/modules/player/player.controller.ts",
+        "server/src/modules/player/player.routes.ts"
+      ]
+    },
+    {
+      "id": "API-002",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "sect",
+      "title": "后端缺少 /sect/my 端点",
+      "description": "前端获取当前玩家所属门派信息, 后端未实现",
+      "frontend": "src/services/api.ts:249",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/social/sect/sect.service.ts",
+        "server/src/modules/social/sect/sect.controller.ts",
+        "server/src/modules/social/sect/sect.routes.ts"
+      ]
+    },
+    {
+      "id": "API-003",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "sect",
+      "title": "后端缺少 /sect/members 端点",
+      "description": "前端获取门派成员列表, 后端未实现",
+      "frontend": "src/services/api.ts:251",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/social/sect/sect.service.ts",
+        "server/src/modules/social/sect/sect.controller.ts",
+        "server/src/modules/social/sect/sect.routes.ts"
+      ]
+    },
+    {
+      "id": "API-004",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "sect",
+      "title": "门派加入路径不一致",
+      "description": "前端 POST /sect/join + body.sectId, 后端 POST /sect/:id/join",
+      "frontend": "src/services/api.ts:259-260",
+      "backend": "server/src/modules/social/sect/sect.routes.ts:32-39",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-005",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "sect",
+      "title": "门派离开路径不一致",
+      "description": "前端 POST /sect/leave, 后端 POST /sect/:id/leave",
+      "frontend": "src/services/api.ts:262",
+      "backend": "server/src/modules/social/sect/sect.routes.ts:102-110",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-006",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "sect",
+      "title": "后端缺少 /sect/contribute 端点",
+      "description": "前端门派贡献功能, 后端未实现",
+      "frontend": "src/services/api.ts:264-265",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/social/sect/sect.service.ts",
+        "server/src/modules/social/sect/sect.controller.ts",
+        "server/src/modules/social/sect/sect.routes.ts"
+      ]
+    },
+    {
+      "id": "API-007",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "chat",
+      "title": "后端缺少 /chat/messages 端点",
+      "description": "前端获取聊天消息, 后端未实现 HTTP API",
+      "frontend": "src/services/api.ts:311-315",
+      "backend": "server/src/modules/social/chat/chat.routes.ts:6-12",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/social/chat/chat.service.ts",
+        "server/src/modules/social/chat/chat.controller.ts",
+        "server/src/modules/social/chat/chat.routes.ts",
+        "server/src/modules/social/chat/chat.types.ts",
+        "server/src/modules/social/chat/index.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "GET /api/chat/messages"
+        }
+      }
+    },
+    {
+      "id": "API-008",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "chat",
+      "title": "后端缺少 /chat/send 端点",
+      "description": "前端发送聊天消息, 后端未实现 HTTP API",
+      "frontend": "src/services/api.ts:317-318",
+      "backend": "server/src/modules/social/chat/chat.routes.ts:14-22",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/social/chat/chat.service.ts",
+        "server/src/modules/social/chat/chat.controller.ts",
+        "server/src/modules/social/chat/chat.routes.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "POST /api/chat/send"
+        }
+      }
+    },
+    {
+      "id": "API-009",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "market",
+      "title": "交易购买路径不一致",
+      "description": "前端 POST /market/buy + body.listingId, 后端 POST /market/buy/:id",
+      "frontend": "src/services/api.ts:371-372",
+      "backend": "server/src/modules/trade/market/market.routes.ts:24-31",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-010",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "market",
+      "title": "上架端点名称不一致",
+      "description": "前端 POST /market/sell, 后端 POST /market/list",
+      "frontend": "src/services/api.ts:374-375",
+      "backend": "server/src/modules/trade/market/market.routes.ts:6-14",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-011",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "market",
+      "title": "取消上架路径不一致",
+      "description": "前端 POST /market/cancel + body.listingId, 后端 POST /market/cancel/:id",
+      "frontend": "src/services/api.ts:377-378",
+      "backend": "server/src/modules/trade/market/market.routes.ts:34-42",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-012",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "market",
+      "title": "交易记录端点名称不一致",
+      "description": "前端 GET /market/my-trades, 后端 GET /market/history",
+      "frontend": "src/services/api.ts:382",
+      "backend": "server/src/modules/trade/market/market.routes.ts:44-52",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-013",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "market",
+      "title": "后端缺少 /market/shop 端点",
+      "description": "前端系统商店列表, 后端未实现",
+      "frontend": "src/services/api.ts:384-388",
+      "backend": "server/src/modules/trade/market/market.routes.ts:64-70",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/trade/market/market.service.ts",
+        "server/src/modules/trade/market/market.controller.ts",
+        "server/src/modules/trade/market/market.routes.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "GET /api/market/shop"
+        }
+      }
+    },
+    {
+      "id": "API-014",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "market",
+      "title": "后端缺少 /market/shop/buy 端点",
+      "description": "前端系统商店购买, 后端未实现",
+      "frontend": "src/services/api.ts:390-391",
+      "backend": "server/src/modules/trade/market/market.routes.ts:72-80",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/trade/market/market.service.ts",
+        "server/src/modules/trade/market/market.controller.ts",
+        "server/src/modules/trade/market/market.routes.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "POST /api/market/shop/buy"
+        }
+      }
+    },
+    {
+      "id": "API-015",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "pvp",
+      "title": "PVP匹配加入路径不一致",
+      "description": "前端 POST /pvp/queue/join, 后端 POST /pvp/match",
+      "frontend": "src/services/api.ts:440",
+      "backend": "server/src/modules/pvp/pvp.routes.ts:6-14",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-016",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "pvp",
+      "title": "PVP匹配离开路径和方法不一致",
+      "description": "前端 POST /pvp/queue/leave, 后端 DELETE /pvp/match",
+      "frontend": "src/services/api.ts:442",
+      "backend": "server/src/modules/pvp/pvp.routes.ts:16-24",
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ]
+    },
+    {
+      "id": "API-017",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "pvp",
+      "title": "后端缺少 /pvp/battle 端点",
+      "description": "前端获取当前战斗状态, 后端未实现",
+      "frontend": "src/services/api.ts:444",
+      "backend": "server/src/modules/pvp/pvp.routes.ts:54-62",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/pvp/pvp.service.ts",
+        "server/src/modules/pvp/pvp.controller.ts",
+        "server/src/modules/pvp/pvp.routes.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "GET /api/pvp/battle"
+        }
+      }
+    },
+    {
+      "id": "API-018",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "pvp",
+      "title": "后端缺少 /pvp/battle/action 端点",
+      "description": "前端战斗行动, 后端未实现",
+      "frontend": "src/services/api.ts:446-447",
+      "backend": "server/src/modules/pvp/pvp.routes.ts:64-72",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/pvp/pvp.service.ts",
+        "server/src/modules/pvp/pvp.controller.ts",
+        "server/src/modules/pvp/pvp.routes.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "POST /api/pvp/battle/action"
+        }
+      }
+    },
+    {
+      "id": "API-019",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "pvp",
+      "title": "后端缺少 /pvp/battle/surrender 端点",
+      "description": "前端投降功能, 后端未实现",
+      "frontend": "src/services/api.ts:449",
+      "backend": "server/src/modules/pvp/pvp.routes.ts:74-82",
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/pvp/pvp.service.ts",
+        "server/src/modules/pvp/pvp.controller.ts",
+        "server/src/modules/pvp/pvp.routes.ts"
+      ],
+      "retest_result": {
+        "status": "pass",
+        "timestamp": "2026-02-05T10:30:00.000Z",
+        "evidence": {
+          "route_registered": "POST /api/pvp/battle/surrender"
+        }
+      }
+    },
+    {
+      "id": "API-020",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "admin",
+      "title": "后端缺少 GET /admin/activities 端点",
+      "description": "后台活动列表查询, 后端未实现",
+      "frontend": "src/admin/api/index.ts:63-64",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/admin/activity/activity.service.ts",
+        "server/src/modules/admin/activity/activity.controller.ts",
+        "server/src/modules/admin/activity/activity.routes.ts"
+      ]
+    },
+    {
+      "id": "API-021",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "admin",
+      "title": "后端缺少 PUT /admin/activities/:id 端点",
+      "description": "后台活动更新, 后端未实现",
+      "frontend": "src/admin/api/index.ts:67-68",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/admin/activity/activity.service.ts",
+        "server/src/modules/admin/activity/activity.controller.ts",
+        "server/src/modules/admin/activity/activity.routes.ts"
+      ]
+    },
+    {
+      "id": "API-022",
+      "severity": "P1",
+      "category": "api-mismatch",
+      "module": "admin",
+      "title": "后端缺少 DELETE /admin/activities/:id 端点",
+      "description": "后台活动删除, 后端未实现",
+      "frontend": "src/admin/api/index.ts:69-70",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "server/src/modules/admin/activity/activity.service.ts",
+        "server/src/modules/admin/activity/activity.controller.ts",
+        "server/src/modules/admin/activity/activity.routes.ts"
+      ]
+    },
+    {
+      "id": "API-023",
+      "severity": "P2",
+      "category": "api-mismatch",
+      "module": "auth",
+      "title": "注册响应字段不一致",
+      "description": "后端返回 createdAt 字段, 前端类型未定义",
+      "frontend": "src/services/api.ts:65-69",
+      "backend": "server/src/modules/auth/auth.routes.ts:19-35",
+      "status": "open"
+    },
+    {
+      "id": "API-024",
+      "severity": "P2",
+      "category": "api-mismatch",
+      "module": "player",
+      "title": "更新资料请求参数不一致",
+      "description": "后端支持 avatarId 参数, 前端未定义",
+      "frontend": "src/services/api.ts:137-138",
+      "backend": "server/src/modules/player/player.routes.ts:31-47",
+      "status": "open"
+    },
+    {
+      "id": "API-025",
+      "severity": "P2",
+      "category": "api-mismatch",
+      "module": "pvp",
+      "title": "后端缺少 /pvp/rankings 端点",
+      "description": "前端 PVP 排名应使用 /ranking/pvp, 但定义了重复的 /pvp/rankings",
+      "frontend": "src/services/api.ts:437-438",
+      "backend": null,
+      "status": "fixed",
+      "fix_files_changed": [
+        "src/services/api.ts"
+      ],
+      "note": "前端已修改为使用 /ranking/pvp"
+    }
+  ]
+}

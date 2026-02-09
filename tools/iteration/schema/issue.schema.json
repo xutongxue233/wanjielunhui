@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Issue",
+  "description": "迭代系统问题定义",
+  "type": "object",
+  "required": ["id", "severity", "area", "title", "evidence"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z]+-\\d{3}$",
+      "description": "问题ID，格式: PREFIX-NNN"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2"],
+      "description": "严重级别: P0阻断/P1功能缺失/P2体验问题"
+    },
+    "area": {
+      "type": "string",
+      "enum": ["api", "admin", "ui", "db", "devtools"],
+      "description": "问题区域"
+    },
+    "route": {
+      "type": "string",
+      "description": "相关页面路由"
+    },
+    "api_name": {
+      "type": "string",
+      "description": "相关API名称，格式: METHOD /path"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 200,
+      "description": "问题标题"
+    },
+    "description": {
+      "type": "string",
+      "description": "详细描述"
+    },
+    "evidence": {
+      "type": "object",
+      "description": "证据信息",
+      "properties": {
+        "console": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "控制台日志片段"
+        },
+        "network": {
+          "type": "object",
+          "description": "网络请求信息",
+          "properties": {
+            "url": { "type": "string" },
+            "method": { "type": "string" },
+            "status": { "type": "integer" },
+            "response": { "type": "object" }
+          }
+        },
+        "screenshot": {
+          "type": "string",
+          "description": "截图文件路径"
+        },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "复现步骤"
+        },
+        "expected": {
+          "type": "string",
+          "description": "预期行为"
+        },
+        "actual": {
+          "type": "string",
+          "description": "实际行为"
+        }
+      }
+    },
+    "fix_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "需要修复的文件列表"
+    },
+    "retest_result": {
+      "type": "object",
+      "description": "复测结果",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "fail", "pending"]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence": {
+          "type": "object"
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { usePlayerStore } from '../../stores/playerStore';
 import { getRealmColor, REALM_CONFIGS } from '../../data/realms';
 import { getSpiritualRootName } from '../../data/origins';
 import { formatNumber } from '../../core/game-loop';
+import './PlayerStatus.css';
 
 export const PlayerStatus: React.FC = () => {
   const player = usePlayerStore((state) => state.player);
@@ -17,76 +18,40 @@ export const PlayerStatus: React.FC = () => {
   return (
     <Card className="w-full">
       {/* 角色头像和基本信息 */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', marginBottom: '20px' }}>
+      <div className="player-status-header">
         {/* 头像 */}
         <div
+          className="player-avatar"
           style={{
-            width: '64px',
-            height: '64px',
-            minWidth: '64px',
-            minHeight: '64px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '24px',
-            fontWeight: 'bold',
             background: `linear-gradient(135deg, ${realmColor}30, ${realmColor}10)`,
             border: `2px solid ${realmColor}`,
             boxShadow: `0 0 20px ${realmColor}30`,
-            fontFamily: "'Ma Shan Zheng', serif",
-            color: 'var(--text-primary)',
-            flexShrink: 0,
           }}
         >
           {player.name.charAt(0)}
         </div>
 
         {/* 名字和境界信息 */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              lineHeight: '1.3',
-              marginBottom: '6px',
-              color: 'var(--text-primary)',
-              fontFamily: "'Ma Shan Zheng', serif",
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
+        <div className="player-info">
+          <div className="player-name">
             {player.name}
           </div>
-          <div style={{ marginBottom: '4px' }}>
+          <div className="player-realm">
             <Tooltip content={realmConfig.description}>
-              <span
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'help',
-                  color: realmColor,
-                }}
-              >
+              <span className="player-realm-text" style={{ color: realmColor }}>
                 {realm.displayName}
               </span>
             </Tooltip>
           </div>
-          <div
-            style={{
-              fontSize: '12px',
-              color: 'var(--text-muted)',
-            }}
-          >
+          <div className="player-spiritual-root">
             {getSpiritualRootName(spiritualRoot)}
           </div>
         </div>
       </div>
 
       {/* 状态条 */}
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ marginBottom: '12px' }}>
+      <div className="player-bars">
+        <div className="player-bar-row">
           <ProgressBar
             current={attributes.hp}
             max={attributes.maxHp}
@@ -95,7 +60,7 @@ export const PlayerStatus: React.FC = () => {
             height={14}
           />
         </div>
-        <div style={{ marginBottom: '12px' }}>
+        <div className="player-bar-row">
           <ProgressBar
             current={attributes.mp}
             max={attributes.maxMp}
@@ -104,7 +69,7 @@ export const PlayerStatus: React.FC = () => {
             height={14}
           />
         </div>
-        <div>
+        <div className="player-bar-row">
           <ProgressBar
             current={attributes.cultivation}
             max={attributes.maxCultivation}
@@ -116,56 +81,56 @@ export const PlayerStatus: React.FC = () => {
       </div>
 
       {/* 分隔线 */}
-      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold-immortal) 50%, var(--border-subtle) 80%, transparent 100%)', margin: '16px 0' }} />
+      <div className="player-divider" />
 
       {/* 属性列表 */}
-      <div>
-        <div style={{ display: 'flex', marginBottom: '8px' }}>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingRight: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>攻击</span>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--crimson-light)' }}>{formatNumber(attributes.attack)}</span>
+      <div className="player-attributes">
+        <div className="player-attr-row">
+          <div className="player-attr-item">
+            <span className="player-attr-label">攻击</span>
+            <span className="player-attr-value attack">{formatNumber(attributes.attack)}</span>
           </div>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>防御</span>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--azure-light)' }}>{formatNumber(attributes.defense)}</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', marginBottom: '8px' }}>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingRight: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>速度</span>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--jade-light)' }}>{formatNumber(attributes.speed)}</span>
-          </div>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>悟性</span>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--purple-light)' }}>{attributes.comprehension}</span>
+          <div className="player-attr-item">
+            <span className="player-attr-label">防御</span>
+            <span className="player-attr-value defense">{formatNumber(attributes.defense)}</span>
           </div>
         </div>
-        <div style={{ display: 'flex' }}>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingRight: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>气运</span>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--gold-light)' }}>{attributes.luck}</span>
+        <div className="player-attr-row">
+          <div className="player-attr-item">
+            <span className="player-attr-label">速度</span>
+            <span className="player-attr-value speed">{formatNumber(attributes.speed)}</span>
           </div>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>寿元</span>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)' }}>{attributes.lifespan}/{attributes.maxLifespan}</span>
+          <div className="player-attr-item">
+            <span className="player-attr-label">悟性</span>
+            <span className="player-attr-value comprehension">{attributes.comprehension}</span>
+          </div>
+        </div>
+        <div className="player-attr-row">
+          <div className="player-attr-item">
+            <span className="player-attr-label">气运</span>
+            <span className="player-attr-value luck">{attributes.luck}</span>
+          </div>
+          <div className="player-attr-item">
+            <span className="player-attr-label">寿元</span>
+            <span className="player-attr-value lifespan">{attributes.lifespan}/{attributes.maxLifespan}</span>
           </div>
         </div>
       </div>
 
       {/* 分隔线 */}
-      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold-immortal) 50%, var(--border-subtle) 80%, transparent 100%)', margin: '16px 0' }} />
+      <div className="player-divider" />
 
       {/* 五行亲和 */}
-      <div>
-        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+      <div className="player-elements">
+        <div className="player-elements-title">
           五行亲和
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '4px' }}>
-          <ElementBadge name="金" value={spiritualRoot.elements.includes('metal') ? 100 : 0} color="var(--metal-silver)" />
-          <ElementBadge name="木" value={spiritualRoot.elements.includes('wood') ? 100 : 0} color="var(--wood-green)" />
-          <ElementBadge name="水" value={spiritualRoot.elements.includes('water') ? 100 : 0} color="var(--water-blue)" />
-          <ElementBadge name="火" value={spiritualRoot.elements.includes('fire') ? 100 : 0} color="var(--fire-red)" />
-          <ElementBadge name="土" value={spiritualRoot.elements.includes('earth') ? 100 : 0} color="var(--earth-yellow)" />
+        <div className="player-elements-list">
+          <ElementBadge name="金" value={spiritualRoot.elements.includes('metal') ? 100 : 0} color="var(--element-metal)" />
+          <ElementBadge name="木" value={spiritualRoot.elements.includes('wood') ? 100 : 0} color="var(--element-wood)" />
+          <ElementBadge name="水" value={spiritualRoot.elements.includes('water') ? 100 : 0} color="var(--element-water)" />
+          <ElementBadge name="火" value={spiritualRoot.elements.includes('fire') ? 100 : 0} color="var(--element-fire)" />
+          <ElementBadge name="土" value={spiritualRoot.elements.includes('earth') ? 100 : 0} color="var(--element-earth)" />
         </div>
       </div>
     </Card>
@@ -181,21 +146,14 @@ interface ElementBadgeProps {
 const ElementBadge: React.FC<ElementBadgeProps> = ({ name, value, color }) => {
   return (
     <div
+      className="element-badge"
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '6px 10px',
-        borderRadius: '4px',
         background: `${color}15`,
         border: `1px solid ${color}40`,
-        minWidth: '36px',
       }}
     >
-      <span style={{ fontSize: '12px', color, fontWeight: '500' }}>{name}</span>
-      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>
-        {value}
-      </span>
+      <span className="element-badge-name" style={{ color }}>{name}</span>
+      <span className="element-badge-value">{value}</span>
     </div>
   );
 };

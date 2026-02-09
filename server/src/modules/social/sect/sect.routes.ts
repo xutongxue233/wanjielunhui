@@ -3,6 +3,16 @@ import { sectController } from './sect.controller.js';
 import { authenticate } from '../../../shared/middleware/auth.middleware.js';
 
 export async function sectRoutes(fastify: FastifyInstance) {
+  fastify.get('/my', {
+    schema: {
+      description: '获取当前玩家所属门派',
+      tags: ['门派'],
+      security: [{ bearerAuth: [] }],
+    },
+    preHandler: authenticate,
+    handler: sectController.getMySect.bind(sectController),
+  });
+
   fastify.post('/create', {
     schema: {
       description: '创建门派',
@@ -27,6 +37,14 @@ export async function sectRoutes(fastify: FastifyInstance) {
       tags: ['门派'],
     },
     handler: sectController.getDetail.bind(sectController),
+  });
+
+  fastify.get('/:id/members', {
+    schema: {
+      description: '获取门派成员列表',
+      tags: ['门派'],
+    },
+    handler: sectController.getMembers.bind(sectController),
   });
 
   fastify.post('/:id/join', {
@@ -107,6 +125,23 @@ export async function sectRoutes(fastify: FastifyInstance) {
     },
     preHandler: authenticate,
     handler: sectController.leave.bind(sectController),
+  });
+
+  fastify.post('/:id/contribute', {
+    schema: {
+      description: '贡献资源',
+      tags: ['门派'],
+      security: [{ bearerAuth: [] }],
+      body: {
+        type: 'object',
+        required: ['amount'],
+        properties: {
+          amount: { type: 'integer', minimum: 1 },
+        },
+      },
+    },
+    preHandler: authenticate,
+    handler: sectController.contribute.bind(sectController),
   });
 }
 

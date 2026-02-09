@@ -1,0 +1,182 @@
+/* PlayerStatus - 使用Design System CSS变量 */
+
+.player-status-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.player-avatar {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'Ma Shan Zheng', serif;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-name {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  font-family: 'Ma Shan Zheng', serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-realm {
+  margin-bottom: 4px;
+}
+
+.player-realm-text {
+  font-size: 14px;
+  font-weight: 500;
+  cursor: help;
+}
+
+.player-spiritual-root {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* 状态条区域 */
+.player-bars {
+  margin-bottom: var(--spacing-lg);
+}
+
+.player-bar-row {
+  margin-bottom: var(--spacing-md);
+}
+
+.player-bar-row:last-child {
+  margin-bottom: 0;
+}
+
+/* 分隔线 */
+.player-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-subtle) 20%, var(--gold) 50%, var(--border-subtle) 80%, transparent 100%);
+  margin: var(--spacing-lg) 0;
+}
+
+/* 属性列表 */
+.player-attributes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.player-attr-row {
+  display: flex;
+}
+
+.player-attr-item {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-attr-item:first-child {
+  padding-right: var(--spacing-md);
+}
+
+.player-attr-item:last-child {
+  padding-left: var(--spacing-md);
+}
+
+.player-attr-label {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.player-attr-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.player-attr-value.attack { color: var(--crimson-light); }
+.player-attr-value.defense { color: var(--azure-light); }
+.player-attr-value.speed { color: var(--jade-light); }
+.player-attr-value.comprehension { color: var(--purple-light); }
+.player-attr-value.luck { color: var(--gold-light); }
+.player-attr-value.lifespan { color: var(--text-secondary); }
+
+/* 五行亲和 */
+.player-elements {
+  margin-top: 0;
+}
+
+.player-elements-title {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-sm);
+}
+
+.player-elements-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.element-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  min-width: 36px;
+}
+
+.element-badge-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.element-badge-value {
+  font-size: 11px;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .player-status-header {
+    gap: var(--spacing-md);
+  }
+
+  .player-avatar {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 18px;
+  }
+
+  .player-name {
+    font-size: 18px;
+  }
+
+  .player-attr-item:first-child {
+    padding-right: var(--spacing-sm);
+  }
+
+  .player-attr-item:last-child {
+    padding-left: var(--spacing-sm);
+  }
+}

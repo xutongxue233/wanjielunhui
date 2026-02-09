@@ -1,0 +1,25 @@
+[
+  {
+    "id": "ISSUE-001",
+    "severity": "P1",
+    "area": "api",
+    "title": "DELETE 请求发送 Content-Type 但无 body 导致 400 错误",
+    "evidence": {
+      "console": ["Failed to load resource: the server responded with a status of 400"],
+      "network": {
+        "url": "DELETE http://localhost:5173/api/v1/admin/announcements/{id}",
+        "status": 400,
+        "response": "{\"success\":false,\"error\":{\"code\":\"UNKNOWN_ERROR\",\"message\":\"Body cannot be empty when content-type is set to 'application/json'\"}}"
+      },
+      "steps": [
+        "访问后台公告管理页面",
+        "点击删除按钮",
+        "确认删除",
+        "请求失败返回 400"
+      ]
+    },
+    "fix_files": ["src/admin/api/index.ts"],
+    "fix_description": "修改 request 函数，只有在有 body 时才设置 Content-Type: application/json",
+    "status": "verified"
+  }
+]

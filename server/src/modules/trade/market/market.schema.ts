@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const createListingSchema = z.object({
   itemType: z.string().max(32),
   itemId: z.string().max(64),
-  itemData: z.record(z.unknown()),
+  itemData: z.record(z.string(), z.unknown()),
   amount: z.number().int().positive().default(1),
   price: z.number().int().positive(),
   currency: z.string().max(32).default('spiritStones'),

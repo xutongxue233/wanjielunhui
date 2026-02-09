@@ -24,9 +24,24 @@ export async function activityRoutes(fastify: FastifyInstance) {
 export async function adminActivityRoutes(fastify: FastifyInstance) {
   fastify.addHook('preHandler', authenticate);
 
+  fastify.get('/activities', {
+    schema: { description: '获取所有活动', tags: ['管理-活动'], security: [{ bearerAuth: [] }] },
+    handler: activityController.getAll.bind(activityController),
+  });
+
   fastify.post('/activities', {
     schema: { description: '创建活动', tags: ['管理-活动'], security: [{ bearerAuth: [] }] },
     handler: activityController.create.bind(activityController),
+  });
+
+  fastify.put('/activities/:id', {
+    schema: { description: '更新活动', tags: ['管理-活动'], security: [{ bearerAuth: [] }] },
+    handler: activityController.update.bind(activityController),
+  });
+
+  fastify.delete('/activities/:id', {
+    schema: { description: '删除活动', tags: ['管理-活动'], security: [{ bearerAuth: [] }] },
+    handler: activityController.delete.bind(activityController),
   });
 }
 

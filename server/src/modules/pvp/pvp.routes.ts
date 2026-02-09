@@ -50,6 +50,36 @@ export async function pvpRoutes(fastify: FastifyInstance) {
     preHandler: authenticate,
     handler: pvpController.getStats.bind(pvpController),
   });
+
+  fastify.get('/battle', {
+    schema: {
+      description: '获取当前战斗状态',
+      tags: ['PVP'],
+      security: [{ bearerAuth: [] }],
+    },
+    preHandler: authenticate,
+    handler: pvpController.getBattle.bind(pvpController),
+  });
+
+  fastify.post('/battle/action', {
+    schema: {
+      description: '执行战斗行动',
+      tags: ['PVP'],
+      security: [{ bearerAuth: [] }],
+    },
+    preHandler: authenticate,
+    handler: pvpController.performAction.bind(pvpController),
+  });
+
+  fastify.post('/battle/surrender', {
+    schema: {
+      description: '投降',
+      tags: ['PVP'],
+      security: [{ bearerAuth: [] }],
+    },
+    preHandler: authenticate,
+    handler: pvpController.surrender.bind(pvpController),
+  });
 }
 
 export default pvpRoutes;

@@ -38,7 +38,7 @@ export class ActivityService {
       name: a.name,
       description: a.description,
       type: a.type,
-      config: a.config as Record<string, unknown>,
+      config: JSON.parse(a.config) as Record<string, unknown>,
       startAt: a.startAt,
       endAt: a.endAt,
       isActive: a.isActive,
@@ -56,8 +56,8 @@ export class ActivityService {
     return {
       activityId: progress.activityId,
       playerId: progress.playerId,
-      progress: progress.progress as Record<string, unknown>,
-      rewards: progress.rewards as Record<string, unknown> | null,
+      progress: JSON.parse(progress.progress) as Record<string, unknown>,
+      rewards: progress.rewards ? JSON.parse(progress.rewards) as Record<string, unknown> : null,
     };
   }
 
@@ -79,12 +79,12 @@ export class ActivityService {
       throw new BadRequestError(ErrorCodes.INVALID_INPUT, '奖励已领取');
     }
 
-    const config = activity.config as { rewards?: Record<string, unknown> };
+    const config = JSON.parse(activity.config) as { rewards?: Record<string, unknown> };
     const rewards = config.rewards ?? {};
 
     await prisma.activityProgress.update({
       where: { id: progress.id },
-      data: { rewards },
+      data: { rewards: JSON.stringify(rewards) },
     });
 
     return { rewards };
@@ -96,7 +96,7 @@ export class ActivityService {
         name: input.name,
         description: input.description,
         type: input.type,
-        config: input.config,
+        config: JSON.stringify(input.config),
         startAt: input.startAt,
         endAt: input.endAt,
         isActive: true,
@@ -108,12 +108,68 @@ export class ActivityService {
       name: activity.name,
       description: activity.description,
       type: activity.type,
-      config: activity.config as Record<string, unknown>,
+      config: JSON.parse(activity.config) as Record<string, unknown>,
       startAt: activity.startAt,
       endAt: activity.endAt,
       isActive: activity.isActive,
       createdAt: activity.createdAt,
     };
+  }
+
+  async getAllActivities(page: number = 1, pageSize: number = 20): Promise<{ activities: ActivityInfo[]; total: number }> {
+    const [activities, total] = await Promise.all([
+      prisma.activity.findMany({
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.activity.count(),
+    ]);
+
+    return {
+      activities: activities.map((a) => ({
+        id: a.id,
+        name: a.name,
+        description: a.description,
+        type: a.type,
+        config: JSON.parse(a.config) as Record<string, unknown>,
+        startAt: a.startAt,
+        endAt: a.endAt,
+        isActive: a.isActive,
+        createdAt: a.createdAt,
+      })),
+      total,
+    };
+  }
+
+  async updateActivity(id: string, input: Partial<CreateActivityInput>): Promise<ActivityInfo> {
+    const activity = await prisma.activity.update({
+      where: { id },
+      data: {
+        ...(input.name !== undefined ? { name: input.name } : {}),
+        ...(input.description !== undefined ? { description: input.description } : {}),
+        ...(input.type !== undefined ? { type: input.type } : {}),
+        ...(input.config !== undefined ? { config: JSON.stringify(input.config) } : {}),
+        ...(input.startAt !== undefined ? { startAt: input.startAt } : {}),
+        ...(input.endAt !== undefined ? { endAt: input.endAt } : {}),
+      },
+    });
+
+    return {
+      id: activity.id,
+      name: activity.name,
+      description: activity.description,
+      type: activity.type,
+      config: JSON.parse(activity.config) as Record<string, unknown>,
+      startAt: activity.startAt,
+      endAt: activity.endAt,
+      isActive: activity.isActive,
+      createdAt: activity.createdAt,
+    };
+  }
+
+  async deleteActivity(id: string): Promise<void> {
+    await prisma.activity.delete({ where: { id } });
   }
 }
 

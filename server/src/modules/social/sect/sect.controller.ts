@@ -149,6 +149,41 @@ export class SectController {
       data: { message: '已离开门派' },
     });
   }
+
+  async getMySect(request: FastifyRequest, reply: FastifyReply) {
+    const { playerId } = request.user;
+
+    const result = await sectService.getMySect(playerId);
+
+    return reply.send({
+      success: true,
+      data: result,
+    });
+  }
+
+  async getMembers(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string };
+
+    const result = await sectService.getSectMembers(id);
+
+    return reply.send({
+      success: true,
+      data: result,
+    });
+  }
+
+  async contribute(request: FastifyRequest, reply: FastifyReply) {
+    const { playerId } = request.user;
+    const { id } = request.params as { id: string };
+    const { amount } = request.body as { amount: number };
+
+    await sectService.contribute(playerId, id, amount);
+
+    return reply.send({
+      success: true,
+      data: { message: '贡献成功' },
+    });
+  }
 }
 
 export const sectController = new SectController();

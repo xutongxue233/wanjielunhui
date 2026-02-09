@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { message } from '../../components/ui';
 
 export function MailPage() {
   const [form, setForm] = useState({
@@ -14,7 +15,7 @@ export function MailPage() {
     e.preventDefault();
     setSending(true);
     setTimeout(() => {
-      alert('邮件发送成功');
+      message.success('邮件发送成功');
       setSending(false);
       setForm({ targetType: 'all', targetIds: '', title: '', content: '', attachments: '' });
     }, 1000);

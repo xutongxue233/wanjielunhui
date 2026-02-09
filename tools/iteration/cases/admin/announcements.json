@@ -1,0 +1,96 @@
+{
+  "name": "admin-announcements-crud",
+  "description": "后台公告管理CRUD操作及持久化验证",
+  "start_url": "http://localhost:5173/admin",
+  "auth": {
+    "required": true,
+    "username": "admin",
+    "password": "admin123"
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "text": "仪表盘",
+      "timeout": 10000
+    },
+    {
+      "action": "click",
+      "target_text": "公告管理"
+    },
+    {
+      "action": "wait",
+      "text": "公告列表",
+      "timeout": 5000
+    },
+    {
+      "action": "screenshot",
+      "name": "announcements-list"
+    },
+    {
+      "action": "click",
+      "target_text": "新建公告"
+    },
+    {
+      "action": "wait",
+      "text": "公告标题",
+      "timeout": 3000
+    },
+    {
+      "action": "fill",
+      "target_placeholder": "公告标题",
+      "value": "测试公告_{{timestamp}}"
+    },
+    {
+      "action": "fill",
+      "target_placeholder": "公告内容",
+      "value": "这是一条测试公告内容"
+    },
+    {
+      "action": "click",
+      "target_text": "保存"
+    },
+    {
+      "action": "wait",
+      "text": "创建成功",
+      "timeout": 5000
+    },
+    {
+      "action": "screenshot",
+      "name": "announcements-created"
+    },
+    {
+      "action": "reload",
+      "description": "刷新页面验证持久化"
+    },
+    {
+      "action": "wait",
+      "text": "测试公告",
+      "timeout": 5000
+    },
+    {
+      "action": "screenshot",
+      "name": "announcements-persisted"
+    }
+  ],
+  "assertions": [
+    {
+      "type": "text_exists",
+      "text": "测试公告"
+    },
+    {
+      "type": "no_console_errors"
+    },
+    {
+      "type": "api_success",
+      "pattern": "/admin/announcements"
+    }
+  ],
+  "viewports": [
+    { "name": "desktop", "width": 1920, "height": 1080 }
+  ],
+  "persistence_test": {
+    "enabled": true,
+    "verify_after_reload": true,
+    "verify_after_relogin": false
+  }
+}
