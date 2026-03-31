@@ -1,0 +1,12 @@
+{
+  "name": "@wanjie/admin-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../node_modules/vite/bin/vite.js --configLoader runner --config ../../vite.workspace.mjs --mode admin",
+    "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.json",
+    "bundle": "node ../../node_modules/vite/bin/vite.js build --configLoader runner --config ../../vite.workspace.mjs --mode admin",
+    "preview": "node ../../node_modules/vite/bin/vite.js preview --configLoader runner --config ../../vite.workspace.mjs --mode admin"
+  }
+}

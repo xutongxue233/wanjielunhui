@@ -6,13 +6,13 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    setupFiles: ['./apps/game-web/src/test/setup.ts'],
+    include: ['apps/game-web/src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['src/components/**', 'src/design-system/**'],
-      exclude: ['src/**/*.test.*', 'src/**/*.spec.*', 'src/test/**'],
+      include: ['apps/game-web/src/components/**', 'apps/game-web/src/design-system/**'],
+      exclude: ['apps/game-web/src/**/*.test.*', 'apps/game-web/src/**/*.spec.*', 'apps/game-web/src/test/**'],
     },
   },
 });

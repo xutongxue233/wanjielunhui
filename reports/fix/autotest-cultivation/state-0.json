@@ -1,0 +1,72 @@
+{
+  "screenModel": "panel-based-ui",
+  "note": "该游戏为面板式文字修仙界面，无二维坐标系。",
+  "phase": "playing",
+  "ui": {
+    "nav": "修炼",
+    "gameTab": "修炼",
+    "visibleButtons": [
+      "存档",
+      "返回",
+      "▼",
+      "修炼",
+      "剧情",
+      "战斗",
+      "炼丹",
+      "弟子",
+      "探索",
+      "修为不足",
+      "修炼",
+      "社交"
+    ]
+  },
+  "player": {
+    "name": "自动化道友",
+    "realm": "炼气初期",
+    "cultivation": {
+      "current": 0,
+      "required": 100,
+      "speedPerSecond": 2.2
+    },
+    "hp": 100,
+    "maxHp": 100,
+    "mp": 50,
+    "maxMp": 50,
+    "totalPlayTime": 0,
+    "activeTechniqueId": "forgotten_breathing_technique",
+    "inventoryPreview": [
+      {
+        "id": "sealed_memory_fragment",
+        "name": "封印记忆碎片",
+        "quantity": 1
+      },
+      {
+        "id": "spirit_stone",
+        "name": "灵石",
+        "quantity": 20
+      },
+      {
+        "id": "reincarnation_pill",
+        "name": "轮回丹",
+        "quantity": 1
+      }
+    ]
+  },
+  "story": {
+    "chapterId": "prologue",
+    "nodeId": "start",
+    "completedChapters": [],
+    "flags": {}
+  },
+  "combat": null,
+  "alchemy": {
+    "level": 1,
+    "refining": false,
+    "learnedRecipes": [
+      "qi_gathering_pill",
+      "healing_pill"
+    ],
+    "pillCount": 0
+  },
+  "exploration": null
+}

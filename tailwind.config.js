@@ -2,7 +2,7 @@
 
 // 从Design System导入颜色Token
 // 注意：Tailwind配置在Node环境运行，需要直接定义值
-// 这些值与 src/design-system/tokens.ts 保持同步
+// 这些值与 apps/game-web/src/design-system/tokens.ts 保持同步
 
 const colors = {
   // 水墨色阶
@@ -69,8 +69,11 @@ const colors = {
 
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./apps/game-web/index.html",
+    "./apps/admin-web/index.html",
+    "./apps/game-web/src/**/*.{js,ts,jsx,tsx}",
+    "./apps/admin-web/src/**/*.{js,ts,jsx,tsx}",
+    "./packages/ui/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
