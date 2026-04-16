@@ -1,4 +1,4 @@
-const API_BASE = '/api/v1';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api/v1';
 
 import { useAuthStore } from '../stores/authStore';
 import type { AuthSession } from '@wanjie/contracts';

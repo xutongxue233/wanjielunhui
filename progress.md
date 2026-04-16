@@ -589,3 +589,24 @@ TODO（下一轮）
 - 给 `apps/api` 接入真正的 `contracts` / `game-rules` 运行时用法，而不只停留在路径映射与前端首批复用。
 - 把内容静态表逐步迁移到 `apps/api` 的内容版本模型，先从剧情章节、敌人模板和物品表开始。
 - 继续推进 `bundle:game` / `bundle:admin` 的环境兼容，必要时替换掉当前受沙箱影响的 Vite 构建链验证方式。
+
+2026-04-16 架构优先改造（C/S）
+- 结论更新：仓库已具备前后端分离结构（game-web/admin-web/api），但核心玩法仍以前端本地状态为主，属于“混合 C/S 过渡态”。
+- 新增架构文档：`docs/architecture/client-server-architecture.md`，明确状态权威矩阵、风险点、目标态和分阶段迁移路径。
+- 后端落地改造：`save.service` 在写入云存档时，新增“存档快照 -> player 主数据投影”同步，减少存档与后台/排行视图脱节。
+- 新增快照解析器：`apps/api/src/modules/save/save.player-projection.ts`。
+- 前端 API 基址从硬编码改为可配置：`VITE_API_BASE || /api/v1`（game-web/admin-web 同步）。
+
+TODO（架构下一步）
+- 给存档与玩家投影增加 revision/version，明确并发写冲突策略。
+- 存档成功后触发排行榜异步重算，避免排行滞后。
+- 把修炼与战斗结算逐步迁移为服务端权威接口。
+
+2026-04-16 架构改造验证补充（Playwright）
+- 按 `develop-web-game` 技能执行自动化烟测。
+- 首次运行发现启动阻断：页面报 `esbuild` 平台不匹配（截图：`output/web-game/shot-0.png`，错误：`output/web-game/errors-0.json`）。
+- 已执行 `npm rebuild esbuild` 修复依赖二进制。
+- 修复后复测通过：
+  - 截图：`reports/architecture-smoke/shot-0.png`
+  - 状态：`reports/architecture-smoke/state-0.json`
+  - 页面可正常进入标题界面，未生成新的 `errors-0.json`。

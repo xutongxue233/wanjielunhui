@@ -1,7 +1,9 @@
 import crypto from 'node:crypto';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma.js';
 import config from '../../config/index.js';
 import { NotFoundError, BadRequestError, ErrorCodes } from '../../shared/errors/index.js';
+import { buildPlayerProjectionFromSaveData } from './save.player-projection.js';
 
 interface SaveData {
   name: string;
@@ -77,27 +79,8 @@ export class SaveService {
       throw new BadRequestError(ErrorCodes.INVALID_INPUT, '存档槽位必须在1-3之间');
     }
 
-    let player = await prisma.player.findUnique({
-      where: { userId },
-    });
-
-    // 玩家不存在时自动创建
-    if (!player) {
-      const playerData = data.playerData as { player?: { name?: string; realm?: { id?: string; stage?: string }; spiritualRoot?: { type?: string } } };
-      const playerInfo = playerData?.player;
-
-      player = await prisma.player.create({
-        data: {
-          userId,
-          name: playerInfo?.name || '无名修士',
-          realm: playerInfo?.realm?.id || '炼气',
-          realmStage: playerInfo?.realm?.stage || '初期',
-          spiritualRoot: playerInfo?.spiritualRoot?.type || '混沌灵根',
-        },
-      });
-    }
-
     const checksum = this.generateChecksum(data);
+    const projection = buildPlayerProjectionFromSaveData(data.playerData, data.roguelikeData);
 
     // 将对象序列化为 JSON 字符串存储
     const playerDataStr = JSON.stringify(data.playerData);
@@ -106,33 +89,81 @@ export class SaveService {
     const discipleDataStr = JSON.stringify(data.discipleData);
     const roguelikeDataStr = JSON.stringify(data.roguelikeData);
 
-    const save = await prisma.gameSave.upsert({
-      where: { playerId_slot: { playerId: player.id, slot } },
-      update: {
-        name: data.name,
-        playerData: playerDataStr,
-        gameData: gameDataStr,
-        alchemyData: alchemyDataStr,
-        discipleData: discipleDataStr,
-        roguelikeData: roguelikeDataStr,
-        playTime: data.playTime ?? 0,
-        checkpoint: data.checkpoint ?? null,
-        checksum,
-        version: { increment: 1 },
-      },
-      create: {
-        playerId: player.id,
-        slot,
-        name: data.name,
-        playerData: playerDataStr,
-        gameData: gameDataStr,
-        alchemyData: alchemyDataStr,
-        discipleData: discipleDataStr,
-        roguelikeData: roguelikeDataStr,
-        playTime: data.playTime ?? 0,
-        checkpoint: data.checkpoint ?? null,
-        checksum,
-      },
+    const save = await prisma.$transaction(async (tx) => {
+      let player = await tx.player.findUnique({
+        where: { userId },
+      });
+
+      // 玩家不存在时自动创建
+      if (!player) {
+        player = await tx.player.create({
+          data: {
+            userId,
+            name: projection.name || '无名修士',
+            realm: projection.realm || '炼气',
+            realmStage: projection.realmStage || '初期',
+            spiritualRoot: projection.spiritualRoot || '混沌灵根',
+          },
+        });
+      }
+
+      const playerUpdateData: Prisma.PlayerUpdateInput = {
+        lastActiveAt: new Date(),
+      };
+
+      if (projection.name !== undefined) playerUpdateData.name = projection.name;
+      if (projection.realm !== undefined) playerUpdateData.realm = projection.realm;
+      if (projection.realmStage !== undefined) playerUpdateData.realmStage = projection.realmStage;
+      if (projection.spiritualRoot !== undefined) playerUpdateData.spiritualRoot = projection.spiritualRoot;
+      if (projection.cultivation !== undefined) {
+        playerUpdateData.cultivation = projection.cultivation;
+        playerUpdateData.totalCultivation =
+          projection.cultivation > player.totalCultivation ? projection.cultivation : player.totalCultivation;
+      }
+      if (projection.health !== undefined) playerUpdateData.health = projection.health;
+      if (projection.maxHealth !== undefined) playerUpdateData.maxHealth = projection.maxHealth;
+      if (projection.attack !== undefined) playerUpdateData.attack = projection.attack;
+      if (projection.defense !== undefined) playerUpdateData.defense = projection.defense;
+      if (projection.speed !== undefined) playerUpdateData.speed = projection.speed;
+      if (projection.critRate !== undefined) playerUpdateData.critRate = projection.critRate;
+      if (projection.critDamage !== undefined) playerUpdateData.critDamage = projection.critDamage;
+      if (projection.combatPower !== undefined) playerUpdateData.combatPower = projection.combatPower;
+      if (projection.reincarnations !== undefined) playerUpdateData.reincarnations = projection.reincarnations;
+      if (projection.destinyPoints !== undefined) playerUpdateData.destinyPoints = projection.destinyPoints;
+
+      await tx.player.update({
+        where: { id: player.id },
+        data: playerUpdateData,
+      });
+
+      return tx.gameSave.upsert({
+        where: { playerId_slot: { playerId: player.id, slot } },
+        update: {
+          name: data.name,
+          playerData: playerDataStr,
+          gameData: gameDataStr,
+          alchemyData: alchemyDataStr,
+          discipleData: discipleDataStr,
+          roguelikeData: roguelikeDataStr,
+          playTime: data.playTime ?? 0,
+          checkpoint: data.checkpoint ?? null,
+          checksum,
+          version: { increment: 1 },
+        },
+        create: {
+          playerId: player.id,
+          slot,
+          name: data.name,
+          playerData: playerDataStr,
+          gameData: gameDataStr,
+          alchemyData: alchemyDataStr,
+          discipleData: discipleDataStr,
+          roguelikeData: roguelikeDataStr,
+          playTime: data.playTime ?? 0,
+          checkpoint: data.checkpoint ?? null,
+          checksum,
+        },
+      });
     });
 
     return {
