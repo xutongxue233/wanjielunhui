@@ -610,3 +610,34 @@ TODO（架构下一步）
   - 截图：`reports/architecture-smoke/shot-0.png`
   - 状态：`reports/architecture-smoke/state-0.json`
   - 页面可正常进入标题界面，未生成新的 `errors-0.json`。
+
+2026-04-16 Playwright MCP 全量迭代（本轮）
+- 按“全量测试+持续迭代”执行：通过本地 Playwright MCP 服务（`@playwright/mcp` + MCP SDK 客户端）完成 4 轮回归。
+- 新增全量回归脚本：`tools/iteration/run-playwright-mcp-full.mjs`。
+  - 覆盖范围：游戏端 11 面板 * 3 视口 + 后台 3 视口（共 36 case/轮）。
+  - 自动产出：`reports/iteration/<timestamp>/iteration-summary.json`、`issues.json`、`screenshots/*`。
+
+关键问题与处理
+1) 阻断问题：API 服务启动失败（`@prisma/client` 在当前 ESM 下命名导入不兼容）
+   - 证据：`dev-api.log` 报错 `does not provide an export named 'PrismaClient'`。
+   - 修复：`apps/api/src/lib/prisma.ts` 改为默认导入解构 `PrismaClient`，恢复服务可启动。
+2) 阻断问题：存档页未登录场景触发 401 console error
+   - 证据：第 3 轮 `game-*-save` 捕获 `/api/v1/save/list` 401 + `Failed to get cloud saves`。
+   - 修复：`apps/game-web/src/services/saveSync.ts` 增加云存档鉴权前置判断与鉴权错误静默处理。
+3) 测试脚本误判（非业务阻断）
+   - 修复 `tools/iteration/run-playwright-mcp-full.mjs` 的后台登录判定和标签页判定口径。
+
+轮次结果
+- 第 1 轮: `reports/iteration/20260416-140956` => P0=0, P1=0, P2=0
+- 第 2 轮: `reports/iteration/20260416-142500` => P0=0, P1=0, P2=0
+- 第 3 轮（增强断言后）: `reports/iteration/20260416-142848` => P0=0, P1=7, P2=15
+- 第 4 轮（修复后）: `reports/iteration/20260416-143412` => P0=0, P1=0, P2=1
+- 第 5 轮（复核）: `reports/iteration/20260416-143642` => P0=0, P1=0, P2=1
+
+当前残留
+- P2: `admin-desktop` 公告 CRUD 自动化选择器未命中（业务页面可用，但脚本未稳定命中“新建公告/保存”控件）。
+
+TODO（下一轮）
+- 为后台公告页补专用稳定定位（`data-testid`）后再做 CRUD 持久化硬断言。
+- 将 `tools/iteration/run-playwright-mcp-full.mjs` 的网络检查升级为 API 白名单精确断言（避免 UI 静态资源干扰）。
+- 增加后台分页/筛选/权限边界用例，补齐“全量”深度。

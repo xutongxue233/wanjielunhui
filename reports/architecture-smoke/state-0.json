@@ -1,0 +1,37 @@
+{
+  "screenModel": "panel-based-ui",
+  "note": "该游戏为面板式文字修仙界面，无二维坐标系。",
+  "phase": "title",
+  "ui": {
+    "nav": null,
+    "gameTab": null,
+    "visibleButtons": [
+      "踏入仙途",
+      "登录账号"
+    ]
+  },
+  "player": null,
+  "story": {
+    "chapterId": "prologue",
+    "nodeId": "start",
+    "completedChapters": [],
+    "flags": {}
+  },
+  "storyBattle": null,
+  "combat": null,
+  "alchemy": {
+    "level": 1,
+    "refining": false,
+    "learnedRecipes": [
+      "qi_gathering_pill",
+      "healing_pill"
+    ],
+    "pillCount": 0
+  },
+  "exploration": null,
+  "automation": {
+    "enabled": false,
+    "forceProc": false,
+    "encounter": []
+  }
+}

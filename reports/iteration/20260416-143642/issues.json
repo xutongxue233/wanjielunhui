@@ -1,0 +1,11 @@
+[
+  {
+    "id": "issue_1",
+    "priority": "P2",
+    "scope": "admin-desktop",
+    "message": "公告 CRUD 自动化选择器未完全命中",
+    "evidence": {
+      "evidence": "### Result\n{\"title\":\"自动化公告_1776321507438\",\"persisted\":false,\"createButtonFound\":false,\"titleInputFound\":false,\"contentInputFound\":false,\"saveButtonFound\":false}\n### Ran Playwright code\n```js\nawait (async (page) => {\n            const stamp = Date.now();\n            const title = '自动化公告_' + stamp;\n            const content = '自动化回归公告内容_' + stamp;\n            let createButtonFound = false;\n            let titleInputFound = false;\n            let contentInputFound = false;\n            let saveButtonFound = false;\n\n            const nav = page.getByText('公告管理', { exact: false }).first();\n            if (await nav.count()) {\n              await nav.click();\n              await page.waitForTimeout(800);\n            }\n\n            const createBtn = page.getByRole('button', { name: /新建公告|新增公告|创建公告/ }).first();\n            if (await createBtn.count()) {\n              createButtonFound = true;\n              await createBtn.click();\n              await page.waitForTimeout(600);\n            }\n\n   "
+    }
+  }
+]

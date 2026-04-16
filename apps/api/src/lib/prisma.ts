@@ -1,12 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import prismaClientPkg from '@prisma/client';
+import type { PrismaClient as PrismaClientType } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 import config from '../config/index.js';
 
+const { PrismaClient } = prismaClientPkg;
+
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: PrismaClientType | undefined;
 };
 
-function createPrismaClient(): PrismaClient {
+function createPrismaClient(): PrismaClientType {
   const adapter = new PrismaLibSql({
     url: config.database.url,
   });

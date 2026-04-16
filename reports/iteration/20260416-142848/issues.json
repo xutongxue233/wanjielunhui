@@ -1,0 +1,218 @@
+[
+  {
+    "id": "issue_1",
+    "priority": "P2",
+    "scope": "game-desktop-ranking",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "排行榜",
+      "actualTab": "修炼"
+    }
+  },
+  {
+    "id": "issue_2",
+    "priority": "P2",
+    "scope": "game-desktop-social",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "社交",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_3",
+    "priority": "P2",
+    "scope": "game-desktop-market",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "坊市",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_4",
+    "priority": "P2",
+    "scope": "game-desktop-pvp",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "论剑",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_5",
+    "priority": "P2",
+    "scope": "game-desktop-save",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "存档",
+      "actualTab": "修炼"
+    }
+  },
+  {
+    "id": "issue_6",
+    "priority": "P1",
+    "scope": "game-desktop-save",
+    "message": "页面存在 console error",
+    "evidence": {
+      "console": "### Result\nTotal messages: 9 (Errors: 4, Warnings: 2)\nReturning 4 messages for level \"error\"\n\n[ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5173/api/v1/save/list:0\n[ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5173/api/v1/save/list:0\n[ERROR] Failed to get cloud saves: Error: 无效的令牌\n    at request (http://localhost:5173/src/services/api.ts:42:11)\n    at async SaveSyncService.getCloudSaves (http://localhost:5173/src/services/saveSync.ts:94:14)\n    at async loadSaves (http://localhost:5173/src/components/save/SaveManager.tsx:22:21) @ http://localhost:5173/src/services/saveSync.ts:95\n[ERROR] Failed to get cloud saves: Error: 无效的令牌\n    at request (http://localhost:5173/src/services/api.ts:42:11)\n    at async SaveSyncService.getCloudSaves (http://localhost:5173/src/services/saveSync.ts:94:14)\n    at async loadSaves (http://localhost:5173/src/components/save/SaveManager.tsx:22:21) @ http://localhost:5173/src/services/saveSync.ts:95",
+      "screenshot": "D:\\Workspace\\wanjielunhui\\reports\\iteration\\20260416-142848\\screenshots\\game-desktop-save.png"
+    }
+  },
+  {
+    "id": "issue_7",
+    "priority": "P2",
+    "scope": "game-laptop-ranking",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "排行榜",
+      "actualTab": "修炼"
+    }
+  },
+  {
+    "id": "issue_8",
+    "priority": "P2",
+    "scope": "game-laptop-social",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "社交",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_9",
+    "priority": "P2",
+    "scope": "game-laptop-market",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "坊市",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_10",
+    "priority": "P2",
+    "scope": "game-laptop-pvp",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "论剑",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_11",
+    "priority": "P2",
+    "scope": "game-laptop-save",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "存档",
+      "actualTab": "修炼"
+    }
+  },
+  {
+    "id": "issue_12",
+    "priority": "P1",
+    "scope": "game-laptop-save",
+    "message": "页面存在 console error",
+    "evidence": {
+      "console": "### Result\nTotal messages: 9 (Errors: 4, Warnings: 2)\nReturning 4 messages for level \"error\"\n\n[ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5173/api/v1/save/list:0\n[ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5173/api/v1/save/list:0\n[ERROR] Failed to get cloud saves: Error: 无效的令牌\n    at request (http://localhost:5173/src/services/api.ts:42:11)\n    at async SaveSyncService.getCloudSaves (http://localhost:5173/src/services/saveSync.ts:94:14)\n    at async loadSaves (http://localhost:5173/src/components/save/SaveManager.tsx:22:21) @ http://localhost:5173/src/services/saveSync.ts:95\n[ERROR] Failed to get cloud saves: Error: 无效的令牌\n    at request (http://localhost:5173/src/services/api.ts:42:11)\n    at async SaveSyncService.getCloudSaves (http://localhost:5173/src/services/saveSync.ts:94:14)\n    at async loadSaves (http://localhost:5173/src/components/save/SaveManager.tsx:22:21) @ http://localhost:5173/src/services/saveSync.ts:95",
+      "screenshot": "D:\\Workspace\\wanjielunhui\\reports\\iteration\\20260416-142848\\screenshots\\game-laptop-save.png"
+    }
+  },
+  {
+    "id": "issue_13",
+    "priority": "P2",
+    "scope": "game-mobile-ranking",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "排行榜",
+      "actualTab": "修炼"
+    }
+  },
+  {
+    "id": "issue_14",
+    "priority": "P2",
+    "scope": "game-mobile-social",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "社交",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_15",
+    "priority": "P2",
+    "scope": "game-mobile-market",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "坊市",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_16",
+    "priority": "P2",
+    "scope": "game-mobile-pvp",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "论剑",
+      "actualTab": "unknown"
+    }
+  },
+  {
+    "id": "issue_17",
+    "priority": "P2",
+    "scope": "game-mobile-save",
+    "message": "目标标签页未命中，自动化入口与实际 UI 不一致",
+    "evidence": {
+      "expectedTab": "存档",
+      "actualTab": "修炼"
+    }
+  },
+  {
+    "id": "issue_18",
+    "priority": "P1",
+    "scope": "game-mobile-save",
+    "message": "页面存在 console error",
+    "evidence": {
+      "console": "### Result\nTotal messages: 9 (Errors: 4, Warnings: 2)\nReturning 4 messages for level \"error\"\n\n[ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5173/api/v1/save/list:0\n[ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:5173/api/v1/save/list:0\n[ERROR] Failed to get cloud saves: Error: 无效的令牌\n    at request (http://localhost:5173/src/services/api.ts:42:11)\n    at async SaveSyncService.getCloudSaves (http://localhost:5173/src/services/saveSync.ts:94:14)\n    at async loadSaves (http://localhost:5173/src/components/save/SaveManager.tsx:22:21) @ http://localhost:5173/src/services/saveSync.ts:95\n[ERROR] Failed to get cloud saves: Error: 无效的令牌\n    at request (http://localhost:5173/src/services/api.ts:42:11)\n    at async SaveSyncService.getCloudSaves (http://localhost:5173/src/services/saveSync.ts:94:14)\n    at async loadSaves (http://localhost:5173/src/components/save/SaveManager.tsx:22:21) @ http://localhost:5173/src/services/saveSync.ts:95",
+      "screenshot": "D:\\Workspace\\wanjielunhui\\reports\\iteration\\20260416-142848\\screenshots\\game-mobile-save.png"
+    }
+  },
+  {
+    "id": "issue_19",
+    "priority": "P1",
+    "scope": "admin-desktop",
+    "message": "后台登录后未进入仪表盘",
+    "evidence": {
+      "evidence": "### Result\n{\"hasDashboard\":false}\n### Ran Playwright code\n```js\nawait (async (page) => {\n          const text = await page.locator('body').innerText();\n          return { hasDashboard: text.includes('仪表盘') };\n        })(page);\n```"
+    }
+  },
+  {
+    "id": "issue_20",
+    "priority": "P1",
+    "scope": "admin-desktop",
+    "message": "公告 CRUD 持久化校验未通过",
+    "evidence": {
+      "evidence": "### Result\n{\"title\":\"自动化公告_1776321089832\",\"persisted\":false}\n### Ran Playwright code\n```js\nawait (async (page) => {\n            const stamp = Date.now();\n            const title = '自动化公告_' + stamp;\n            const content = '自动化回归公告内容_' + stamp;\n\n            const nav = page.getByText('公告管理', { exact: false }).first();\n            if (await nav.count()) {\n              await nav.click();\n              await page.waitForTimeout(800);\n            }\n\n            const createBtn = page.getByRole('button', { name: /新建公告|新增公告|创建公告/ }).first();\n            if (await createBtn.count()) {\n              await createBtn.click();\n              await page.waitForTimeout(600);\n            }\n\n            const titleInput = page.locator('input[placeholder*=\"标题\"]').first();\n            const contentInput = page.locator('textarea[placeholder*=\"内容\"], textarea').first();\n\n            if (await titleInput.count()) await titleInput.fill(title);\n            if (await contentInput.count()) await contentInpu"
+    }
+  },
+  {
+    "id": "issue_21",
+    "priority": "P1",
+    "scope": "admin-laptop",
+    "message": "后台登录后未进入仪表盘",
+    "evidence": {
+      "evidence": "### Result\n{\"hasDashboard\":false}\n### Ran Playwright code\n```js\nawait (async (page) => {\n          const text = await page.locator('body').innerText();\n          return { hasDashboard: text.includes('仪表盘') };\n        })(page);\n```"
+    }
+  },
+  {
+    "id": "issue_22",
+    "priority": "P1",
+    "scope": "admin-mobile",
+    "message": "后台登录后未进入仪表盘",
+    "evidence": {
+      "evidence": "### Result\n{\"hasDashboard\":false}\n### Ran Playwright code\n```js\nawait (async (page) => {\n          const text = await page.locator('body').innerText();\n          return { hasDashboard: text.includes('仪表盘') };\n        })(page);\n```"
+    }
+  }
+]

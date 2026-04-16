@@ -2,6 +2,7 @@ import { usePlayerStore } from '../stores/playerStore';
 import { useGameStore } from '../stores/gameStore';
 import { useAlchemyStore } from '../stores/alchemyStore';
 import { useDiscipleStore } from '../stores/discipleStore';
+import { useAuthStore } from '../stores/authStore';
 import { saveApi, type SaveSlot, type SaveData } from './api';
 
 // 获取所有store的状态用于存档
@@ -125,11 +126,32 @@ class SaveSyncService {
   private autoSaveInterval: number | null = null;
   private isSaving = false;
 
+  private canUseCloudSave(): boolean {
+    const auth = useAuthStore.getState();
+    return Boolean(auth.isAuthenticated && auth.accessToken);
+  }
+
+  private isAuthRelatedError(error: unknown): boolean {
+    if (!(error instanceof Error)) return false;
+    return (
+      error.message.includes('无效的令牌')
+      || error.message.includes('登录已过期')
+      || error.message.includes('请重新登录')
+    );
+  }
+
   // 获取云存档列表
   async getCloudSaves(): Promise<SaveSlot[]> {
+    if (!this.canUseCloudSave()) {
+      return [];
+    }
+
     try {
       return await saveApi.list();
     } catch (error) {
+      if (this.isAuthRelatedError(error)) {
+        return [];
+      }
       console.error('Failed to get cloud saves:', error);
       return [];
     }
@@ -137,11 +159,18 @@ class SaveSyncService {
 
   // 加载云存档
   async loadCloudSave(slot: number): Promise<boolean> {
+    if (!this.canUseCloudSave()) {
+      return false;
+    }
+
     try {
       const saveData = await saveApi.get(slot);
       restoreStoreStates(saveData);
       return true;
     } catch (error) {
+      if (this.isAuthRelatedError(error)) {
+        return false;
+      }
       console.error('Failed to load cloud save:', error);
       return false;
     }
@@ -149,7 +178,7 @@ class SaveSyncService {
 
   // 保存到云端
   async saveToCloud(slot: number, name?: string): Promise<boolean> {
-    if (this.isSaving) return false;
+    if (!this.canUseCloudSave() || this.isSaving) return false;
 
     this.isSaving = true;
     try {
@@ -169,6 +198,9 @@ class SaveSyncService {
 
       return true;
     } catch (error) {
+      if (this.isAuthRelatedError(error)) {
+        return false;
+      }
       console.error('Failed to save to cloud:', error);
       return false;
     } finally {
@@ -178,10 +210,17 @@ class SaveSyncService {
 
   // 删除云存档
   async deleteCloudSave(slot: number): Promise<boolean> {
+    if (!this.canUseCloudSave()) {
+      return false;
+    }
+
     try {
       await saveApi.delete(slot);
       return true;
     } catch (error) {
+      if (this.isAuthRelatedError(error)) {
+        return false;
+      }
       console.error('Failed to delete cloud save:', error);
       return false;
     }
@@ -238,6 +277,10 @@ class SaveSyncService {
 
   // 上传本地存档到云端
   async uploadLocalToCloud(slot: number): Promise<boolean> {
+    if (!this.canUseCloudSave()) {
+      return false;
+    }
+
     const local = this.getLocalSave();
     if (!local) return false;
 
@@ -279,6 +322,9 @@ class SaveSyncService {
 
       return true;
     } catch (error) {
+      if (this.isAuthRelatedError(error)) {
+        return false;
+      }
       console.error('Failed to upload local save:', error);
       return false;
     }
