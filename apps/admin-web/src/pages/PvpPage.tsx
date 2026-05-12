@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { Confirm } from '../../components/ui';
 import { pvpApi, type PvpMatch, type PvpSeason } from '../api';
@@ -25,7 +25,7 @@ export function PvpPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const statsData = await pvpApi.getStats();
@@ -45,11 +45,11 @@ export function PvpPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, tab]);
 
   useEffect(() => {
     loadData();
-  }, [tab, page]);
+  }, [loadData]);
 
   const handleCreateSeason = async () => {
     try {
@@ -183,17 +183,25 @@ export function PvpPage() {
         )}
       </div>
 
-      <DataTable
-        columns={tab === 'matches' ? matchColumns : seasonColumns}
-        data={(tab === 'matches' ? matches : seasons) as any}
-        loading={loading}
-        pagination={tab === 'matches' ? {
-          page,
-          pageSize: 20,
-          total,
-          onChange: setPage,
-        } : undefined}
-      />
+      {tab === 'matches' ? (
+        <DataTable
+          columns={matchColumns}
+          data={matches}
+          loading={loading}
+          pagination={{
+            page,
+            pageSize: 20,
+            total,
+            onChange: setPage,
+          }}
+        />
+      ) : (
+        <DataTable
+          columns={seasonColumns}
+          data={seasons}
+          loading={loading}
+        />
+      )}
 
       {showSeasonForm && (
         <div className="admin-modal-overlay" onClick={() => setShowSeasonForm(false)}>

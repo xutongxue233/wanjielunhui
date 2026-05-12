@@ -4,7 +4,7 @@
   position: fixed;
   right: 0;
   top: 0;
-  bottom: 64px;
+  bottom: 0;
   width: 320px;
   background: linear-gradient(180deg, rgba(12, 10, 6, 0.98) 0%, rgba(8, 6, 4, 0.99) 100%);
   border-left: 1px solid var(--border-subtle);
@@ -13,6 +13,20 @@
   z-index: 90;
   transform: translateX(100%);
   transition: transform var(--transition-normal);
+}
+
+@media (max-width: 768px) {
+  .chat-panel {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    width: min(100vw, 360px);
+  }
+}
+
+@media (max-width: 390px) {
+  .chat-panel {
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+    width: 100vw;
+  }
 }
 
 .chat-panel.open {

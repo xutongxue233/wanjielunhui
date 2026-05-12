@@ -128,7 +128,7 @@ export const DisciplePanel: React.FC = () => {
     if (recruitCandidates.length === 0) {
       refreshRecruitCandidates();
     }
-  }, []);
+  }, [recruitCandidates.length, refreshRecruitCandidates]);
 
   const idleDisciples = disciples.filter(d => d.status === 'idle');
 

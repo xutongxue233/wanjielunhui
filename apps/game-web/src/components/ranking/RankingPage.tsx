@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { rankingApiExtended, type RankingEntry } from '../../services/api';
 import { Tabs } from '../ui';
 import './RankingPage.css';
@@ -22,12 +22,9 @@ export function RankingPage() {
   const [rankings, setRankings] = useState<RankingEntry[]>([]);
   const [myRank, setMyRank] = useState<MyRankInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadRankings();
-  }, [activeTab]);
-
-  const loadRankings = async () => {
+  const loadRankings = useCallback(async () => {
     setLoading(true);
     try {
       let rankingsData: { entries?: RankingEntry[]; rankings?: RankingEntry[]; total: number };
@@ -51,6 +48,7 @@ export function RankingPage() {
 
       // 兼容后端返回 entries 或 rankings 字段
       setRankings(rankingsData.entries || rankingsData.rankings || []);
+      setLoadError(null);
 
       // 获取我的排名
       try {
@@ -59,13 +57,18 @@ export function RankingPage() {
       } catch {
         setMyRank(null);
       }
-    } catch (err) {
-      console.error('加载排行榜失败:', err);
+    } catch {
       setRankings([]);
+      setMyRank(null);
+      setLoadError('暂时无法连接排行榜服务');
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    loadRankings();
+  }, [loadRankings]);
 
   const currentTabInfo = RANKING_TABS.find((t) => t.id === activeTab)!;
 
@@ -119,7 +122,7 @@ export function RankingPage() {
             <svg className="ranking-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <span>暂无排行数据</span>
+            <span>{loadError || '暂无排行数据'}</span>
           </div>
         ) : (
           <div className="ranking-list">

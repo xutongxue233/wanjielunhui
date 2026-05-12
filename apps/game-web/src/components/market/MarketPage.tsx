@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { marketApi, type MarketListing, type ShopItem, type MyTrade } from '../../services/api';
 import { message, Tabs } from '../ui';
 import './MarketPage.css';
@@ -39,46 +39,37 @@ export function MarketPage() {
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
   const [myTrades, setMyTrades] = useState<MyTrade[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPlayerListings();
-  }, [selectedType, searchQuery]);
-
-  useEffect(() => {
-    if (activeTab === 'shop') {
-      loadShopItems();
-    } else if (activeTab === 'myTrades') {
-      loadMyTrades();
-    }
-  }, [activeTab, selectedCategory]);
-
-  const loadPlayerListings = async () => {
+  const loadPlayerListings = useCallback(async () => {
     setLoading(true);
     try {
       const data = await marketApi.listings(1, 50, selectedType, searchQuery);
       setListings(data.listings);
-    } catch (err) {
-      console.error('加载市场列表失败:', err);
-      message.error('加载市场列表失败');
+      setLoadError(null);
+    } catch {
+      setListings([]);
+      setLoadError('暂时无法连接坊市服务');
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedType, searchQuery]);
 
-  const loadShopItems = async () => {
+  const loadShopItems = useCallback(async () => {
     setLoading(true);
     try {
       const data = await marketApi.shop(selectedCategory);
       setShopItems(data);
-    } catch (err) {
-      console.error('加载商店失败:', err);
-      message.error('加载商店失败');
+      setLoadError(null);
+    } catch {
+      setShopItems([]);
+      setLoadError('暂时无法连接商店服务');
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
-  const loadMyTrades = async () => {
+  const loadMyTrades = useCallback(async () => {
     setLoading(true);
     try {
       const [listings, trades] = await Promise.all([
@@ -86,20 +77,32 @@ export function MarketPage() {
         marketApi.myTrades().catch(() => []),
       ]);
       setMyTrades([...listings, ...trades]);
-    } catch (err) {
-      console.error('加载我的交易失败:', err);
-      message.error('加载我的交易失败');
+      setLoadError(null);
+    } catch {
+      setMyTrades([]);
+      setLoadError('暂时无法连接交易服务');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadPlayerListings();
+  }, [loadPlayerListings]);
+
+  useEffect(() => {
+    if (activeTab === 'shop') {
+      loadShopItems();
+    } else if (activeTab === 'myTrades') {
+      loadMyTrades();
+    }
+  }, [activeTab, loadMyTrades, loadShopItems]);
 
   const handleBuy = async (listingId: string) => {
     try {
       await marketApi.buy(listingId);
       loadPlayerListings();
-    } catch (err) {
-      console.error('购买失败:', err);
+    } catch {
       message.error('购买失败');
     }
   };
@@ -108,8 +111,7 @@ export function MarketPage() {
     try {
       await marketApi.shopBuy(itemId);
       message.success('购买成功');
-    } catch (err) {
-      console.error('购买失败:', err);
+    } catch {
       message.error('购买失败');
     }
   };
@@ -118,8 +120,7 @@ export function MarketPage() {
     try {
       await marketApi.cancel(listingId);
       loadMyTrades();
-    } catch (err) {
-      console.error('下架失败:', err);
+    } catch {
       message.error('下架失败');
     }
   };
@@ -153,7 +154,7 @@ export function MarketPage() {
           <svg className="market-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
-          <span>暂无商品</span>
+          <span>{loadError || '暂无商品'}</span>
         </div>
       ) : (
         <div className="market-grid">
@@ -208,7 +209,7 @@ export function MarketPage() {
           <svg className="market-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
-          <span>暂无商品</span>
+          <span>{loadError || '暂无商品'}</span>
         </div>
       ) : (
         <div className="market-grid">
@@ -249,7 +250,7 @@ export function MarketPage() {
           <svg className="market-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
-          <span>暂无交易记录</span>
+          <span>{loadError || '暂无交易记录'}</span>
         </div>
       ) : (
         myTrades.map((trade) => (

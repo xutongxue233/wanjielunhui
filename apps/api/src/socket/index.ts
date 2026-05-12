@@ -1,4 +1,4 @@
-import type { Server as SocketServer, Socket } from 'socket.io';
+import type { Server as SocketServer } from 'socket.io';
 import type { FastifyInstance } from 'fastify';
 import { verifySocketToken } from './auth.js';
 import { chatHandler } from './handlers/chat.handler.js';
@@ -31,7 +31,7 @@ export function setupSocketIO(io: SocketServer, app: FastifyInstance) {
       const userData = await verifySocketToken(token, app);
       socket.user = userData;
       next();
-    } catch (error) {
+    } catch {
       next(new Error('认证失败'));
     }
   });

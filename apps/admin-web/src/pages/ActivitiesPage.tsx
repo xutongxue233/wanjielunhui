@@ -47,7 +47,7 @@ export function ActivitiesPage() {
       setShowModal(false);
       setForm({ name: '', description: '', type: 'login', config: {}, startAt: '', endAt: '' });
       load();
-    } catch (err) {
+    } catch {
       message.error('创建失败');
     } finally {
       setSaving(false);
@@ -59,7 +59,7 @@ export function ActivitiesPage() {
       try {
         await activityApi.delete(id);
         load();
-      } catch (err) {
+      } catch {
         message.error('删除失败');
       }
     });

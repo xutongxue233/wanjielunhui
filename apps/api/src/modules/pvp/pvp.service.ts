@@ -5,7 +5,6 @@ import type {
   PvpMatchInfo,
   PvpMatchResult,
   PvpSeasonInfo,
-  MatchPoolEntry,
 } from './pvp.types.js';
 import { PVP_CONFIG } from './pvp.types.js';
 
@@ -350,7 +349,6 @@ export class PvpService {
 
     const myAtk = myPlayer?.attack ?? 10;
     const myDef = myPlayer?.defense ?? 5;
-    const mySpeed = myPlayer?.speed ?? 10;
     const myCritRate = myPlayer?.critRate ?? 0.05;
     const myCritDamage = myPlayer?.critDamage ?? 1.5;
     const enemyAtk = enemyPlayer?.attack ?? 10;
@@ -397,7 +395,7 @@ export class PvpService {
       const myDefReduction = Math.min(0.6, myDef / (myDef + 100));
       const enemyRandomFactor = 0.9 + Math.random() * 0.2;
       const enemyBaseDamage = enemyAtk * 1.0;
-      let enemyDamage = Math.max(1, Math.floor(enemyBaseDamage * (1 - myDefReduction) * enemyRandomFactor));
+      const enemyDamage = Math.max(1, Math.floor(enemyBaseDamage * (1 - myDefReduction) * enemyRandomFactor));
       const actualDamage = action === 'defend' ? Math.floor(enemyDamage / 2) : enemyDamage;
       battle.myHp = Math.max(0, battle.myHp - actualDamage);
       logs.push({ message: `${battle.opponent.name} 攻击你，造成 ${actualDamage} 点伤害`, type: 'enemy' });

@@ -332,7 +332,7 @@ export const StoryPanel: React.FC<{ onReturnToCultivation?: () => void }> = ({ o
     } else if (node) {
       setTextToType(node.content);
     }
-  }, [player, resolveStoryNode, storyProgress.currentChapterId, storyProgress.currentNodeId]);
+  }, [player, resolveStoryNode, storyDisplayState.displayedText, storyProgress]);
 
   // 保存显示状态
   useEffect(() => {

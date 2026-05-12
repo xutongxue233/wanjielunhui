@@ -22,7 +22,7 @@ interface DataTableProps<T> {
 }
 
 export function DataTable<T>({
-  columns, data, loading, emptyText = '暂无数据', onRowClick, pagination: _pagination,
+  columns, data, loading, emptyText = '暂无数据', onRowClick, pagination,
 }: DataTableProps<T>) {
   if (loading) {
     return (
@@ -58,40 +58,65 @@ export function DataTable<T>({
     );
   }
 
+  const totalPages = pagination ? Math.ceil(pagination.total / pagination.pageSize) : 0;
+
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th key={col.key}>{col.title}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, idx) => (
-            <tr
-              key={(item as Record<string, unknown>).id?.toString() ?? idx}
-              onClick={() => onRowClick?.(item)}
-              style={{
-                cursor: onRowClick ? 'pointer' : 'default',
-                animation: `ink-spread 0.4s var(--ease-flow) ${idx * 50}ms both`,
-              }}
-            >
-              {columns.map((col) => {
-                const value = (item as Record<string, unknown>)[col.key];
-                return (
-                  <td key={col.key}>
-                    {col.render
-                      ? col.render(value, item)
-                      : value?.toString() ?? '-'}
-                  </td>
-                );
-              })}
+    <div>
+      <div style={{ overflowX: 'auto' }}>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              {columns.map((col) => (
+                <th key={col.key}>{col.title}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((item, idx) => (
+              <tr
+                key={(item as Record<string, unknown>).id?.toString() ?? idx}
+                onClick={() => onRowClick?.(item)}
+                style={{
+                  cursor: onRowClick ? 'pointer' : 'default',
+                  animation: `ink-spread 0.4s var(--ease-flow) ${idx * 50}ms both`,
+                }}
+              >
+                {columns.map((col) => {
+                  const value = (item as Record<string, unknown>)[col.key];
+                  return (
+                    <td key={col.key}>
+                      {col.render
+                        ? col.render(value, item)
+                        : value?.toString() ?? '-'}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {pagination && totalPages > 1 && (
+        <div className="admin-table-pagination">
+          <button
+            className="admin-btn admin-btn-ghost"
+            disabled={pagination.page <= 1}
+            onClick={() => pagination.onChange(pagination.page - 1)}
+          >
+            上一页
+          </button>
+          <span>
+            {pagination.page} / {totalPages}
+          </span>
+          <button
+            className="admin-btn admin-btn-ghost"
+            disabled={pagination.page >= totalPages}
+            onClick={() => pagination.onChange(pagination.page + 1)}
+          >
+            下一页
+          </button>
+        </div>
+      )}
     </div>
   );
 }

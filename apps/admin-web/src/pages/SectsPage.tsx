@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { sectApi, type SectInfo, type SectMemberInfo } from '../api';
 import { Confirm } from '../../components/ui';
@@ -18,7 +18,7 @@ export function SectsPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [listData, statsData] = await Promise.all([
@@ -33,11 +33,11 @@ export function SectsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     loadData();
-  }, [page, search]);
+  }, [loadData]);
 
   const handleViewMembers = async (sect: SectInfo) => {
     setSelectedSect(sect);

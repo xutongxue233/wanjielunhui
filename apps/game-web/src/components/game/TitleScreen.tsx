@@ -7,6 +7,16 @@ import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../services/api';
 import './TitleScreen.css';
 
+const TITLE_PARTICLES = Array.from({ length: 20 }, (_, i) => {
+  const seed = i + 1;
+  return {
+    id: i,
+    delay: ((seed * 37) % 80) / 10,
+    duration: 8 + ((seed * 17) % 60) / 10,
+    x: (seed * 53) % 100,
+  };
+});
+
 const FloatingParticle: React.FC<{ delay: number; duration: number; x: number }> = ({ delay, duration, x }) => (
   <motion.div
     className="absolute w-1 h-1 rounded-full title-particle"
@@ -70,13 +80,7 @@ export const TitleScreen: React.FC<{ onEnter?: () => void }> = ({ onEnter }) => 
     return () => clearTimeout(timer);
   }, []);
 
-  const particles = useMemo(() =>
-    Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      delay: Math.random() * 8,
-      duration: 8 + Math.random() * 6,
-      x: Math.random() * 100,
-    })), []);
+  const particles = useMemo(() => TITLE_PARTICLES, []);
 
   const handleNewGame = () => {
     if (player) {

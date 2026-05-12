@@ -43,7 +43,7 @@ async function main() {
     try {
       await connectRedis();
       logger.info('Redis connected');
-    } catch (err) {
+    } catch {
       logger.warn('Redis connection failed, continuing without cache');
     }
 

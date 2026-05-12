@@ -67,11 +67,13 @@ export const useAlchemyStore = create<AlchemyStore>()(
         progress: 0,
         startTime: 0,
         endTime: 0,
+        comprehension: 10,
+        luck: 10,
       },
 
       pillInventory: [],
 
-      startRefining: (recipeId, _comprehension, _luck) => {
+      startRefining: (recipeId, comprehension, luck) => {
         const { alchemyLevel, currentFurnace, learnedRecipes, refiningState } = get();
 
         if (refiningState.isRefining) return false;
@@ -108,6 +110,8 @@ export const useAlchemyStore = create<AlchemyStore>()(
             progress: 0,
             startTime: now,
             endTime: now + duration * 1000,
+            comprehension,
+            luck,
           };
         });
 
@@ -122,7 +126,12 @@ export const useAlchemyStore = create<AlchemyStore>()(
         const recipe = PILL_RECIPES[refiningState.currentRecipeId];
         if (!recipe) return null;
 
-        const successRate = calculateSuccessRate(recipe, currentFurnace, alchemyLevel, 10);
+        const successRate = calculateSuccessRate(
+          recipe,
+          currentFurnace,
+          alchemyLevel,
+          refiningState.comprehension
+        );
         const isSuccess = Math.random() < successRate;
 
         set((state) => {
@@ -132,6 +141,8 @@ export const useAlchemyStore = create<AlchemyStore>()(
             progress: 0,
             startTime: 0,
             endTime: 0,
+            comprehension: 10,
+            luck: 10,
           };
 
           // 消耗丹炉耐久
@@ -143,7 +154,12 @@ export const useAlchemyStore = create<AlchemyStore>()(
           return null;
         }
 
-        const quality = calculatePillQuality(recipe, currentFurnace, alchemyLevel, 10);
+        const quality = calculatePillQuality(
+          recipe,
+          currentFurnace,
+          alchemyLevel,
+          refiningState.luck
+        );
         const qualityMultiplier = QUALITY_MULTIPLIERS[quality];
 
         const pill: Pill = {
@@ -175,6 +191,8 @@ export const useAlchemyStore = create<AlchemyStore>()(
             progress: 0,
             startTime: 0,
             endTime: 0,
+            comprehension: 10,
+            luck: 10,
           };
         });
       },

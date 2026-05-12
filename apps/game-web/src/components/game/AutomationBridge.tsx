@@ -107,6 +107,8 @@ function resetAutomationState() {
       progress: 0,
       startTime: 0,
       endTime: 0,
+      comprehension: 10,
+      luck: 10,
     },
     pillInventory: [],
   });
@@ -413,7 +415,7 @@ function buildReadableState(): string {
 }
 
 export const AutomationBridge: React.FC = () => {
-  const params = useMemo(getAutomationParams, []);
+  const params = useMemo(() => getAutomationParams(), []);
 
   useEffect(() => {
     if (!params.enabled) {

@@ -344,14 +344,8 @@ export const CombatPanel: React.FC = () => {
   const setBattleSpeed = useCombatStore((state) => state.setBattleSpeed);
 
   // 当前选中的技能ID
-  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
-
-  // 切换自动/手动模式时清除技能选择
-  useEffect(() => {
-    if (isAutoBattle) {
-      setSelectedSkillId(null);
-    }
-  }, [isAutoBattle]);
+  const [manualSelectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const selectedSkillId = isAutoBattle ? null : manualSelectedSkillId;
 
   // 战斗胜利时发放奖励
   const rewardClaimedRef = useRef<string | null>(null);

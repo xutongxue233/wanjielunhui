@@ -9,6 +9,28 @@ import { useCombatStore } from './combatStore';
 import { getItemById } from '../data/items';
 import { getEquipmentById } from '../data/equipment';
 
+const ATTRIBUTE_REWARD_TARGETS = new Set<keyof PlayerAttributes>([
+  'hp',
+  'maxHp',
+  'mp',
+  'maxMp',
+  'attack',
+  'defense',
+  'speed',
+  'critRate',
+  'critDamage',
+  'cultivation',
+  'maxCultivation',
+  'lifespan',
+  'maxLifespan',
+  'comprehension',
+  'luck',
+]);
+
+function isAttributeRewardTarget(target: string): target is keyof PlayerAttributes {
+  return ATTRIBUTE_REWARD_TARGETS.has(target as keyof PlayerAttributes);
+}
+
 interface StoryEntry {
   id: string;
   content: string;
@@ -241,7 +263,9 @@ export const useGameStore = create<GameState>()(
                 playerStore.addCultivation(reward.value);
                 break;
               case 'attribute':
-                playerStore.modifyAttribute(reward.target as any, reward.value);
+                if (isAttributeRewardTarget(reward.target)) {
+                  playerStore.modifyAttribute(reward.target, reward.value);
+                }
                 break;
             }
           }
@@ -380,7 +404,7 @@ export const useGameStore = create<GameState>()(
       setChapterCompleteCallback: (callback) => {
         set((state) => {
           // 注意：回调函数不会被持久化
-          state.chapterCompleteCallback = callback as any;
+          state.chapterCompleteCallback = callback;
         });
       },
 

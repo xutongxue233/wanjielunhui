@@ -6,7 +6,7 @@
  * 每个组件包含状态: hover/active/disabled/loading/error/empty + focus可访问性
  */
 
-import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import React, { useState, useEffect, useCallback, createContext, useContext, useId } from 'react';
 import { createPortal } from 'react-dom';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
@@ -177,17 +177,25 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const sizeClass = `modal-${size}`;
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="modal-backdrop animate-fade-in" />
+      <DialogPrimitive.Overlay className="modal-backdrop animate-fade-in" onClick={onClose} />
+      <div className="modal-container">
         <DialogPrimitive.Content
           className={`modal-content card-xian card-padding-lg ${sizeClass} animate-fade-in-scale`}
-          onPointerDownOutside={(e) => e.preventDefault()}
+          aria-describedby={undefined}
         >
-          {title && (
+          {title ? (
             <DialogPrimitive.Title className="card-title">
               {title}
+            </DialogPrimitive.Title>
+          ) : (
+            <DialogPrimitive.Title className="sr-only">
+              对话框
             </DialogPrimitive.Title>
           )}
           <DialogPrimitive.Close className="modal-close" aria-label="关闭">
@@ -197,7 +205,7 @@ export const Modal: React.FC<ModalProps> = ({
           </DialogPrimitive.Close>
           {children}
         </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
+      </div>
     </DialogPrimitive.Root>
   );
 };
@@ -220,7 +228,8 @@ export const Input: React.FC<InputProps> = ({
   id,
   ...props
 }) => {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const inputId = id || `input-${generatedId}`;
   const sizeClass = `input-${size}`;
   const errorClass = error ? 'input-error' : '';
 
@@ -272,8 +281,13 @@ export const Tabs: React.FC<TabsProps> = ({
           <TabsPrimitive.Trigger
             key={item.key}
             value={item.key}
-            className="tab-xian data-[state=active]:active"
+            className={`tab-xian ${activeKey === item.key ? 'active' : ''}`}
             disabled={item.disabled}
+            onClick={() => {
+              if (!item.disabled && item.key !== activeKey) {
+                onChange(item.key);
+              }
+            }}
           >
             {item.label}
           </TabsPrimitive.Trigger>
@@ -328,11 +342,15 @@ export const Tooltip: React.FC<TooltipProps> = ({
   side = 'top',
   className = '',
 }) => {
+  const trigger = React.isValidElement(children)
+    ? children
+    : <span className={className}>{children}</span>;
+
   return (
     <TooltipPrimitive.Provider delayDuration={200}>
       <TooltipPrimitive.Root>
-        <TooltipPrimitive.Trigger asChild className={className}>
-          {children}
+        <TooltipPrimitive.Trigger asChild>
+          {trigger}
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
@@ -344,6 +362,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
             <TooltipPrimitive.Arrow className="fill-bg-elevated" />
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
+        <span className="sr-only">{content}</span>
       </TooltipPrimitive.Root>
     </TooltipPrimitive.Provider>
   );
@@ -494,6 +513,7 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
@@ -629,7 +649,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
   disabled,
   ...props
 }) => {
-  const inputId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const inputId = id || `textarea-${generatedId}`;
   const errorClass = error ? 'input-error' : '';
   const disabledClass = disabled ? 'disabled' : '';
 
@@ -687,7 +708,8 @@ export const Select: React.FC<SelectProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const inputId = `select-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const inputId = `select-${generatedId}`;
   const sizeClass = `select-${size}`;
   const errorClass = error ? 'select-error' : '';
 
@@ -1117,6 +1139,7 @@ class MessageManager {
   }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const message = new MessageManager();
 
 export const MessageContainer: React.FC = () => {

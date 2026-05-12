@@ -138,7 +138,7 @@ export const ExplorationPanel: React.FC = () => {
           playerInBattle.mp
         );
       }
-      setIsBattling(false);
+      queueMicrotask(() => setIsBattling(false));
 
       // 如果战斗失败，退出秘境
       if (battle.phase === 'defeat') {
@@ -153,7 +153,7 @@ export const ExplorationPanel: React.FC = () => {
   // 如果正在进行秘境，切换到运行标签
   useEffect(() => {
     if (currentRun) {
-      setActiveTab('run');
+      queueMicrotask(() => setActiveTab('run'));
     }
   }, [currentRun]);
 

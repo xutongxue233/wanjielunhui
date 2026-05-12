@@ -22,14 +22,15 @@ export class AdminMailService {
     let playerIds: string[] = [];
 
     switch (input.targetType) {
-      case 'all':
+      case 'all': {
         const allPlayers = await prisma.player.findMany({
           select: { id: true },
         });
         playerIds = allPlayers.map((p) => p.id);
         break;
+      }
 
-      case 'realm':
+      case 'realm': {
         if (!input.targetRealm) {
           throw new Error('必须指定目标境界');
         }
@@ -39,8 +40,9 @@ export class AdminMailService {
         });
         playerIds = realmPlayers.map((p) => p.id);
         break;
+      }
 
-      case 'vip':
+      case 'vip': {
         if (input.targetVipLevel === undefined) {
           throw new Error('必须指定VIP等级');
         }
@@ -50,6 +52,7 @@ export class AdminMailService {
         });
         playerIds = vipPlayers.map((p) => p.id);
         break;
+      }
 
       case 'custom':
         if (!input.targetPlayerIds || input.targetPlayerIds.length === 0) {

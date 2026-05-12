@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { saveApi, type GameSave, type GameSaveDetail, type SaveStats } from '../api';
 import { message, Confirm } from '../../components/ui';
@@ -25,7 +25,7 @@ export function SavesPage() {
   const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
   const pageSize = 20;
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const [listRes, statsRes] = await Promise.all([
@@ -40,11 +40,11 @@ export function SavesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     load();
-  }, [page]);
+  }, [load]);
 
   const handleSearch = () => {
     setPage(1);
@@ -56,7 +56,7 @@ export function SavesPage() {
       try {
         await saveApi.delete(id);
         load();
-      } catch (err) {
+      } catch {
         message.error('删除失败');
       }
     });
@@ -68,7 +68,7 @@ export function SavesPage() {
       const detail = await saveApi.getById(id);
       setSelectedSave(detail);
       setShowDetail(true);
-    } catch (err) {
+    } catch {
       message.error('获取详情失败');
     }
   };

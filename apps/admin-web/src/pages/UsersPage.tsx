@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { userApi, type User } from '../api';
 import { message, Confirm } from '../../components/ui';
@@ -16,7 +16,7 @@ export function UsersPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await userApi.getList(page, pageSize, search || undefined);
@@ -27,11 +27,11 @@ export function UsersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     load();
-  }, [page]);
+  }, [load]);
 
   const handleSearch = () => {
     setPage(1);
@@ -45,7 +45,7 @@ export function UsersPage() {
       try {
         await userApi.ban(id);
         load();
-      } catch (err) {
+      } catch {
         message.error('操作失败');
       }
     });
@@ -59,7 +59,7 @@ export function UsersPage() {
       try {
         await userApi.unban(id);
         load();
-      } catch (err) {
+      } catch {
         message.error('操作失败');
       }
     });

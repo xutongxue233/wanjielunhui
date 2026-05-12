@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { Confirm } from '../../components/ui';
 import { marketApi, type MarketListing, type TradeLog } from '../api';
@@ -23,7 +23,7 @@ export function MarketPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const statsData = await marketApi.getStats();
@@ -43,11 +43,11 @@ export function MarketPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, tab]);
 
   useEffect(() => {
     loadData();
-  }, [tab, page]);
+  }, [loadData]);
 
   const handleCancelListing = (id: string) => {
     setConfirmTitle('确认操作');
@@ -138,17 +138,31 @@ export function MarketPage() {
         </button>
       </div>
 
-      <DataTable
-        columns={tab === 'listings' ? listingColumns : tradeColumns}
-        data={(tab === 'listings' ? listings : trades) as any}
-        loading={loading}
-        pagination={{
-          page,
-          pageSize: 20,
-          total,
-          onChange: setPage,
-        }}
-      />
+      {tab === 'listings' ? (
+        <DataTable
+          columns={listingColumns}
+          data={listings}
+          loading={loading}
+          pagination={{
+            page,
+            pageSize: 20,
+            total,
+            onChange: setPage,
+          }}
+        />
+      ) : (
+        <DataTable
+          columns={tradeColumns}
+          data={trades}
+          loading={loading}
+          pagination={{
+            page,
+            pageSize: 20,
+            total,
+            onChange: setPage,
+          }}
+        />
+      )}
 
       <Confirm
         isOpen={confirmOpen}

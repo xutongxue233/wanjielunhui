@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { chatApi, type ChatMessage as ApiChatMessage } from '../../services/api';
-import { message } from '../ui';
+import { usePlayerStore } from '../../stores/playerStore';
 import './ChatPanel.css';
 
 type ChatChannel = 'world' | 'realm' | 'sect' | 'private';
@@ -29,12 +29,42 @@ const CHANNELS: { id: ChatChannel; label: string }[] = [
   { id: 'private', label: '私聊' },
 ];
 
+const LOCAL_CHAT_STORAGE_KEY = 'wanjie-local-chat-messages';
+const LOCAL_CHAT_LIMIT = 100;
+
+const isChatChannel = (channel: string): channel is ChatChannel => {
+  return CHANNELS.some((item) => item.id === channel);
+};
+
+const readLocalMessages = (): ChatMessage[] => {
+  try {
+    const raw = localStorage.getItem(LOCAL_CHAT_STORAGE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw) as Array<Omit<ChatMessage, 'timestamp'> & { timestamp: string | number }>;
+    return parsed
+      .filter((msg) => isChatChannel(msg.channel))
+      .map((msg) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp),
+      }));
+  } catch {
+    return [];
+  }
+};
+
+const writeLocalMessages = (messages: ChatMessage[]) => {
+  const trimmed = messages.slice(-LOCAL_CHAT_LIMIT);
+  localStorage.setItem(LOCAL_CHAT_STORAGE_KEY, JSON.stringify(trimmed));
+};
+
 export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const [activeChannel, setActiveChannel] = useState<ChatChannel>('world');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
+  const player = usePlayerStore((state) => state.player);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollingRef = useRef<number | null>(null);
 
@@ -53,9 +83,9 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     try {
       const data = await chatApi.getMessages(activeChannel);
       setMessages(data.map(transformMessage));
-    } catch (err) {
-      console.error('获取消息失败:', err);
-      message.error('获取消息失败');
+    } catch {
+      const localMessages = readLocalMessages().filter((msg) => msg.channel === activeChannel);
+      setMessages(localMessages);
     }
   }, [activeChannel]);
 
@@ -82,14 +112,26 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const handleSend = async () => {
     if (!inputValue.trim() || sending) return;
 
+    const content = inputValue.trim();
     setSending(true);
     try {
-      const newMsg = await chatApi.send(activeChannel, inputValue.trim());
+      const newMsg = await chatApi.send(activeChannel, content);
       setMessages((prev) => [...prev, transformMessage(newMsg)]);
       setInputValue('');
-    } catch (err) {
-      console.error('发送消息失败:', err);
-      message.error('发送消息失败');
+    } catch {
+      const localMessage: ChatMessage = {
+        id: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        channel: activeChannel,
+        senderId: player?.id || 'local-player',
+        senderName: player?.name || '本地道友',
+        senderRealm: player?.realm.displayName,
+        content,
+        timestamp: new Date(),
+      };
+      const allLocalMessages = [...readLocalMessages(), localMessage];
+      writeLocalMessages(allLocalMessages);
+      setMessages((prev) => [...prev, localMessage]);
+      setInputValue('');
     } finally {
       setSending(false);
     }
@@ -106,12 +148,16 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
     return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
   };
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <>
-      <div className={`chat-panel ${isOpen ? 'open' : ''}`}>
+      <div className="chat-panel open">
         <div className="chat-panel-header">
           <span className="chat-panel-title">仙界通讯</span>
-          <button className="chat-panel-close" onClick={onClose}>
+          <button className="chat-panel-close" onClick={onClose} aria-label="关闭聊天">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
@@ -182,7 +228,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
 
 export function ChatToggleButton({ onClick, unreadCount }: { onClick: () => void; unreadCount?: number }) {
   return (
-    <button className="chat-toggle-btn" onClick={onClick}>
+    <button className="chat-toggle-btn" onClick={onClick} aria-label="打开聊天">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>

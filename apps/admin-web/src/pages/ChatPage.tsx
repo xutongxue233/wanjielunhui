@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { chatApi, type ChatMessage } from '../api';
 import { Confirm } from '../../components/ui';
@@ -23,7 +23,7 @@ export function ChatPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [listData, statsData] = await Promise.all([
@@ -38,11 +38,11 @@ export function ChatPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [channel, page]);
 
   useEffect(() => {
     loadData();
-  }, [channel, page]);
+  }, [loadData]);
 
   const handleDelete = (id: string) => {
     setConfirmTitle('确认删除');

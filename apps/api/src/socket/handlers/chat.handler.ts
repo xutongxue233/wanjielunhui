@@ -82,7 +82,7 @@ export function chatHandler(io: SocketServer, socket: Socket) {
           io.to(`sect:${sectId}`).emit('chat:message', response);
           break;
 
-        case 'PRIVATE':
+        case 'PRIVATE': {
           if (!data.targetId) {
             callback?.({ success: false, error: '未指定目标玩家' });
             return;
@@ -93,6 +93,7 @@ export function chatHandler(io: SocketServer, socket: Socket) {
           }
           socket.emit('chat:message', response);
           break;
+        }
       }
 
       callback?.({ success: true });

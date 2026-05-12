@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { rankingApi, type RankingEntry } from '../api';
 import { Confirm } from '../../components/ui';
@@ -25,7 +25,7 @@ export function RankingPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const data = await rankingApi.getList(type, page);
@@ -36,11 +36,11 @@ export function RankingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, type]);
 
   useEffect(() => {
     loadData();
-  }, [type, page]);
+  }, [loadData]);
 
   const handleSync = async () => {
     setSyncing(true);

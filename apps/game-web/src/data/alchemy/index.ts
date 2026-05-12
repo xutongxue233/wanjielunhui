@@ -60,6 +60,8 @@ export interface AlchemyState {
   progress: number;               // 0-100
   startTime: number;
   endTime: number;
+  comprehension: number;
+  luck: number;
 }
 
 // 丹药配方数据

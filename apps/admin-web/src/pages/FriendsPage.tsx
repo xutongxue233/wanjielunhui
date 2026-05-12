@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { DataTable } from '../components/DataTable';
 import { friendApi, type FriendRelation } from '../api';
 import { Confirm } from '../../components/ui';
@@ -15,7 +15,7 @@ export function FriendsPage() {
   const [confirmTitle, setConfirmTitle] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [listData, statsData] = await Promise.all([
@@ -30,11 +30,11 @@ export function FriendsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     loadData();
-  }, [page, search]);
+  }, [loadData]);
 
   const handleDelete = (id: string) => {
     setConfirmTitle('确认删除');

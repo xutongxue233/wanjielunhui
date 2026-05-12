@@ -3,6 +3,48 @@ const API_BASE = import.meta.env.VITE_API_BASE || '/api/v1';
 import { useAuthStore } from '../stores/authStore';
 import type { AuthSession } from '@wanjie/contracts';
 
+type ApiEnvelope<T> = {
+  data?: T;
+  error?: {
+    message?: string;
+  };
+  message?: string;
+};
+
+const parseResponse = async <T>(response: Response): Promise<ApiEnvelope<T> | null> => {
+  const text = await response.text();
+
+  if (!text.trim()) {
+    return null;
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    if (response.ok) {
+      throw new Error('服务返回格式错误');
+    }
+    return {
+      error: {
+        message: response.statusText || `请求失败 (${response.status})`,
+      },
+    };
+  }
+
+  try {
+    return JSON.parse(text) as ApiEnvelope<T>;
+  } catch {
+    throw new Error('服务返回格式错误');
+  }
+};
+
+const fetchApi = async (endpoint: string, options: RequestInit): Promise<Response> => {
+  try {
+    return await fetch(`${API_BASE}${endpoint}`, options);
+  } catch {
+    throw new Error('无法连接服务器，请确认后端服务已启动');
+  }
+};
+
 async function request<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -18,7 +60,7 @@ async function request<T>(
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
 
-  let response = await fetch(`${API_BASE}${endpoint}`, {
+  let response = await fetchApi(endpoint, {
     ...options,
     headers,
   });
@@ -26,19 +68,22 @@ async function request<T>(
   // Token过期，尝试刷新
   if (response.status === 401 && refreshToken) {
     try {
-      const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
+      const refreshRes = await fetchApi('/auth/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
 
       if (refreshRes.ok) {
-        const refreshData = await refreshRes.json();
+        const refreshData = await parseResponse<AuthSession>(refreshRes);
+        if (!refreshData?.data) {
+          throw new Error('登录已过期，请重新登录');
+        }
         updateToken(refreshData.data.accessToken, refreshData.data.refreshToken);
 
         // 重试原请求
         headers['Authorization'] = `Bearer ${refreshData.data.accessToken}`;
-        response = await fetch(`${API_BASE}${endpoint}`, {
+        response = await fetchApi(endpoint, {
           ...options,
           headers,
         });
@@ -52,13 +97,13 @@ async function request<T>(
     }
   }
 
-  const data = await response.json();
+  const data = await parseResponse<T>(response);
 
   if (!response.ok) {
-    throw new Error(data.error?.message || '请求失败');
+    throw new Error(data?.error?.message || data?.message || `请求失败 (${response.status})`);
   }
 
-  return data.data;
+  return data?.data as T;
 }
 
 // 认证API

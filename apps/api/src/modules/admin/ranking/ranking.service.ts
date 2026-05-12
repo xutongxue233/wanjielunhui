@@ -1,5 +1,3 @@
-import { prisma } from '../../../lib/prisma.js';
-import { getRedis } from '../../../lib/redis.js';
 import { rankingService } from '../../ranking/ranking.service.js';
 import type { RankingType } from '@prisma/client';
 

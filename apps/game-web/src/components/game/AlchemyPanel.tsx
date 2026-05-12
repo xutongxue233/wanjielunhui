@@ -35,7 +35,7 @@ export const AlchemyPanel: React.FC = () => {
   const startRefining = useAlchemyStore((state) => state.startRefining);
   const completeRefining = useAlchemyStore((state) => state.completeRefining);
   const cancelRefining = useAlchemyStore((state) => state.cancelRefining);
-  const usePill = useAlchemyStore((state) => state.usePill);
+  const consumePill = useAlchemyStore((state) => state.usePill);
 
   const healPlayer = usePlayerStore((state) => state.healPlayer);
   const restoreMp = usePlayerStore((state) => state.restoreMp);
@@ -44,6 +44,7 @@ export const AlchemyPanel: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [refiningProgress, setRefiningProgress] = useState(0);
   const [resultMessage, setResultMessage] = useState<string | null>(null);
+  const progressValue = refiningState.isRefining ? refiningProgress : 0;
 
   // 计算材料持有情况
   const materialStatus = useMemo(() => {
@@ -73,7 +74,6 @@ export const AlchemyPanel: React.FC = () => {
   // 更新炼制进度
   useEffect(() => {
     if (!refiningState.isRefining) {
-      setRefiningProgress(0);
       return;
     }
 
@@ -115,7 +115,7 @@ export const AlchemyPanel: React.FC = () => {
   };
 
   const handleUsePill = (pillId: string) => {
-    const pill = usePill(pillId);
+    const pill = consumePill(pillId);
     if (!pill) return;
 
     const effectTexts: string[] = [];
@@ -205,7 +205,7 @@ export const AlchemyPanel: React.FC = () => {
           {refiningState.isRefining && (
             <div className="mt-4">
               <ProgressBar
-                current={refiningProgress}
+                current={progressValue}
                 max={100}
                 type="custom"
                 customColor="linear-gradient(90deg, #f97316, #fbbf24)"

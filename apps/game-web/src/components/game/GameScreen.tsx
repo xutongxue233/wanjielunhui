@@ -69,7 +69,7 @@ export const GameScreen: React.FC = () => {
     contentLoadStarted.current = true;
 
     if (isAllLoaded()) {
-      setContentReady(true);
+      queueMicrotask(() => setContentReady(true));
       return;
     }
 
@@ -94,7 +94,9 @@ export const GameScreen: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchUnreadCount();
+      queueMicrotask(() => {
+        void fetchUnreadCount();
+      });
       const interval = setInterval(fetchUnreadCount, 30000);
       return () => clearInterval(interval);
     }
@@ -292,10 +294,12 @@ export const GameScreen: React.FC = () => {
         unreadCount={unreadCount}
       />
 
-      <ChatToggleButton
-        onClick={() => setIsChatOpen(!isChatOpen)}
-        unreadCount={isChatOpen ? 0 : unreadCount}
-      />
+      {!isChatOpen && (
+        <ChatToggleButton
+          onClick={() => setIsChatOpen(true)}
+          unreadCount={unreadCount}
+        />
+      )}
 
       <ChatPanel
         isOpen={isChatOpen}

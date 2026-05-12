@@ -24,6 +24,7 @@ import {
 } from '../data/combat';
 import { getDungeonById, generateDungeonEnemies, calculateSweepRewards, CHAPTERS } from '../data/combat/dungeons';
 import { getSkillsByElement } from '../data/combat/skills';
+import type { Element } from '../types';
 
 // 副本进度
 export interface DungeonProgress {
@@ -710,7 +711,7 @@ export const useCombatStore = create<CombatState>()(
       },
 
       getPlayerSkills: (element) => {
-        return getSkillsByElement(element as any);
+        return getSkillsByElement(element as Element);
       },
     })),
     {
